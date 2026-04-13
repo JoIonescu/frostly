@@ -1,3 +1,6 @@
+<img width="1003" height="1148" alt="image" src="https://github.com/user-attachments/assets/1d26fb28-abf5-4fc1-9fa0-864bb2085b7b" />
+
+
 Your smart freezer, finally.
 
 Track what's inside, get expiry alerts, and discover meals from what you already have.
