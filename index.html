@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#0a1628" media="(prefers-color-scheme: dark)" />
-  <meta name="theme-color" content="#dff0fa" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#d8eef9"  media="(prefers-color-scheme: light)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Frostly" />
@@ -13,497 +13,267 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Phudu:wght@300;400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Phudu:wght@300;400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box; margin: 0; padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    :root {
-      --ice: #4FC3F7;
-      --ice-dark: #0288D1;
-      --ice-glow: rgba(79,195,247,0.3);
-      --coral: #FF7043;
-      --coral-glow: rgba(255,112,67,0.3);
-      --amber: #FFB300;
-      --green: #66BB6A;
-      --bg: #0a1628;
-      --bg-outer: #060e1a;
-      --surface: rgba(255,255,255,0.04);
-      --surface-hover: rgba(255,255,255,0.08);
-      --border: rgba(255,255,255,0.08);
-      --border-ice: rgba(79,195,247,0.2);
-      --text: #e8f4f8;
-      --text-muted: rgba(232,244,248,0.45);
-      --modal-bg: #0f2035;
-      --heading-grad: linear-gradient(135deg,#fff 30%,var(--ice));
-      --phone-r1: #1c2d42; --phone-r2: #0d1929;
-      --phone-notch: #0a1422; --phone-btn: #1c2d42;
-      --feat-text: rgba(232,244,248,0.65);
-      --radius: 20px; --radius-sm: 12px;
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #dff0fa; --bg-outer: #b8d8ef;
-        --surface: rgba(255,255,255,0.65);
-        --surface-hover: rgba(255,255,255,0.9);
-        --border: rgba(10,22,40,0.1);
-        --border-ice: rgba(2,136,209,0.3);
-        --text: #0a1628;
-        --text-muted: rgba(10,22,40,0.5);
-        --modal-bg: #eef7fd;
-        --heading-grad: linear-gradient(135deg,#0a1628 30%,var(--ice-dark));
-        --ice-glow: rgba(2,136,209,0.25);
-        --phone-r1: #a0c4db; --phone-r2: #85afc8;
-        --phone-notch: #b8d8ef; --phone-btn: #a0c4db;
-        --feat-text: rgba(10,22,40,0.65);
-      }
-    }
-
-    html { height: 100%; background: var(--bg); }
-
-    body {
-      height: 100%; background: var(--bg);
-      color: var(--text); font-family: 'DM Sans', sans-serif;
-      font-size: 15px; overflow: hidden;
-      -webkit-text-size-adjust: 100%; overscroll-behavior: none;
-    }
-
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,0.12) 0%,transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,0.1) 0%,transparent 60%);
-      pointer-events: none; z-index: 0;
-    }
-
-    @media (prefers-color-scheme: light) {
-      body::before {
-        background:
-          radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,0.35) 0%,transparent 60%),
-          radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,0.2) 0%,transparent 60%);
-      }
-    }
-
-    /* MOBILE: wrappers are invisible pass-through */
-    @media (max-width: 599px) {
-      .desktop-layout {
-        display: block; width: 100%; height: 100%;
-      }
-      .desktop-shell {
-        display: block; width: 100%; height: 100%;
-        border-radius: 0 !important; overflow: visible !important;
-        box-shadow: none !important; background: transparent !important;
-      }
-      .desktop-info { display: none !important; }
-    }
-
-    #app {
-      position: relative; z-index: 1;
-      height: 100vh; height: 100dvh;
-      display: flex; flex-direction: column;
-      max-width: 430px; margin: 0 auto; background: transparent;
-    }
-
-    /* HEADER */
-    header {
-      padding: 52px 24px 20px;
-      padding-top: max(52px, env(safe-area-inset-top) + 16px);
-      flex-shrink: 0; animation: fadeDown .6s ease both;
-    }
-    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .logo { display: flex; align-items: center; gap: 10px; }
-    .logo-icon {
-      width: 36px; height: 36px; flex-shrink: 0;
-      background: linear-gradient(135deg,var(--ice),var(--ice-dark));
-      border-radius: 10px; display: flex; align-items: center;
-      justify-content: center; font-size: 18px; box-shadow: 0 0 20px var(--ice-glow);
-    }
-    .logo-name {
-      font-family: 'Phudu', sans-serif; font-size: 22px; font-weight: 700;
-      letter-spacing: -.5px; background: var(--heading-grad);
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent; color: transparent;
-    }
-    .header-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 300; letter-spacing: .5px; margin-left: 46px; }
-
-    /* STATS */
-    .stats-bar { display: flex; gap: 10px; padding: 0 24px 16px; flex-shrink: 0; animation: fadeDown .6s .1s ease both; }
-    .stat-chip {
-      flex: 1; background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 10px 12px; text-align: center;
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    }
-    .stat-num { font-family: 'Phudu', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; margin-bottom: 3px; }
-    .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; font-weight: 500; }
-    .stat-chip.urgent .stat-num { color: var(--coral); text-shadow: 0 0 12px var(--coral-glow); }
-    .stat-chip.soon   .stat-num { color: var(--amber); }
-    .stat-chip.good   .stat-num { color: var(--green); }
-
-    /* FILTER TABS */
-    .filter-tabs {
-      display: flex; gap: 8px; padding: 0 24px 14px; flex-shrink: 0;
-      overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-      animation: fadeDown .6s .15s ease both;
-    }
-    .filter-tabs::-webkit-scrollbar { display: none; }
-    .tab {
-      flex-shrink: 0; padding: 6px 14px; border-radius: 100px;
-      font-size: 12px; font-weight: 500; cursor: pointer;
-      border: 1px solid var(--border); background: var(--surface);
-      color: var(--text-muted); white-space: nowrap;
-      touch-action: manipulation; user-select: none;
-      transition: background .15s, color .15s, border-color .15s;
-    }
-    .tab.active {
-      background: var(--ice); color: #0a1628; border-color: var(--ice);
-      font-weight: 600; box-shadow: 0 0 16px var(--ice-glow);
-    }
-
-    /* LIST */
-    .list-wrap {
-      flex: 1; overflow-y: auto; padding: 0 24px;
-      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
-      -webkit-overflow-scrolling: touch;
-    }
-    .list-wrap::-webkit-scrollbar { width: 3px; }
-    .list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; animation: fadeIn .4s ease; }
-    .empty-icon { font-size: 52px; opacity: .4; }
-    .empty-title { font-family: 'Phudu', sans-serif; font-size: 20px; font-weight: 600; color: var(--text-muted); }
-    .empty-sub { font-size: 13px; color: var(--text-muted); opacity: .6; text-align: center; max-width: 200px; line-height: 1.5; }
-
-    .item-card {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      margin-bottom: 10px; cursor: pointer;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      animation: slideIn .35s ease both; position: relative; overflow: hidden;
-      touch-action: manipulation; transition: background .15s, border-color .15s;
-    }
-    .item-card::before { content: ''; position: absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
-    .item-card.urgent::before { background: var(--coral); box-shadow: 0 0 8px var(--coral-glow); }
-    .item-card.soon::before   { background: var(--amber); }
-    .item-card.good::before   { background: var(--green); }
-    .item-card:active { transform: scale(.98); }
-
-    .item-emoji { font-size: 28px; flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.05); border-radius: 12px; }
-    .item-info { flex: 1; min-width: 0; }
-    .item-name { font-family: 'Phudu', sans-serif; font-size: 17px; font-weight: 600; letter-spacing: -.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .item-meta { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
-    .item-qty  { font-size: 12px; color: var(--text-muted); font-weight: 300; }
-    .item-dot  { width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; opacity: .4; }
-    .item-expiry { font-size: 12px; font-weight: 500; }
-    .item-card.urgent .item-expiry { color: var(--coral); }
-    .item-card.soon   .item-expiry { color: var(--amber); }
-    .item-card.good   .item-expiry { color: var(--green); }
-
-    .item-delete {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: rgba(255,255,255,.05); border: none;
-      color: var(--text-muted); cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; flex-shrink: 0; touch-action: manipulation;
-      transition: background .15s, color .15s;
-    }
-    .item-delete:active { background: rgba(255,112,67,.2); color: var(--coral); }
-
-    /* BOTTOM BAR */
-    .bottom-bar {
-      padding: 12px 20px 32px;
-      padding-bottom: max(32px, env(safe-area-inset-bottom) + 12px);
-      flex-shrink: 0; display: flex; align-items: center; gap: 10px;
-      animation: fadeUp .6s .2s ease both;
-    }
-    .btn-meal {
-      flex: 1; min-width: 0; height: 54px; padding: 0 14px;
-      border-radius: var(--radius); border: 1px solid var(--border-ice);
-      background: rgba(79,195,247,.07); color: var(--ice);
-      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      gap: 7px; touch-action: manipulation; white-space: nowrap; overflow: hidden;
-      transition: background .15s;
-    }
-    @media (prefers-color-scheme: light) { .btn-meal { background: rgba(2,136,209,.08); color: var(--ice-dark); } }
-    .btn-meal:active { background: rgba(79,195,247,.2); }
-
-    .btn-add {
-      width: 54px; height: 54px; border-radius: 18px; flex-shrink: 0;
-      background: linear-gradient(135deg,var(--ice),var(--ice-dark));
-      border: none; color: #0a1628; font-size: 28px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 20px var(--ice-glow); touch-action: manipulation;
-      transition: transform .15s;
-    }
-    .btn-add:active { transform: scale(.92); }
-
-    /* MODALS */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(10,22,40,.8);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      z-index: 1000; display: flex; align-items: flex-end;
-      opacity: 0; pointer-events: none; transition: opacity .3s ease;
-    }
-    @media (prefers-color-scheme: light) { .modal-overlay { background: rgba(10,22,40,.4); } }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-    .modal {
-      width: 100%; max-width: 430px; margin: 0 auto;
-      background: var(--modal-bg); border: 1px solid var(--border-ice);
-      border-bottom: none; border-radius: 28px 28px 0 0;
-      padding: 12px 24px 48px;
-      padding-bottom: max(48px, env(safe-area-inset-bottom) + 24px);
-      transform: translateY(100%);
-      transition: transform .4s cubic-bezier(.4,0,.2,1);
-      max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
-    }
-    .modal-overlay.open .modal { transform: translateY(0); }
-
-    .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 8px auto 24px; }
-    .modal-title {
-      font-family: 'Phudu', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 24px;
-      background: var(--heading-grad); -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent; color: transparent;
-    }
-
-    /* FORM */
-    .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
-    .field input, .field select {
-      width: 100%; padding: 14px 16px; background: var(--surface);
-      -webkit-appearance: none; appearance: none;
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
-      outline: none; transition: border-color .2s, box-shadow .2s; color-scheme: light dark;
-    }
-    .field input:focus, .field select:focus { border-color: var(--ice); box-shadow: 0 0 0 3px var(--ice-glow); background: rgba(79,195,247,.05); }
-    .field select option { background: var(--modal-bg); color: var(--text); }
-    .field-row { display: flex; gap: 12px; }
-    .field-row .field { flex: 1; }
-
-    /* AUTOCOMPLETE */
-    .autocomplete-wrap { position: relative; }
-    .autocomplete-list {
-      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
-      background: var(--modal-bg); border: 1px solid var(--border-ice);
-      border-radius: var(--radius-sm); max-height: 220px; overflow-y: auto;
-      z-index: 10; display: none; box-shadow: 0 8px 24px rgba(0,0,0,.25);
-      -webkit-overflow-scrolling: touch;
-    }
-    .autocomplete-list.open { display: block; }
-    .autocomplete-item {
-      padding: 11px 14px; cursor: pointer; font-size: 14px;
-      display: flex; align-items: center; gap: 10px;
-      border-bottom: 1px solid var(--border); touch-action: manipulation;
-      transition: background .1s;
-    }
-    .autocomplete-item:last-child { border-bottom: none; }
-    .autocomplete-item:active { background: var(--surface-hover); }
-    .autocomplete-item-name { flex: 1; color: var(--text); }
-    .autocomplete-badge { font-size: 10px; color: var(--ice); background: rgba(79,195,247,.1); padding: 2px 7px; border-radius: 100px; border: 1px solid rgba(79,195,247,.2); white-space: nowrap; }
-    @media (prefers-color-scheme: light) { .autocomplete-badge { color: var(--ice-dark); } }
-
-    .btn-submit {
-      width: 100%; padding: 16px;
-      background: linear-gradient(135deg,var(--ice),var(--ice-dark));
-      border: none; border-radius: var(--radius-sm); color: #0a1628;
-      font-family: 'Phudu', sans-serif; font-size: 18px; font-weight: 700;
-      cursor: pointer; letter-spacing: .3px; touch-action: manipulation;
-      transition: opacity .15s, transform .15s;
-    }
-    .btn-submit:active { transform: scale(.98); opacity: .9; }
-
-    /* CHOICE */
-    .btn-choice {
-      width: 100%; padding: 16px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      cursor: pointer; display: flex; align-items: center; gap: 16px;
-      margin-bottom: 12px; text-align: left; touch-action: manipulation;
-      transition: background .15s, border-color .15s;
-    }
-    .btn-choice:active { background: var(--surface-hover); border-color: var(--border-ice); }
-    .btn-choice-icon { font-size: 30px; flex-shrink: 0; line-height: 1; }
-    .btn-choice-text { flex: 1; }
-    .btn-choice-label { font-family: 'Phudu', sans-serif; font-size: 17px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .btn-choice-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-    .pro-badge { font-size: 9px; font-family: 'DM Sans', sans-serif; background: var(--amber); color: #0a1628; padding: 2px 7px; border-radius: 4px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
-    .lock-icon { font-size: 16px; color: var(--text-muted); flex-shrink: 0; }
-
-    /* MEAL */
-    .meal-content { font-size: 14px; line-height: 1.7; color: var(--text); max-height: 55vh; overflow-y: auto; padding-right: 4px; -webkit-overflow-scrolling: touch; }
-    .meal-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
-    .meal-card-img { width: 100%; height: 160px; object-fit: cover; display: block; background: var(--surface-hover); }
-    .meal-card-body { padding: 14px; }
-    .meal-card-title { font-family: 'Phudu', sans-serif; font-size: 18px; font-weight: 700; color: var(--ice); margin-bottom: 6px; }
-    @media (prefers-color-scheme: light) { .meal-card-title { color: var(--ice-dark); } }
-    .meal-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-    .meal-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-    .meal-card-tag { font-size: 11px; padding: 3px 9px; border-radius: 100px; background: rgba(79,195,247,.1); color: var(--ice); border: 1px solid rgba(79,195,247,.2); }
-    @media (prefers-color-scheme: light) { .meal-card-tag { color: var(--ice-dark); } }
-    .meal-no-results { text-align: center; padding: 32px 0; color: var(--text-muted); font-size: 14px; line-height: 1.7; }
-    .meal-loading { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 0; }
-    .frost-spinner { width: 48px; height: 48px; border: 2px solid var(--border); border-top-color: var(--ice); border-radius: 50%; animation: spin .8s linear infinite; }
-    .meal-loading p { color: var(--text-muted); font-size: 13px; }
-
-    /* PRO */
-    .pro-upsell { text-align: center; padding: 8px 0 4px; }
-    .pro-upsell-icon { font-size: 52px; margin-bottom: 16px; }
-    .pro-upsell-title { font-family: 'Phudu', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-    .pro-upsell-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 260px; margin: 0 auto 24px; }
-    .btn-pro { width: 100%; padding: 16px; background: linear-gradient(135deg,#FFB300,#e65100); border: none; border-radius: var(--radius-sm); color: #fff; font-family: 'Phudu', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; touch-action: manipulation; transition: opacity .15s, transform .15s; }
-    .btn-pro:active { opacity: .9; transform: scale(.98); }
-    .pro-footnote { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
-
-    /* CAMERA */
-    #camera-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s; }
-    #camera-overlay.open { opacity: 1; pointer-events: all; }
-    #video { width: 100%; max-width: 430px; }
-    .camera-ui { position: absolute; inset: 0; display: flex; flex-direction: column; pointer-events: none; }
-    .scan-frame { flex: 1; display: flex; align-items: center; justify-content: center; }
-    .scan-box { width: 250px; height: 150px; border: 2px solid var(--ice); border-radius: 16px; box-shadow: 0 0 0 2000px rgba(0,0,0,.55),0 0 30px var(--ice-glow); position: relative; }
-    .scan-line { position: absolute; left: 10px; right: 10px; height: 2px; background: linear-gradient(90deg,transparent,var(--ice),transparent); animation: scanLine 1.8s ease-in-out infinite; border-radius: 2px; }
-    .camera-bottom { padding: 24px; pointer-events: all; text-align: center; }
-    .camera-label { font-size: 13px; color: rgba(255,255,255,.6); margin-bottom: 16px; }
-    .btn-camera-close { padding: 12px 32px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 100px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; touch-action: manipulation; }
-
-    /* TOAST */
-    .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(--modal-bg); border: 1px solid var(--border-ice); border-radius: 100px; padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--ice); z-index: 3000; transition: transform .35s cubic-bezier(.4,0,.2,1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.2); pointer-events: none; }
-    @media (prefers-color-scheme: light) { .toast { color: var(--ice-dark); } }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-
-    @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:none} }
-    @keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:none} }
-    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
-    @keyframes slideIn  { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:none} }
-    @keyframes spin     { to{transform:rotate(360deg)} }
-    @keyframes scanLine { 0%{top:10px;opacity:1} 50%{opacity:.7} 100%{top:calc(100% - 12px);opacity:1} }
-
-    /* DESKTOP */
-    @media (min-width: 600px) {
-      html, body { overflow: auto; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg-outer) !important; }
-      .desktop-layout { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; padding: 40px; }
-      .desktop-shell { position: relative; width: 390px; height: 844px; border-radius: 52px; overflow: hidden; flex-shrink: 0; background: var(--bg); box-shadow: 0 0 0 10px var(--phone-r1),0 0 0 13px var(--phone-r2),0 50px 100px rgba(0,0,0,.5),0 0 80px rgba(79,195,247,.07); }
-      .desktop-shell::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:126px; height:36px; background:var(--phone-notch); border-radius:0 0 22px 22px; z-index:200; }
-      .desktop-shell::after { content:''; position:absolute; left:-13px; top:140px; width:4px; height:36px; background:var(--phone-btn); border-radius:4px 0 0 4px; box-shadow:0 52px 0 var(--phone-btn),0 104px 0 var(--phone-btn); }
-      #app { height: 844px; max-width: 100%; overflow: hidden; }
-      .desktop-info { display: flex; flex-direction: column; justify-content: center; margin-left: 60px; gap: 28px; max-width: 300px; }
-      .desktop-tagline { font-family:'Phudu',sans-serif; font-size:38px; font-weight:700; line-height:1.15; background:var(--heading-grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
-      .desktop-sub { font-size:15px; color:var(--text-muted); line-height:1.7; font-weight:300; }
-      .desktop-features { display:flex; flex-direction:column; gap:14px; }
-      .desktop-feature { display:flex; align-items:center; gap:14px; font-size:14px; color:var(--feat-text); }
-      .desktop-feature-icon { width:36px; height:36px; flex-shrink:0; background:rgba(79,195,247,.08); border:1px solid var(--border-ice); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
-      .desktop-url { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; background:rgba(79,195,247,.06); border:1px solid var(--border-ice); border-radius:100px; font-size:13px; color:var(--ice); font-weight:500; width:fit-content; }
-    }
-    @media (min-width:600px) and (prefers-color-scheme:light) { .desktop-url { color:var(--ice-dark); } }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  :root{
+    --ice:#4FC3F7;--ice-dark:#0288D1;--glow:#3db8ef4a;
+    --coral:#FF7043;--glow-c:#ff70434a;
+    --amber:#FFB300;--green:#66BB6A;
+    --r:20px;--rsm:12px;
+    --bg:#0a1628;--bg2:#060e1a;
+    --surf:rgba(255,255,255,.045);--surfh:rgba(255,255,255,.09);
+    --bdr:rgba(255,255,255,.08);--bdri:rgba(79,195,247,.2);
+    --tx:#e8f4f8;--txm:rgba(232,244,248,.45);
+    --modal:#0f2035;
+    --ha:#fff;--hb:#4FC3F7;
+    --pr1:#1c2d42;--pr2:#0d1929;--pn:#090f1e;--ps:#1c2d42;
+    --pt:rgba(232,244,248,.65)
+  }
+  @media(prefers-color-scheme:light){:root{
+    --bg:#d8eef9;--bg2:#b0cfea;
+    --surf:rgba(255,255,255,.72);--surfh:rgba(255,255,255,.92);
+    --bdr:rgba(10,22,40,.1);--bdri:rgba(2,136,209,.28);
+    --tx:#0d1f2d;--txm:rgba(10,22,40,.48);
+    --modal:#eaf5fd;--glow:rgba(2,136,209,.22);
+    --ha:#0d1f2d;--hb:#0288D1;
+    --pr1:#9dc4dc;--pr2:#83b2cc;--pn:#b0cfea;--ps:#9dc4dc;
+    --pt:rgba(10,22,40,.6)
+  }}
+  html{height:100%;background:var(--bg)}
+  body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px}
+  .bg-atmo{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,.12) 0%,transparent 60%),
+               radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.1) 0%,transparent 60%)}
+  @media(prefers-color-scheme:light){.bg-atmo{background:radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,.35) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.18) 0%,transparent 60%)}}
+  @media(max-width:599px){
+    body{overflow:hidden}
+    .dl,.ds{all:initial!important;display:block!important;width:100%!important;height:100%!important}
+    .di{display:none!important}
+    #app{height:100vh;height:100dvh}
+  }
+  #app{position:relative;z-index:1;display:flex;flex-direction:column;max-width:430px;margin:0 auto;background:transparent}
+  header{padding:52px 24px 20px;padding-top:max(52px,env(safe-area-inset-top) + 16px);flex-shrink:0;animation:fadeDown .6s ease both}
+  .h-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--ice),var(--ice-dark));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 18px var(--glow);flex-shrink:0}
+  .logo-name{font-family:'Phudu',sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(--ha) 30%,var(--hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .header-sub{font-size:12px;color:var(--txm);font-weight:300;letter-spacing:.5px;margin-left:46px}
+  .stats-bar{display:flex;gap:10px;padding:0 24px 16px;flex-shrink:0;animation:fadeDown .6s .1s ease both}
+  .stat{flex:1;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rsm);padding:10px 12px;text-align:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .stat-n{font-family:'Phudu',sans-serif;font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
+  .stat-l{font-size:10px;color:var(--txm);text-transform:uppercase;letter-spacing:.8px;font-weight:500}
+  .stat.u .stat-n{color:var(--coral);text-shadow:0 0 12px var(--glow-c)}
+  .stat.s .stat-n{color:var(--amber)}
+  .stat.g .stat-n{color:var(--green)}
+  .tabs{display:flex;gap:8px;padding:0 24px 14px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;animation:fadeDown .6s .15s ease both}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex-shrink:0;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:var(--surf);color:var(--txm);transition:all .2s;white-space:nowrap;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+  .tab.active{background:var(--ice);color:#0a1628;border-color:var(--ice);font-weight:600;box-shadow:0 0 14px var(--glow)}
+  .list-wrap{flex:1;overflow-y:auto;padding:0 24px;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent;-webkit-overflow-scrolling:touch}
+  .list-wrap::-webkit-scrollbar{width:3px}
+  .list-wrap::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;animation:fadeIn .4s ease}
+  .empty-ico{font-size:52px;opacity:.4}
+  .empty-ttl{font-family:'Phudu',sans-serif;font-size:20px;font-weight:600;color:var(--txm)}
+  .empty-sub{font-size:13px;color:var(--txm);opacity:.6;text-align:center;max-width:200px;line-height:1.5}
+  .card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:10px;transition:transform .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:slideIn .35s ease both;position:relative;overflow:hidden;touch-action:manipulation}
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+  .card.urgent::before{background:var(--coral);box-shadow:0 0 8px var(--glow-c)}
+  .card.soon::before{background:var(--amber)}
+  .card.good::before{background:var(--green)}
+  .card:active{transform:scale(.98)}
+  .card-ico{font-size:28px;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border-radius:12px}
+  @media(prefers-color-scheme:light){.card-ico{background:rgba(0,0,0,.04)}}
+  .card-info{flex:1;min-width:0}
+  .card-name{font-family:'Phudu',sans-serif;font-size:17px;font-weight:600;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-meta{display:flex;align-items:center;gap:8px;margin-top:3px}
+  .card-qty{font-size:12px;color:var(--txm);font-weight:300}
+  .card-dot{width:3px;height:3px;background:var(--txm);border-radius:50%;opacity:.4}
+  .card-exp{font-size:12px;font-weight:500}
+  .card.urgent .card-exp{color:var(--coral)}
+  .card.soon .card-exp{color:var(--amber)}
+  .card.good .card-exp{color:var(--green)}
+  .card-del{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:none;color:var(--txm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;touch-action:manipulation}
+  @media(prefers-color-scheme:light){.card-del{background:rgba(0,0,0,.04)}}
+  .card-del:active{background:rgba(255,112,67,.18);color:var(--coral)}
+  .bar{padding:12px 20px 32px;padding-bottom:max(32px,env(safe-area-inset-bottom) + 12px);flex-shrink:0;display:flex;align-items:center;gap:10px;animation:fadeUp .6s .2s ease both}
+  .btn-meal{flex:1;min-width:0;height:54px;padding:0 14px;border-radius:var(--r);border:1px solid var(--bdri);background:rgba(79,195,247,.07);color:var(--ice);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;touch-action:manipulation;white-space:nowrap}
+  @media(prefers-color-scheme:light){.btn-meal{background:rgba(2,136,209,.08);color:var(--ice-dark);border-color:rgba(2,136,209,.28)}}
+  .btn-meal:active{background:rgba(79,195,247,.18)}
+  .btn-add{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--ice),var(--ice-dark));border:none;color:#0a1628;font-size:28px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px var(--glow);touch-action:manipulation}
+  .btn-add:active{transform:scale(.91)}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,.8);z-index:100;align-items:flex-end}
+  @media(prefers-color-scheme:light){.overlay{background:rgba(10,22,40,.4)}}
+  .overlay.open{display:flex}
+  .sheet{width:100%;max-width:430px;margin:0 auto;background:var(--modal);border:1px solid var(--bdri);border-bottom:none;border-radius:28px 28px 0 0;padding:12px 24px 48px;padding-bottom:max(48px,env(safe-area-inset-bottom) + 24px);max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:slideUp .38s cubic-bezier(.4,0,.2,1) both}
+  .handle{width:40px;height:4px;background:var(--bdr);border-radius:2px;margin:8px auto 24px}
+  .sheet-title{font-family:'Phudu',sans-serif;font-size:24px;font-weight:700;margin-bottom:24px;background:linear-gradient(135deg,var(--ha) 40%,var(--hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--txm);margin-bottom:8px}
+  .field input,.field select{width:100%;padding:14px 16px;background:var(--surf);-webkit-appearance:none;appearance:none;border:1px solid var(--bdr);border-radius:var(--rsm);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark}
+  .field input:focus,.field select:focus{border-color:var(--ice);box-shadow:0 0 0 3px var(--glow);background:rgba(79,195,247,.05)}
+  .field select option{background:var(--modal);color:var(--tx)}
+  .row{display:flex;gap:12px}
+  .row .field{flex:1}
+  .ac-wrap{position:relative}
+  .ac-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--modal);border:1px solid var(--bdri);border-radius:var(--rsm);max-height:190px;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.25);-webkit-overflow-scrolling:touch}
+  .ac-list.open{display:block}
+  .ac-row{padding:11px 14px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bdr);touch-action:manipulation}
+  .ac-row:last-child{border-bottom:none}
+  .ac-row:active{background:var(--surfh)}
+  .ac-name{flex:1;color:var(--tx)}
+  .ac-badge{font-size:10px;color:var(--ice);background:rgba(79,195,247,.1);padding:2px 7px;border-radius:100px;border:1px solid rgba(79,195,247,.2);white-space:nowrap}
+  @media(prefers-color-scheme:light){.ac-badge{color:var(--ice-dark)}}
+  .btn-prim{width:100%;padding:16px;background:linear-gradient(135deg,var(--ice),var(--ice-dark));border:none;border-radius:var(--rsm);color:#0a1628;font-family:'Phudu',sans-serif;font-size:18px;font-weight:700;letter-spacing:.3px;cursor:pointer;touch-action:manipulation;margin-top:4px}
+  .btn-prim:active{opacity:.88;transform:scale(.98)}
+  .btn-choice{width:100%;padding:16px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;display:flex;align-items:center;gap:16px;margin-bottom:12px;text-align:left;touch-action:manipulation}
+  .btn-choice:active{background:var(--surfh);border-color:var(--bdri)}
+  .bc-ico{font-size:28px;flex-shrink:0;line-height:1}
+  .bc-tx{flex:1}
+  .bc-lbl{font-family:'Phudu',sans-serif;font-size:17px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .bc-sub{font-size:12px;color:var(--txm);margin-top:3px}
+  .pro-badge{font-size:9px;font-family:'DM Sans',sans-serif;background:var(--amber);color:#0a1628;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .meal-wrap{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .meal-top{font-size:12px;color:var(--txm);margin-bottom:14px;text-align:center}
+  .rc{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+  .rc-head{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+  .rc-emo{font-size:26px;flex-shrink:0}
+  .rc-name{font-family:'Phudu',sans-serif;font-size:17px;font-weight:700;color:var(--tx)}
+  .rc-time{font-size:11px;color:var(--txm);margin-top:1px}
+  .rc-desc{font-size:13px;color:var(--txm);line-height:1.6;margin-bottom:8px}
+  .rc-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .rc-chip{font-size:11px;background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.18);color:var(--ice);padding:3px 9px;border-radius:100px}
+  @media(prefers-color-scheme:light){.rc-chip{color:var(--ice-dark)}}
+  .pro-up{text-align:center;padding:8px 0 4px}
+  .pro-ico{font-size:52px;margin-bottom:16px}
+  .pro-ttl{font-family:'Phudu',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px;color:var(--tx)}
+  .pro-desc{font-size:14px;color:var(--txm);line-height:1.6;max-width:260px;margin:0 auto 24px}
+  .btn-upgrade{width:100%;padding:16px;background:linear-gradient(135deg,#FFB300,#e65100);border:none;border-radius:var(--rsm);color:#fff;font-family:'Phudu',sans-serif;font-size:18px;font-weight:700;cursor:pointer;touch-action:manipulation}
+  .btn-upgrade:active{opacity:.9;transform:scale(.98)}
+  .pro-fn{font-size:12px;color:var(--txm);margin-top:10px}
+  #cam-overlay{display:none;position:fixed;inset:0;background:#000;z-index:200;flex-direction:column;align-items:center;justify-content:center}
+  #cam-overlay.open{display:flex}
+  #video{width:100%;max-width:430px}
+  .cam-ui{position:absolute;inset:0;display:flex;flex-direction:column;pointer-events:none}
+  .scan-frame{flex:1;display:flex;align-items:center;justify-content:center}
+  .scan-box{width:250px;height:150px;border:2px solid var(--ice);border-radius:16px;box-shadow:0 0 0 2000px rgba(0,0,0,.55),0 0 30px var(--glow);position:relative}
+  .scan-line{position:absolute;left:10px;right:10px;height:2px;background:linear-gradient(90deg,transparent,var(--ice),transparent);animation:scanLine 1.8s ease-in-out infinite;border-radius:2px}
+  .cam-bottom{padding:24px;pointer-events:all;text-align:center}
+  .cam-lbl{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:16px}
+  .btn-cam-close{padding:12px 32px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;touch-action:manipulation}
+  .toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--modal);border:1px solid var(--bdri);border-radius:100px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--ice);z-index:400;pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:toastIn .35s cubic-bezier(.4,0,.2,1) both}
+  @media(prefers-color-scheme:light){.toast{color:var(--ice-dark)}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes scanLine{0%{top:10px;opacity:1}50%{opacity:.7}100%{top:calc(100% - 12px);opacity:1}}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  @media(min-width:600px){
+    html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg2)!important}
+    .dl{display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;padding:40px;position:relative;z-index:1}
+    .ds{position:relative;width:390px;height:844px;border-radius:52px;overflow:hidden;flex-shrink:0;background:var(--bg);box-shadow:0 0 0 10px var(--pr1),0 0 0 13px var(--pr2),0 50px 100px rgba(0,0,0,.5),0 0 80px rgba(79,195,247,.07)}
+    .ds::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:var(--pn);border-radius:0 0 22px 22px;z-index:2;pointer-events:none}
+    .ds::after{content:'';position:absolute;left:-13px;top:140px;width:4px;height:36px;background:var(--ps);border-radius:4px 0 0 4px;box-shadow:0 52px 0 var(--ps),0 104px 0 var(--ps);pointer-events:none}
+    #app{height:844px;max-width:100%;overflow:hidden}
+    .di{display:flex;flex-direction:column;justify-content:center;margin-left:60px;gap:28px;max-width:300px}
+    .di-tag{font-family:'Phudu',sans-serif;font-size:38px;font-weight:700;line-height:1.15;background:linear-gradient(135deg,var(--ha) 30%,var(--hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .di-sub{font-size:15px;color:var(--pt);line-height:1.7;font-weight:300}
+    .di-feats{display:flex;flex-direction:column;gap:14px}
+    .di-feat{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--pt)}
+    .di-feat-ico{width:36px;height:36px;background:rgba(79,195,247,.08);border:1px solid var(--bdri);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .di-url{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(79,195,247,.06);border:1px solid var(--bdri);border-radius:100px;font-size:13px;color:var(--ice);font-weight:500;width:fit-content}
+    @media(prefers-color-scheme:light){.di-url{color:var(--ice-dark)}}
+  }
   </style>
 </head>
 <body>
-
-<div class="desktop-layout">
-  <div class="desktop-shell">
+<div class="bg-atmo" aria-hidden="true"></div>
+<div class="dl">
+  <div class="ds">
     <div id="app">
       <header>
-        <div class="header-top">
+        <div class="h-top">
           <div class="logo">
             <div class="logo-icon">❄️</div>
             <span class="logo-name">Frostly</span>
           </div>
         </div>
-        <div class="header-subtitle">your smart freezer companion</div>
+        <div class="header-sub">your smart freezer companion</div>
       </header>
-
       <div class="stats-bar">
-        <div class="stat-chip urgent"><div class="stat-num" id="stat-urgent">0</div><div class="stat-label">Expiring</div></div>
-        <div class="stat-chip soon"  ><div class="stat-num" id="stat-soon">0</div><div class="stat-label">This Month</div></div>
-        <div class="stat-chip good"  ><div class="stat-num" id="stat-good">0</div><div class="stat-label">Good</div></div>
+        <div class="stat u"><div class="stat-n" id="s-u">0</div><div class="stat-l">Expiring</div></div>
+        <div class="stat s"><div class="stat-n" id="s-s">0</div><div class="stat-l">This Month</div></div>
+        <div class="stat g"><div class="stat-n" id="s-g">0</div><div class="stat-l">Good</div></div>
       </div>
-
-      <div class="filter-tabs">
-        <div class="tab active" data-filter="all">All Items</div>
-        <div class="tab" data-filter="urgent">⚠️ Expiring</div>
-        <div class="tab" data-filter="meat">🥩 Meat</div>
-        <div class="tab" data-filter="fish">🐟 Fish</div>
-        <div class="tab" data-filter="vegetable">🥦 Veggies</div>
-        <div class="tab" data-filter="dairy">🧀 Dairy</div>
-        <div class="tab" data-filter="prepared">🍲 Prepared</div>
-        <div class="tab" data-filter="other">📦 Other</div>
+      <div class="tabs">
+        <div class="tab active" data-f="all">All Items</div>
+        <div class="tab" data-f="urgent">⚠️ Expiring</div>
+        <div class="tab" data-f="meat">🥩 Meat</div>
+        <div class="tab" data-f="fish">🐟 Fish</div>
+        <div class="tab" data-f="vegetable">🥦 Veggies</div>
+        <div class="tab" data-f="dairy">🧀 Dairy</div>
+        <div class="tab" data-f="prepared">🍲 Prepared</div>
+        <div class="tab" data-f="other">📦 Other</div>
       </div>
-
-      <div class="list-wrap" id="item-list">
-        <div class="empty-state" id="empty-state">
-          <div class="empty-icon">🧊</div>
-          <div class="empty-title">Freezer is empty</div>
+      <div class="list-wrap" id="list">
+        <div class="empty" id="empty">
+          <div class="empty-ico">🧊</div>
+          <div class="empty-ttl">Freezer is empty</div>
           <div class="empty-sub">Tap + to add your first item</div>
         </div>
       </div>
-
-      <div class="bottom-bar">
-        <button class="btn-meal" id="btn-meal"><span>🍽️</span> What can I cook?</button>
+      <div class="bar">
+        <button class="btn-meal" id="btn-meal">🍽️ What can I cook?</button>
         <button class="btn-add"  id="btn-add">+</button>
       </div>
     </div>
   </div>
-
-  <div class="desktop-info">
-    <div class="desktop-tagline">Your smart freezer, finally.</div>
-    <div class="desktop-sub">Track what's inside, get expiry alerts, and discover meals from what you already have.</div>
-    <div class="desktop-features">
-      <div class="desktop-feature"><div class="desktop-feature-icon">❄️</div><span>Track items with auto expiry dates</span></div>
-      <div class="desktop-feature"><div class="desktop-feature-icon">📷</div><span>Scan barcodes to add instantly</span></div>
-      <div class="desktop-feature"><div class="desktop-feature-icon">🍽️</div><span>Recipe ideas from expiring items</span></div>
-      <div class="desktop-feature"><div class="desktop-feature-icon">🔒</div><span>100% private — data stays on your device</span></div>
+  <div class="di">
+    <div class="di-tag">Your smart freezer, finally.</div>
+    <div class="di-sub">Track what's inside, get expiry alerts, and discover meals from what you already have.</div>
+    <div class="di-feats">
+      <div class="di-feat"><div class="di-feat-ico">❄️</div><span>Track items with auto expiry dates</span></div>
+      <div class="di-feat"><div class="di-feat-ico">📷</div><span>Scan barcodes to add instantly</span></div>
+      <div class="di-feat"><div class="di-feat-ico">🍽️</div><span>Meal ideas from what's expiring</span></div>
+      <div class="di-feat"><div class="di-feat-ico">🔒</div><span>100% private — stays on your device</span></div>
     </div>
-    <div class="desktop-url">📱 Open on your phone for the best experience</div>
+    <div class="di-url">📱 Open on your phone for the best experience</div>
   </div>
 </div>
-
-
-<!-- CHOICE MODAL -->
-<div class="modal-overlay" id="choice-modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Add to Freezer</div>
-    <button class="btn-choice" id="btn-choice-manual">
-      <span class="btn-choice-icon">✏️</span>
-      <div class="btn-choice-text">
-        <div class="btn-choice-label">Add Manually</div>
-        <div class="btn-choice-sub">Search or type item details</div>
-      </div>
+<div class="overlay" id="m-choice">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">Add to Freezer</div>
+    <button class="btn-choice" id="b-manual">
+      <span class="bc-ico">✏️</span>
+      <div class="bc-tx"><div class="bc-lbl">Add Manually</div><div class="bc-sub">Type or search item name</div></div>
     </button>
-    <button class="btn-choice" id="btn-choice-scan">
-      <span class="btn-choice-icon">📷</span>
-      <div class="btn-choice-text">
-        <div class="btn-choice-label">Scan Barcode <span class="pro-badge">PRO</span></div>
-        <div class="btn-choice-sub">Auto-fill from product database</div>
-      </div>
-      <span class="lock-icon">🔒</span>
+    <button class="btn-choice" id="b-scan">
+      <span class="bc-ico">📷</span>
+      <div class="bc-tx"><div class="bc-lbl">Scan Barcode <span class="pro-badge">PRO</span></div><div class="bc-sub">Auto-fill from product database</div></div>
+      <span style="font-size:16px;color:var(--txm)">🔒</span>
     </button>
   </div>
 </div>
-
-
-<!-- ADD ITEM MODAL -->
-<div class="modal-overlay" id="add-modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Add Item</div>
-
+<div class="overlay" id="m-add">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">Add Item</div>
     <div class="field">
       <label>Item Name</label>
-      <div class="autocomplete-wrap">
-        <input type="text" id="input-name" placeholder="e.g. Chicken Breast" autocomplete="off" />
-        <div class="autocomplete-list" id="autocomplete-list"></div>
+      <div class="ac-wrap">
+        <input type="text" id="f-name" placeholder="e.g. Chicken Breast" autocomplete="off" />
+        <div class="ac-list" id="ac"></div>
       </div>
     </div>
-
-    <div class="field-row">
+    <div class="row">
       <div class="field">
         <label>Category</label>
-        <select id="input-category">
+        <select id="f-cat">
           <option value="meat">🥩 Meat</option>
           <option value="fish">🐟 Fish</option>
           <option value="vegetable">🥦 Vegetable</option>
@@ -514,438 +284,328 @@
       </div>
       <div class="field">
         <label>Quantity</label>
-        <input type="text" id="input-qty" placeholder="e.g. 500g" />
+        <input type="text" id="f-qty" placeholder="e.g. 500g" />
       </div>
     </div>
-
     <div class="field">
       <label>Date Added</label>
-      <input type="date" id="input-date" />
+      <input type="date" id="f-date" />
     </div>
-
-    <button class="btn-submit" id="btn-submit">Add to Freezer ❄️</button>
+    <button class="btn-prim" id="btn-submit">Add to Freezer ❄️</button>
   </div>
 </div>
-
-
-<!-- MEAL MODAL -->
-<div class="modal-overlay" id="meal-modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">🍽️ Meal Ideas</div>
-    <div id="meal-content" class="meal-content"></div>
+<div class="overlay" id="m-meal">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">🍽️ Meal Ideas</div>
+    <div class="meal-wrap" id="meal-content"></div>
   </div>
 </div>
-
-
-<!-- PRO MODAL -->
-<div class="modal-overlay" id="pro-modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="pro-upsell">
-      <div class="pro-upsell-icon">📷</div>
-      <div class="pro-upsell-title">Scan to Add</div>
-      <div class="pro-upsell-desc">Point your camera at any barcode and Frostly auto-fills the item name and category — no typing needed.</div>
-      <button class="btn-pro" id="btn-upgrade">Upgrade to Pro — $2.99</button>
-      <div class="pro-footnote">One-time purchase. No subscription.</div>
+<div class="overlay" id="m-pro">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="pro-up">
+      <div class="pro-ico">📷</div>
+      <div class="pro-ttl">Unlock Barcode Scan</div>
+      <div class="pro-desc">Point your camera at any barcode. Frostly looks it up and fills everything in automatically.</div>
+      <button class="btn-upgrade" id="btn-upgrade">Upgrade to Pro — $2.99</button>
+      <div class="pro-fn">One-time purchase. No subscription.</div>
     </div>
   </div>
 </div>
-
-
-<!-- CAMERA -->
-<div id="camera-overlay">
+<div id="cam-overlay">
   <video id="video" autoplay muted playsinline></video>
-  <div class="camera-ui">
+  <div class="cam-ui">
     <div class="scan-frame"><div class="scan-box"><div class="scan-line"></div></div></div>
-    <div class="camera-bottom">
-      <div class="camera-label">Align barcode within the frame</div>
-      <button class="btn-camera-close" id="btn-camera-close">Cancel</button>
+    <div class="cam-bottom">
+      <div class="cam-lbl">Align barcode within the frame</div>
+      <button class="btn-cam-close" id="btn-cam-close">Cancel</button>
     </div>
   </div>
 </div>
-
-<div class="toast" id="toast"></div>
-
-
 <script>
-// ── EXPIRY DATA (USDA FoodKeeper, frozen storage in days) ─────────────────────
-const FOOD_EXPIRY = {
-  'chicken breast':270,'chicken thighs':270,'chicken wings':270,'whole chicken':365,
-  'ground chicken':90,'turkey breast':270,'ground turkey':90,'ground beef':120,
-  'beef steak':365,'beef roast':365,'beef ribs':120,'pork chops':180,
-  'pork roast':365,'pork ribs':180,'bacon':30,'ham':60,'sausage':60,
-  'hot dogs':60,'lamb chops':270,'veal':270,'venison':365,
-  'salmon':90,'salmon fillet':90,'cod':180,'cod fillet':180,'tuna':90,
-  'tuna steak':90,'shrimp':365,'prawns':365,'scallops':90,'crab':90,
-  'lobster':90,'fish fillets':180,'fish fingers':180,'fish sticks':180,
-  'broccoli':365,'spinach':365,'peas':365,'corn':365,'green beans':365,
-  'edamame':365,'cauliflower':365,'mixed vegetables':365,'carrots':365,
-  'kale':365,'asparagus':365,'brussels sprouts':365,'zucchini':365,
-  'strawberries':365,'blueberries':365,'raspberries':365,'blackberries':365,
-  'mixed berries':365,'mango':365,'mango chunks':365,'peaches':365,'cherries':365,'banana':90,
-  'butter':365,'cheese':180,'shredded cheese':180,'ice cream':60,'frozen yogurt':60,
-  'pizza':60,'lasagna':90,'soup':60,'chili':90,'meatballs':90,'burritos':90,
-  'dumplings':90,'spring rolls':90,'egg rolls':90,'waffles':90,'pancakes':90,'pot pies':90,
-  'bread':90,'bagels':90,'rice':180,'pasta':180,
-};
-
-const EXPIRY_DAYS = { meat:270, fish:120, vegetable:300, dairy:90, prepared:90, other:180 };
-
-const CATEGORY_EMOJI = { meat:'🥩', fish:'🐟', vegetable:'🥦', dairy:'🧀', prepared:'🍲', other:'📦' };
-
-const COMMON_ITEMS = [
-  {name:'Chicken Breast',category:'meat'},{name:'Chicken Thighs',category:'meat'},
-  {name:'Ground Beef',category:'meat'},{name:'Ground Turkey',category:'meat'},
-  {name:'Pork Chops',category:'meat'},{name:'Bacon',category:'meat'},
-  {name:'Beef Steak',category:'meat'},{name:'Sausage',category:'meat'},
-  {name:'Salmon Fillet',category:'fish'},{name:'Shrimp',category:'fish'},
-  {name:'Cod Fillet',category:'fish'},{name:'Tuna Steak',category:'fish'},
-  {name:'Fish Fingers',category:'fish'},{name:'Prawns',category:'fish'},
-  {name:'Broccoli',category:'vegetable'},{name:'Spinach',category:'vegetable'},
-  {name:'Peas',category:'vegetable'},{name:'Corn',category:'vegetable'},
-  {name:'Mixed Vegetables',category:'vegetable'},{name:'Green Beans',category:'vegetable'},
-  {name:'Edamame',category:'vegetable'},{name:'Cauliflower',category:'vegetable'},
-  {name:'Strawberries',category:'vegetable'},{name:'Blueberries',category:'vegetable'},
-  {name:'Mixed Berries',category:'vegetable'},{name:'Mango Chunks',category:'vegetable'},
-  {name:'Butter',category:'dairy'},{name:'Cheese Block',category:'dairy'},
-  {name:'Ice Cream',category:'dairy'},
-  {name:'Pizza',category:'prepared'},{name:'Lasagna',category:'prepared'},
-  {name:'Meatballs',category:'prepared'},{name:'Soup',category:'prepared'},
-  {name:'Dumplings',category:'prepared'},{name:'Spring Rolls',category:'prepared'},
-  {name:'Waffles',category:'other'},{name:'Bread',category:'other'},
-  {name:'Pancakes',category:'other'},{name:'Rice',category:'other'},
+'use strict';
+const EXP_KW={'chicken breast':270,'chicken thigh':270,'chicken wing':270,'chicken drumstick':270,'whole chicken':270,'chicken':270,'turkey breast':270,'ground turkey':120,'turkey':120,'duck':180,'ground beef':120,'beef mince':120,'hamburger':120,'beef steak':365,'ribeye':365,'sirloin':365,'brisket':365,'beef short rib':365,'pork chop':180,'pork loin':180,'pork tenderloin':180,'pork shoulder':180,'pork belly':90,'pulled pork':90,'bacon':30,'ham':60,'pork sausage':60,'chorizo':60,'salami':60,'hot dog':60,'bratwurst':60,'lamb chop':270,'ground lamb':120,'lamb shank':270,'lamb':270,'meatball':90,'burger patty':120,'cod':180,'haddock':180,'pollock':180,'tilapia':180,'halibut':180,'flounder':180,'sea bass':180,'fish finger':180,'fish stick':180,'breaded fish':180,'salmon':90,'tuna steak':90,'mackerel':90,'sardine':90,'trout':90,'smoked salmon':60,'shrimp':180,'prawn':180,'scallop':90,'crab':90,'lobster':90,'squid':90,'calamari':90,'broccoli':365,'peas':365,'edamame':365,'corn':365,'green bean':365,'spinach':365,'kale':365,'cauliflower':365,'mixed veg':365,'carrot':365,'parsnip':365,'sweet potato':365,'butternut':365,'squash':365,'courgette':365,'zucchini':365,'pepper':365,'capsicum':365,'mushroom':365,'strawberr':365,'blueberr':365,'raspberr':365,'mango':365,'pineapple':365,'mixed berr':365,'berr':365,'cherry':365,'peach':365,'plum':365,'avocado':180,'butter':270,'ghee':365,'cheddar':180,'mozzarella':180,'parmesan':365,'cheese':180,'ice cream':60,'gelato':60,'sorbet':90,'frozen yogurt':120,'bread':90,'sourdough':90,'baguette':90,'waffle':90,'pancake':90,'croissant':60,'pastry':60,'bagel':90,'pita':90,'naan':90,'tortilla':90,'wrap':90,'rice':180,'pasta':365,'noodle':365,'dumpling':90,'spring roll':90,'samosa':90,'empanada':90,'pierogi':90,'pizza':60,'lasagna':90,'burrito':90,'soup':90,'stew':90,'curry':90,'chilli':90,'meal':90,'casserole':90};
+const EXP_CAT={meat:180,fish:180,vegetable:365,dairy:90,prepared:90,other:180};
+const EMO={meat:'🥩',fish:'🐟',vegetable:'🥦',dairy:'🧀',prepared:'🍲',other:'📦'};
+function getExp(item){const n=item.name.toLowerCase();for(const[k,d]of Object.entries(EXP_KW))if(n.includes(k))return d;return EXP_CAT[item.category]||180;}
+const RECIPES=[
+  {e:'🥢',n:'Chicken Stir-Fry',t:'20 min',d:'Chicken with frozen veg, garlic, and soy sauce in a blazing hot wok.',k:['chicken'],c:['meat','vegetable']},
+  {e:'🍲',n:'Chicken Noodle Soup',t:'35 min',d:'Simmer chicken with noodles and veg in a rich broth. Classic comfort.',k:['chicken'],c:['meat','vegetable']},
+  {e:'🍛',n:'Chicken Curry',t:'30 min',d:'Chicken, tinned tomatoes, curry paste, and frozen veg. Fragrant and warming.',k:['chicken','peas','spinach'],c:['meat','vegetable']},
+  {e:'🍳',n:'Chicken Fried Rice',t:'20 min',d:'Day-old rice, chicken, peas, corn, egg, and soy sauce. Ultimate freezer meal.',k:['chicken','peas','corn'],c:['meat','vegetable']},
+  {e:'🌮',n:'Chicken Tacos',t:'25 min',d:'Season with cumin and smoked paprika, shred and pile into warm tortillas.',k:['chicken','corn'],c:['meat']},
+  {e:'🍝',n:'Chicken & Spinach Pasta',t:'25 min',d:'Pan-fried chicken, wilted spinach, garlic, cream, parmesan over pappardelle.',k:['chicken','spinach'],c:['meat','vegetable']},
+  {e:'🥦',n:'Chicken & Broccoli Bake',t:'35 min',d:'Layer chicken and broccoli in a baking dish with a cheesy white sauce.',k:['chicken','broccoli'],c:['meat','vegetable']},
+  {e:'🫔',n:'Chicken Caesar Wrap',t:'15 min',d:'Grilled chicken, parmesan, Caesar dressing in a toasted tortilla.',k:['chicken'],c:['meat']},
+  {e:'🍜',n:'Thai Chicken Noodles',t:'25 min',d:'Rice noodles, chicken, peanut sauce, edamame, and a squeeze of lime.',k:['chicken','edamame'],c:['meat','vegetable']},
+  {e:'🌶',n:'Chicken Tikka Masala',t:'35 min',d:'Marinate in yogurt and spices, cook in rich tomato-cream sauce.',k:['chicken'],c:['meat','dairy']},
+  {e:'🍲',n:'Chicken & Sweet Potato Stew',t:'40 min',d:'Hearty stew with chunks of sweet potato and warming spices.',k:['chicken','sweet potato'],c:['meat','vegetable']},
+  {e:'🥘',n:'Chicken Paella',t:'40 min',d:'Rice, chicken, peppers, and frozen peas cooked together in one pan.',k:['chicken','peas','pepper'],c:['meat','vegetable']},
+  {e:'🥣',n:'Chicken & Veg Soup',t:'30 min',d:'Clear, nourishing broth packed with chicken and whatever veg you have.',k:['chicken','mixed veg','carrot'],c:['meat','vegetable']},
+  {e:'🫕',n:'Creamy Chicken & Corn Chowder',t:'30 min',d:'Chunky cream soup with chicken, corn, and potatoes.',k:['chicken','corn'],c:['meat','vegetable']},
+  {e:'🌯',n:'Chicken Fajita Bowl',t:'25 min',d:'Seasoned chicken with peppers, corn, and guacamole over rice.',k:['chicken','pepper','corn'],c:['meat','vegetable']},
+  {e:'🥢',n:'Beef Stir-Fry',t:'20 min',d:'Thin-sliced beef, broccoli, oyster sauce. Fast and flavourful.',k:['beef steak','sirloin','ribeye'],c:['meat','vegetable']},
+  {e:'🌮',n:'Beef Tacos',t:'25 min',d:'Brown mince with taco spices, serve in shells with corn and salsa.',k:['ground beef','beef mince'],c:['meat']},
+  {e:'🍝',n:'Spaghetti Bolognese',t:'30 min',d:'Slow-cooked mince in a rich tomato sauce over al dente pasta.',k:['ground beef','beef mince','meatball'],c:['meat']},
+  {e:'🍔',n:'Smash Burgers',t:'15 min',d:'Smash patties thin for maximum crust. Cheese, pickles, sauce.',k:['ground beef','beef mince','hamburger'],c:['meat']},
+  {e:'🍲',n:'Beef & Vegetable Stew',t:'50 min',d:'Slow-simmered beef with root veg in a deep, rich broth.',k:['beef steak','brisket','mixed veg','carrot'],c:['meat','vegetable']},
+  {e:'🥖',n:'Meatball Sub',t:'20 min',d:'Meatballs in marinara sauce piled into a toasted hoagie.',k:['meatball'],c:['meat','prepared']},
+  {e:'🍛',n:'Beef Keema Curry',t:'30 min',d:'Ground beef cooked with peas, tomatoes, and warming spices.',k:['ground beef','beef mince','peas'],c:['meat','vegetable']},
+  {e:'🥘',n:'Beef Stroganoff',t:'30 min',d:'Strips of beef in a creamy mushroom sauce over egg noodles.',k:['beef steak','sirloin','mushroom'],c:['meat','vegetable']},
+  {e:'🌶',n:'Chilli Con Carne',t:'40 min',d:'Classic chilli with beef mince, beans, and warming spices.',k:['ground beef','beef mince'],c:['meat']},
+  {e:'🍱',n:'Korean Beef Bowls',t:'20 min',d:'Gochujang-glazed beef mince over rice with edamame and sesame.',k:['ground beef','beef mince','edamame'],c:['meat','vegetable']},
+  {e:'🍖',n:'Pork Chop with Roasted Veg',t:'30 min',d:'Sear pork chops golden, serve with roasted frozen vegetables.',k:['pork chop','pork loin'],c:['meat','vegetable']},
+  {e:'🍝',n:'Bacon & Broccoli Pasta',t:'20 min',d:'Crispy bacon, tender broccoli, loads of garlic, and parmesan.',k:['bacon','broccoli'],c:['meat','vegetable']},
+  {e:'🥞',n:'Bacon & Egg Breakfast',t:'15 min',d:'Crispy bacon, fried egg, toast. The non-negotiable.',k:['bacon','bread'],c:['meat','other']},
+  {e:'🌭',n:'Sausage & Veg Sheet Pan',t:'35 min',d:'Roast sausages with frozen veg on one tray. Effortless.',k:['pork sausage','bratwurst','chorizo','sausage','mixed veg','pepper'],c:['meat','vegetable']},
+  {e:'🫕',n:'Lamb & Spinach Curry',t:'35 min',d:'Tender lamb in a spiced tomato gravy with frozen spinach.',k:['lamb chop','ground lamb','lamb','spinach'],c:['meat','vegetable']},
+  {e:'🌯',n:'Pulled Pork Burritos',t:'15 min',d:'Shredded pork, corn, and salsa rolled into warm tortillas.',k:['pulled pork','pork shoulder','pork belly','corn'],c:['meat','vegetable']},
+  {e:'🐟',n:'Baked Lemon Salmon',t:'20 min',d:'Brush with olive oil and lemon, bake at 200°C for 14 minutes.',k:['salmon','smoked salmon'],c:['fish']},
+  {e:'🌮',n:'Fish Tacos',t:'25 min',d:'Battered or grilled fish, slaw, avocado sauce. Easy and delicious.',k:['fish finger','cod','salmon','haddock'],c:['fish']},
+  {e:'🍛',n:'Fish Curry',t:'25 min',d:'White fish in a coconut-tomato broth with frozen veg.',k:['cod','salmon','haddock','tilapia','shrimp','prawn'],c:['fish','vegetable']},
+  {e:'🥢',n:'Garlic Butter Shrimp',t:'15 min',d:'Shrimp in foaming garlic butter and white wine. Ready in 10 minutes.',k:['shrimp','prawn'],c:['fish']},
+  {e:'🍝',n:'Shrimp & Spinach Pasta',t:'20 min',d:'Garlic butter shrimp, frozen spinach wilted through, tossed in linguine.',k:['shrimp','prawn','spinach'],c:['fish','vegetable']},
+  {e:'🍝',n:'Tuna Pasta Bake',t:'30 min',d:'Tuna, pasta, cream sauce, and cheese baked until golden.',k:['tuna steak'],c:['fish','dairy']},
+  {e:'🫛',n:'Salmon & Edamame Bowl',t:'20 min',d:'Pan-seared salmon over edamame, rice, and a sesame-soy dressing.',k:['salmon','edamame'],c:['fish','vegetable']},
+  {e:'🥢',n:'Shrimp Stir-Fry',t:'15 min',d:'Shrimp with broccoli, edamame, and soy-ginger sauce.',k:['shrimp','prawn','broccoli','edamame'],c:['fish','vegetable']},
+  {e:'🍣',n:'Salmon Fish Cakes',t:'30 min',d:'Flake salmon with mashed potato and herbs, pan-fry golden.',k:['salmon'],c:['fish']},
+  {e:'🍲',n:'Seafood Chowder',t:'30 min',d:'Chunky cream soup with fish, shrimp, and corn. Warming.',k:['cod','salmon','shrimp','prawn','corn'],c:['fish','vegetable']},
+  {e:'🌯',n:'Fish Finger Wraps',t:'15 min',d:'Crispy fish fingers, peas, tartar sauce in a warm tortilla.',k:['fish finger','fish stick','peas'],c:['fish','vegetable']},
+  {e:'🍱',n:'Teriyaki Salmon Bowls',t:'20 min',d:'Glazed salmon over rice with edamame and sesame seeds.',k:['salmon','edamame'],c:['fish','vegetable']},
+  {e:'🐟',n:'Baked Cod with Veg',t:'25 min',d:'Cod on a bed of frozen Mediterranean veg. One dish, no mess.',k:['cod','haddock','tilapia','mixed veg','pepper'],c:['fish','vegetable']},
+  {e:'🫕',n:'Prawn & Tomato Orzo',t:'25 min',d:'Orzo cooked in a rich tomato broth, finished with butter prawns.',k:['shrimp','prawn'],c:['fish']},
+  {e:'🥢',n:'Vegetable Stir-Fry',t:'15 min',d:'Any frozen veg in a hot wok with garlic, ginger, and soy.',k:['broccoli','mixed veg','peas','corn','green bean','edamame'],c:['vegetable']},
+  {e:'🍲',n:'Vegetable Soup',t:'25 min',d:'Simmer frozen veg in stock, blend half for a velvety texture.',k:['mixed veg','peas','spinach','broccoli','cauliflower','carrot'],c:['vegetable']},
+  {e:'🍛',n:'Vegetable Curry',t:'25 min',d:'Any frozen veg + coconut milk + curry paste. Rich and hearty.',k:['mixed veg','broccoli','peas','spinach','cauliflower','sweet potato'],c:['vegetable']},
+  {e:'🍳',n:'Veggie Fried Rice',t:'20 min',d:'Egg, peas, corn, any frozen veg, and soy sauce. Best freezer-clearer.',k:['peas','corn','mixed veg','broccoli','edamame','spinach'],c:['vegetable']},
+  {e:'🫐',n:'Berry Smoothie Bowl',t:'5 min',d:'Blend frozen berries with banana. Top with granola and honey.',k:['strawberr','blueberr','mango','mixed berr','raspberr','cherry'],c:['vegetable']},
+  {e:'🍑',n:'Fruit Crumble',t:'35 min',d:'Frozen fruit with sugar, topped with a butter-oat crumble.',k:['strawberr','blueberr','mango','mixed berr','peach','plum'],c:['vegetable']},
+  {e:'🥚',n:'Spinach & Cheese Omelette',t:'10 min',d:'Eggs, frozen spinach thawed, and melted cheese. Fast and rich.',k:['spinach','kale','cheese'],c:['vegetable','dairy']},
+  {e:'🌽',n:'Corn & Broccoli Fritters',t:'20 min',d:'Mix corn, broccoli, egg, and flour into patties. Pan-fry golden.',k:['corn','broccoli','cauliflower'],c:['vegetable']},
+  {e:'🥗',n:'Edamame Buddha Bowl',t:'15 min',d:'Edamame over rice with avocado, corn, and a tahini dressing.',k:['edamame','corn','avocado'],c:['vegetable']},
+  {e:'🫕',n:'Minestrone',t:'30 min',d:'Italian vegetable soup with beans, pasta, and whatever veg you have.',k:['mixed veg','peas','green bean','spinach','carrot'],c:['vegetable']},
+  {e:'🥘',n:'Cauliflower Fried Rice',t:'20 min',d:'Pulse cauliflower into rice, stir-fry with peas, corn, and egg.',k:['cauliflower','peas','corn'],c:['vegetable']},
+  {e:'🫙',n:'Pea & Mint Soup',t:'15 min',d:'Blend frozen peas with stock, mint, and cream. Elegant.',k:['peas'],c:['vegetable']},
+  {e:'🌿',n:'Spinach & Mushroom Risotto',t:'35 min',d:'Creamy arborio rice with frozen spinach and mushrooms.',k:['spinach','mushroom'],c:['vegetable','dairy']},
+  {e:'🥬',n:'Green Veg & Egg Bake',t:'25 min',d:'Frozen greens baked with cracked eggs and crumbled feta.',k:['spinach','kale','broccoli','peas'],c:['vegetable','dairy']},
+  {e:'🍠',n:'Sweet Potato & Black Bean Bowl',t:'30 min',d:'Roasted sweet potato with spiced black beans and corn.',k:['sweet potato','corn'],c:['vegetable']},
+  {e:'🥕',n:'Carrot & Ginger Soup',t:'25 min',d:'Roast frozen carrots then blend with ginger and coconut milk.',k:['carrot','sweet potato'],c:['vegetable']},
+  {e:'🌶',n:'Corn & Pepper Frittata',t:'25 min',d:'Egg frittata loaded with corn, peppers, and cheese. Oven-finished.',k:['corn','pepper','capsicum'],c:['vegetable','dairy']},
+  {e:'🧀',n:'Mac and Cheese',t:'20 min',d:'Proper béchamel, heavy on the cheddar, baked with breadcrumbs.',k:['cheese','cheddar','butter'],c:['dairy']},
+  {e:'🥚',n:'Cheese & Corn Quesadillas',t:'15 min',d:'Tortillas loaded with melted cheese and corn, pan-fried golden.',k:['cheese','corn'],c:['dairy','vegetable']},
+  {e:'🧇',n:'Ice Cream Sundae',t:'5 min',d:'Scoop ice cream, pour over warm berries. No recipe needed.',k:['ice cream','gelato','strawberr','mixed berr'],c:['dairy','vegetable']},
+  {e:'🍕',n:'Loaded Frozen Pizza',t:'15 min',d:'Top frozen pizza with corn, peppers, or spinach from the freezer.',k:['pizza'],c:['prepared']},
+  {e:'🫕',n:'Baked Lasagna',t:'40 min',d:'Bake covered 30 min, uncover 10. Golden, bubbling, perfect.',k:['lasagna'],c:['prepared']},
+  {e:'🍚',n:'Meatball Rice Bowl',t:'15 min',d:'Reheat meatballs in sauce and spoon over steamed rice.',k:['meatball'],c:['prepared','meat']},
+  {e:'🌯',n:'Burrito Bowl',t:'10 min',d:'Slice open a frozen burrito, serve over rice with corn and salsa.',k:['burrito'],c:['prepared']},
+  {e:'🍜',n:'Soup & Crusty Bread',t:'15 min',d:'Hearty frozen soup, reheated and served with toasted bread.',k:['soup','stew','chilli','bread'],c:['prepared','other']},
+  {e:'🥟',n:'Dumplings in Broth',t:'15 min',d:'Simmer frozen dumplings in chicken stock with soy and chilli oil.',k:['dumpling','pierogi'],c:['prepared']},
+  {e:'🥢',n:'Crispy Spring Rolls',t:'15 min',d:'Oven-baked until shatteringly crispy. Serve with sweet chilli sauce.',k:['spring roll','samosa','empanada'],c:['prepared']},
+  {e:'🍕',n:'Naan Pizzas',t:'15 min',d:'Top frozen naan with tomato sauce, cheese, and any toppings you have.',k:['naan','pita'],c:['other','dairy']},
+  {e:'🍞',n:'French Toast',t:'10 min',d:'Frozen bread soaked in egg and cinnamon batter, fried golden.',k:['bread','sourdough','baguette'],c:['other','dairy']},
+  {e:'🧇',n:'Waffle Stack',t:'5 min',d:'Toast frozen waffles, pile with frozen berries and maple syrup.',k:['waffle','strawberr','blueberr','mixed berr'],c:['other','vegetable']},
+  {e:'🥞',n:'Pancake Stack',t:'10 min',d:'Reheat frozen pancakes, stack high with butter and syrup.',k:['pancake'],c:['other']},
+  {e:'🥐',n:'Baked Croissants',t:'15 min',d:'Frozen croissants go straight into a hot oven. Bakery quality.',k:['croissant','pastry'],c:['other']},
+  {e:'🍜',n:'Ramen-Style Noodle Soup',t:'20 min',d:'Broth, frozen veg or protein, noodles, soft-boiled egg, chilli oil.',k:['noodle','peas','corn','spinach','chicken'],c:['other','vegetable','meat']},
+  {e:'🥘',n:'Shakshuka',t:'20 min',d:'Eggs poached in spiced tomato sauce with wilted spinach or peppers.',k:['spinach','pepper','kale'],c:['vegetable']},
+  {e:'🍱',n:'Bibimbap Bowl',t:'25 min',d:'Rice bowl with stir-fried veg, ground beef, and a fried egg.',k:['ground beef','beef mince','mixed veg','spinach','carrot','edamame'],c:['meat','vegetable']},
+  {e:'🍣',n:'Poke Bowl',t:'15 min',d:'Salmon or tuna over rice with edamame, avocado, and sesame.',k:['salmon','tuna steak','edamame','avocado'],c:['fish','vegetable']},
+  {e:'🐟',n:'Miso-Glazed Fish',t:'20 min',d:'Miso, mirin, and sugar brushed on salmon or cod, grilled caramelised.',k:['salmon','cod','sea bass','halibut'],c:['fish']},
+  {e:'🍲',n:'Lentil & Spinach Dal',t:'30 min',d:'Spiced red lentil dal finished with frozen spinach. Comforting.',k:['spinach','kale'],c:['vegetable']},
+  {e:'🍛',n:'Aloo Gobi',t:'30 min',d:'Cauliflower and potato with cumin, turmeric, and garam masala.',k:['cauliflower','sweet potato'],c:['vegetable']},
+  {e:'🥟',n:'Pan-Fried Dumplings',t:'20 min',d:'Frozen dumplings crisped in a pan then steamed. Served with chilli oil.',k:['dumpling','mixed veg','edamame'],c:['prepared','vegetable']},
 ];
-
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let items = [];
-try { items = JSON.parse(localStorage.getItem('frostly_items') || '[]'); } catch {}
-let currentFilter = 'all';
-
-function save() { try { localStorage.setItem('frostly_items', JSON.stringify(items)); } catch {} }
-
-function getExpiryDays(item) {
-  return FOOD_EXPIRY[item.name.toLowerCase().trim()] || EXPIRY_DAYS[item.category] || 180;
-}
-
-function daysLeft(item) {
-  const added = new Date(item.dateAdded);
-  const expiry = new Date(added);
-  expiry.setDate(expiry.getDate() + getExpiryDays(item));
-  return Math.ceil((expiry - new Date()) / 86400000);
-}
-
-function urgency(days) {
-  if (days <= 14) return 'urgent';
-  if (days <= 45) return 'soon';
-  return 'good';
-}
-
-function expiryLabel(days) {
-  if (days < 0)   return 'Expired!';
-  if (days === 0) return 'Expires today!';
-  if (days === 1) return 'Expires tomorrow';
-  if (days <= 14) return `${days} days left`;
-  if (days < 60)  return `${Math.ceil(days/7)} weeks left`;
-  return `${Math.ceil(days/30)} months left`;
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
-function render() {
-  const list  = document.getElementById('item-list');
-  const empty = document.getElementById('empty-state');
-
-  let filtered = [...items];
-  if      (currentFilter === 'urgent') filtered = items.filter(i => urgency(daysLeft(i)) === 'urgent');
-  else if (currentFilter !== 'all')    filtered = items.filter(i => i.category === currentFilter);
-  filtered.sort((a,b) => daysLeft(a) - daysLeft(b));
-
-  document.getElementById('stat-urgent').textContent = items.filter(i => urgency(daysLeft(i)) === 'urgent').length;
-  document.getElementById('stat-soon').textContent   = items.filter(i => urgency(daysLeft(i)) === 'soon').length;
-  document.getElementById('stat-good').textContent   = items.filter(i => urgency(daysLeft(i)) === 'good').length;
-
-  list.querySelectorAll('.item-card').forEach(el => el.remove());
-
-  if (!filtered.length) { empty.style.display = 'flex'; return; }
-  empty.style.display = 'none';
-
-  filtered.forEach((item, i) => {
-    const days = daysLeft(item);
-    const u = urgency(days);
-    const card = document.createElement('div');
-    card.className = `item-card ${u}`;
-    card.style.animationDelay = `${i * 0.04}s`;
-    card.innerHTML = `
-      <div class="item-emoji">${CATEGORY_EMOJI[item.category]}</div>
-      <div class="item-info">
-        <div class="item-name">${item.name}</div>
-        <div class="item-meta">
-          <span class="item-qty">${item.quantity || '—'}</span>
-          <div class="item-dot"></div>
-          <span class="item-expiry">${expiryLabel(days)}</span>
-        </div>
-      </div>
-      <button class="item-delete" data-id="${item.id}">✕</button>
-    `;
-    list.appendChild(card);
+const COMMON=[
+  {n:'Chicken Breast',c:'meat'},{n:'Chicken Thighs',c:'meat'},
+  {n:'Ground Beef',c:'meat'},{n:'Ground Turkey',c:'meat'},
+  {n:'Pork Chops',c:'meat'},{n:'Bacon',c:'meat'},
+  {n:'Beef Steak',c:'meat'},{n:'Lamb Chops',c:'meat'},
+  {n:'Meatballs',c:'meat'},{n:'Sausages',c:'meat'},{n:'Chorizo',c:'meat'},
+  {n:'Salmon Fillet',c:'fish'},{n:'Shrimp',c:'fish'},
+  {n:'Cod Fillet',c:'fish'},{n:'Tuna Steak',c:'fish'},
+  {n:'Fish Fingers',c:'fish'},{n:'Prawns',c:'fish'},{n:'Haddock',c:'fish'},
+  {n:'Broccoli',c:'vegetable'},{n:'Spinach',c:'vegetable'},
+  {n:'Peas',c:'vegetable'},{n:'Corn',c:'vegetable'},
+  {n:'Mixed Vegetables',c:'vegetable'},{n:'Edamame',c:'vegetable'},
+  {n:'Green Beans',c:'vegetable'},{n:'Cauliflower',c:'vegetable'},
+  {n:'Strawberries',c:'vegetable'},{n:'Blueberries',c:'vegetable'},
+  {n:'Mango Chunks',c:'vegetable'},{n:'Mixed Berries',c:'vegetable'},
+  {n:'Sweet Potato',c:'vegetable'},{n:'Butternut Squash',c:'vegetable'},
+  {n:'Butter',c:'dairy'},{n:'Cheddar Cheese',c:'dairy'},
+  {n:'Ice Cream',c:'dairy'},{n:'Mozzarella',c:'dairy'},
+  {n:'Pizza',c:'prepared'},{n:'Lasagna',c:'prepared'},
+  {n:'Burritos',c:'prepared'},{n:'Soup',c:'prepared'},
+  {n:'Dumplings',c:'prepared'},{n:'Spring Rolls',c:'prepared'},
+  {n:'Bread',c:'other'},{n:'Waffles',c:'other'},
+  {n:'Pancakes',c:'other'},{n:'Naan Bread',c:'other'},{n:'Tortillas',c:'other'},
+];
+let items=[];try{items=JSON.parse(localStorage.getItem('frostly_items')||'[]');}catch{}
+let filter='all';
+function save(){try{localStorage.setItem('frostly_items',JSON.stringify(items));}catch{}}
+function daysLeft(item){try{const a=new Date(item.dateAdded);const e=new Date(a.getTime()+getExp(item)*86400000);return Math.ceil((e-Date.now())/86400000);}catch{return 999;}}
+function urg(d){return d<=14?'urgent':d<=45?'soon':'good';}
+function expLabel(d){if(d<0)return 'Expired!';if(d===0)return 'Expires today!';if(d===1)return 'Expires tomorrow';if(d<=14)return d+' days left';if(d<60)return Math.ceil(d/7)+' weeks left';return Math.ceil(d/30)+' months left';}
+function matchRecipes(){
+  if(!items.length)return[];
+  const pool=items.map(i=>({...i,d:daysLeft(i),nl:i.name.toLowerCase(),sc:urg(daysLeft(i))==='urgent'?30:urg(daysLeft(i))==='soon'?12:2}));
+  const scored=RECIPES.map(r=>{
+    let pts=0;const used=new Map();
+    r.k.forEach(kw=>pool.forEach(item=>{if(item.nl.includes(kw)||kw.includes(item.nl.split(' ')[0])){if(!used.has(item.id)){pts+=12+item.sc;used.set(item.id,item);}}}));
+    r.c.forEach(cat=>pool.forEach(item=>{if(item.category===cat&&!used.has(item.id)){pts+=2+item.sc*.15;used.set(item.id,item);}}));
+    return{...r,pts,used:[...used.values()]};
   });
-
-  list.querySelectorAll('.item-delete').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      items = items.filter(i => i.id !== btn.dataset.id);
-      save(); showToast('Item removed'); render();
+  return scored.filter(r=>r.pts>8).sort((a,b)=>b.pts-a.pts).slice(0,8);
+}
+function mealHTML(list){
+  if(!list.length)return'<p style="color:var(--txm);text-align:center;padding:24px 0;font-size:13px">Add more items to get ideas!</p>';
+  const info=`<div class="meal-top">Based on ${items.length} item${items.length!==1?'s':''} — soonest-expiring prioritised</div>`;
+  return info+list.map(r=>`<div class="rc"><div class="rc-head"><span class="rc-emo">${r.e}</span><div><div class="rc-name">${r.n}</div><div class="rc-time">⏱ ${r.t}</div></div></div><div class="rc-desc">${r.d}</div><div class="rc-chips">${r.used.slice(0,5).map(item=>`<span class="rc-chip">${EMO[item.category]||'📦'} ${item.name}${item.d<=14?' ⚠️':''}</span>`).join('')}</div></div>`).join('');
+}
+function render(){
+  let shown=[...items];
+  if(filter==='urgent')shown=items.filter(i=>urg(daysLeft(i))==='urgent');
+  else if(filter!=='all')shown=items.filter(i=>i.category===filter);
+  shown.sort((a,b)=>daysLeft(a)-daysLeft(b));
+  const su=document.getElementById('s-u'),ss=document.getElementById('s-s'),sg=document.getElementById('s-g');
+  if(su)su.textContent=items.filter(i=>urg(daysLeft(i))==='urgent').length;
+  if(ss)ss.textContent=items.filter(i=>urg(daysLeft(i))==='soon').length;
+  if(sg)sg.textContent=items.filter(i=>urg(daysLeft(i))==='good').length;
+  const list=document.getElementById('list'),empty=document.getElementById('empty');
+  if(!list||!empty)return;
+  list.querySelectorAll('.card').forEach(el=>el.remove());
+  if(!shown.length){empty.style.display='flex';return;}
+  empty.style.display='none';
+  shown.forEach((item,i)=>{
+    const d=daysLeft(item),u=urg(d),el=document.createElement('div');
+    el.className=`card ${u}`;el.style.animationDelay=`${i*.04}s`;
+    el.innerHTML=`<div class="card-ico">${EMO[item.category]||'📦'}</div><div class="card-info"><div class="card-name">${item.name}</div><div class="card-meta"><span class="card-qty">${item.quantity||'—'}</span><div class="card-dot"></div><span class="card-exp">${expLabel(d)}</span></div></div><button class="card-del" data-id="${item.id}">✕</button>`;
+    list.appendChild(el);
+  });
+  list.querySelectorAll('.card-del').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.stopPropagation();items=items.filter(i=>i.id!==btn.dataset.id);save();toast('Item removed');render();});
+  });
+}
+function openM(id){const el=document.getElementById(id);if(el)el.classList.add('open');}
+function closeM(id){const el=document.getElementById(id);if(el)el.classList.remove('open');if(id==='m-add')closeAC();}
+['m-choice','m-add','m-meal','m-pro'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('click',e=>{if(e.target===el)closeM(id);});
+});
+document.getElementById('btn-add').addEventListener('click',()=>openM('m-choice'));
+document.getElementById('b-manual').addEventListener('click',()=>{
+  closeM('m-choice');
+  setTimeout(()=>{
+    const today=new Date().toISOString().split('T')[0];
+    const fn=document.getElementById('f-name'),fd=document.getElementById('f-date'),fq=document.getElementById('f-qty'),fc=document.getElementById('f-cat');
+    if(fn)fn.value='';if(fd)fd.value=today;if(fq)fq.value='';if(fc)fc.value='meat';
+    closeAC();openM('m-add');
+    setTimeout(()=>{if(fn)fn.focus();},380);
+  },320);
+});
+document.getElementById('b-scan').addEventListener('click',()=>{
+  closeM('m-choice');
+  const pro=localStorage.getItem('frostly_pro')==='true';
+  setTimeout(()=>pro?startScan():openM('m-pro'),320);
+});
+document.getElementById('btn-upgrade').addEventListener('click',()=>toast('Stripe integration coming soon!'));
+document.getElementById('btn-submit').addEventListener('click',function(){
+  const fn=document.getElementById('f-name'),fc=document.getElementById('f-cat'),fq=document.getElementById('f-qty'),fd=document.getElementById('f-date');
+  const name=fn?fn.value.trim():'';
+  if(!name){if(fn){fn.style.borderColor='var(--coral)';fn.focus();setTimeout(()=>{fn.style.borderColor='';},1600);}return;}
+  const today=new Date().toISOString().split('T')[0];
+  items.unshift({id:Date.now().toString(),name,category:fc?fc.value:'other',quantity:fq?fq.value.trim():'',dateAdded:(fd&&fd.value)?fd.value:today});
+  save();closeM('m-add');toast('❄️ Added to freezer!');render();
+});
+const fnEl=document.getElementById('f-name');
+if(fnEl)fnEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('btn-submit').click();}});
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');filter=tab.dataset.f;render();
+  });
+});
+document.getElementById('btn-meal').addEventListener('click',()=>{
+  if(!items.length){toast('Add some items first!');return;}
+  const mc=document.getElementById('meal-content');
+  if(mc)mc.innerHTML=mealHTML(matchRecipes());
+  openM('m-meal');
+});
+let acTimer=null,acData=[];
+function showAC(list){
+  const el=document.getElementById('ac');
+  if(!el||!list.length){closeAC();return;}
+  acData=list;
+  el.innerHTML=list.map((it,i)=>`<div class="ac-row" data-i="${i}"><span>${EMO[it.c]||'🍽️'}</span><span class="ac-name">${it.n}</span>${it.c?`<span class="ac-badge">${it.c}</span>`:''}</div>`).join('');
+  el.classList.add('open');
+  el.querySelectorAll('.ac-row').forEach(row=>{
+    row.addEventListener('mousedown',e=>e.preventDefault());
+    row.addEventListener('click',()=>{
+      const sel=acData[parseInt(row.dataset.i)];
+      const fn=document.getElementById('f-name'),fc=document.getElementById('f-cat');
+      if(fn)fn.value=sel.n;if(fc&&sel.c)fc.value=sel.c;closeAC();
     });
   });
 }
-
-// ── MODALS ────────────────────────────────────────────────────────────────────
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-  if (id === 'add-modal') closeAC();
-}
-
-['choice-modal','add-modal','meal-modal','pro-modal'].forEach(id => {
-  document.getElementById(id).addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeModal(id);
+function closeAC(){clearTimeout(acTimer);const el=document.getElementById('ac');if(el){el.classList.remove('open');el.innerHTML='';}acData=[];}
+if(fnEl){
+  fnEl.addEventListener('input',e=>{
+    const v=e.target.value.trim();if(!v){closeAC();return;}
+    const local=COMMON.filter(i=>i.n.toLowerCase().includes(v.toLowerCase())).slice(0,5);
+    showAC(local);clearTimeout(acTimer);
+    if(v.length>=3){acTimer=setTimeout(async()=>{try{const r=await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(v)}&json=1&page_size=6&search_simple=1&action=process`);const data=await r.json();const off=(data.products||[]).filter(p=>p.product_name&&p.product_name.trim()).map(p=>({n:p.product_name.trim(),c:null})).slice(0,4);const merged=[...local];off.forEach(o=>{if(!merged.find(m=>m.n.toLowerCase()===o.n.toLowerCase()))merged.push(o);});showAC(merged.slice(0,6));}catch{}},480);}
   });
-});
-
-// ── BUTTONS ───────────────────────────────────────────────────────────────────
-document.getElementById('btn-add').addEventListener('click', () => openModal('choice-modal'));
-
-document.getElementById('btn-choice-manual').addEventListener('click', () => {
-  closeModal('choice-modal');
-  setTimeout(() => {
-    document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
-    document.getElementById('input-name').value = '';
-    document.getElementById('input-qty').value  = '';
-    document.getElementById('input-category').value = 'meat';
-    openModal('add-modal');
-    setTimeout(() => document.getElementById('input-name').focus(), 420);
-  }, 280);
-});
-
-document.getElementById('btn-choice-scan').addEventListener('click', () => {
-  const isPro = localStorage.getItem('frostly_pro') === 'true';
-  closeModal('choice-modal');
-  setTimeout(() => isPro ? startScan() : openModal('pro-modal'), 280);
-});
-
-document.getElementById('btn-upgrade').addEventListener('click', () => showToast('Payment coming soon!'));
-
-// ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
-let acTimer = null, acResults = [];
-
-document.getElementById('input-name').addEventListener('input', e => {
-  const val = e.target.value.trim();
-  if (!val) { closeAC(); return; }
-  const local = COMMON_ITEMS.filter(i => i.name.toLowerCase().includes(val.toLowerCase())).slice(0,5);
-  renderAC(local);
-  clearTimeout(acTimer);
-  if (val.length >= 3) acTimer = setTimeout(() => fetchAC(val), 480);
-});
-
-async function fetchAC(query) {
-  try {
-    const r = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&page_size=5&search_simple=1&action=process`);
-    const d = await r.json();
-    const off = (d.products||[]).filter(p=>p.product_name&&p.product_name.trim()).map(p=>({name:p.product_name.trim(),category:null})).slice(0,4);
-    const local = COMMON_ITEMS.filter(i=>i.name.toLowerCase().includes(query.toLowerCase())).slice(0,3);
-    const merged = [...local];
-    off.forEach(o => { if (!merged.find(m=>m.name.toLowerCase()===o.name.toLowerCase())) merged.push(o); });
-    renderAC(merged.slice(0,6));
-  } catch {}
+  fnEl.addEventListener('blur',()=>setTimeout(closeAC,200));
 }
-
-function renderAC(suggestions) {
-  const list = document.getElementById('autocomplete-list');
-  if (!suggestions.length) { closeAC(); return; }
-  acResults = suggestions;
-  list.innerHTML = suggestions.map((item,i) => `
-    <div class="autocomplete-item" data-index="${i}">
-      <span>${CATEGORY_EMOJI[item.category]||'🍽️'}</span>
-      <span class="autocomplete-item-name">${item.name}</span>
-      ${item.category?`<span class="autocomplete-badge">${item.category}</span>`:''}
-    </div>
-  `).join('');
-  list.classList.add('open');
-  list.querySelectorAll('.autocomplete-item').forEach(el => {
-    const pick = () => {
-      const sel = acResults[+el.dataset.index];
-      document.getElementById('input-name').value = sel.name;
-      if (sel.category) document.getElementById('input-category').value = sel.category;
-      closeAC();
-    };
-    el.addEventListener('mousedown', e => { e.preventDefault(); pick(); });
-    el.addEventListener('touchend',  e => { e.preventDefault(); pick(); });
-  });
-}
-
-function closeAC() {
-  const list = document.getElementById('autocomplete-list');
-  list.classList.remove('open'); list.innerHTML = ''; acResults = []; clearTimeout(acTimer);
-}
-
-document.getElementById('input-name').addEventListener('blur', () => setTimeout(closeAC, 150));
-
-// ── ADD ITEM ──────────────────────────────────────────────────────────────────
-document.getElementById('btn-submit').addEventListener('click', addItem);
-
-function addItem() {
-  const nameEl = document.getElementById('input-name');
-  const name   = nameEl.value.trim();
-  if (!name) {
-    nameEl.style.borderColor = 'var(--coral)';
-    setTimeout(() => nameEl.style.borderColor = '', 1200);
-    nameEl.focus();
-    return;
-  }
-  items.unshift({
-    id: Date.now().toString(),
-    name,
-    category: document.getElementById('input-category').value,
-    quantity: document.getElementById('input-qty').value.trim(),
-    dateAdded: document.getElementById('input-date').value || new Date().toISOString().split('T')[0]
-  });
-  save(); closeModal('add-modal'); showToast('❄️ Added to freezer!'); render();
-}
-
-document.getElementById('input-name').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
-
-// ── FILTER TABS ───────────────────────────────────────────────────────────────
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentFilter = tab.dataset.filter;
-    render();
-  });
-});
-
-// ── MEAL SUGGESTIONS (TheMealDB — free, no API key) ───────────────────────────
-document.getElementById('btn-meal').addEventListener('click', async () => {
-  if (!items.length) { showToast('Add some items first!'); return; }
-
-  const mc = document.getElementById('meal-content');
-  mc.innerHTML = `<div class="meal-loading"><div class="frost-spinner"></div><p>Finding recipes from your freezer…</p></div>`;
-  openModal('meal-modal');
-
-  const candidates = [...items]
-    .sort((a,b) => daysLeft(a) - daysLeft(b))
-    .slice(0,4)
-    .map(i => i.name.split(' ')[0].toLowerCase());
-
-  const seen = new Set(), meals = [];
-
-  for (const ing of candidates) {
-    if (meals.length >= 4) break;
-    try {
-      const r = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ing)}`);
-      const d = await r.json();
-      for (const m of (d.meals||[])) {
-        if (!seen.has(m.idMeal) && meals.length < 4) { seen.add(m.idMeal); meals.push(m); }
-      }
-    } catch {}
-  }
-
-  if (!meals.length) {
-    mc.innerHTML = `<div class="meal-no-results"><div style="font-size:36px;margin-bottom:12px">🤷</div>No matching recipes found.<br>Try adding more common ingredients.</div>`;
-    return;
-  }
-
-  const details = await Promise.all(meals.map(async m => {
-    try {
-      const r = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${m.idMeal}`);
-      const d = await r.json();
-      return d.meals?.[0] || m;
-    } catch { return m; }
-  }));
-
-  mc.innerHTML = details.map(meal => {
-    const desc = meal.strInstructions
-      ? meal.strInstructions.replace(/\r?\n/g,' ').split('.').slice(0,2).join('.').trim() + '.'
-      : '';
-    return `
-      <div class="meal-card">
-        ${meal.strMealThumb ? `<img class="meal-card-img" src="${meal.strMealThumb}/preview" alt="${meal.strMeal}" loading="lazy">` : ''}
-        <div class="meal-card-body">
-          <div class="meal-card-title">${meal.strMeal}</div>
-          ${desc ? `<div class="meal-card-desc">${desc}</div>` : ''}
-          <div class="meal-card-tags">
-            ${meal.strArea     ? `<span class="meal-card-tag">${meal.strArea}</span>`     : ''}
-            ${meal.strCategory ? `<span class="meal-card-tag">${meal.strCategory}</span>` : ''}
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-});
-
-// ── CAMERA / SCAN ─────────────────────────────────────────────────────────────
-let cameraStream = null, codeReader = null;
-
-async function startScan() {
-  try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'environment' } });
-    document.getElementById('video').srcObject = cameraStream;
-    document.getElementById('camera-overlay').classList.add('open');
-    if (!window.ZXing) {
-      await new Promise((res,rej) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';
-        s.onload = res; s.onerror = rej; document.head.appendChild(s);
-      });
-    }
-    codeReader = new ZXing.BrowserMultiFormatReader();
-    codeReader.decodeFromVideoDevice(null, document.getElementById('video'), async result => {
-      if (!result) return;
-      codeReader.reset(); closeCamera();
-      showToast('🔍 Looking up product…');
-      try {
-        const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${result.getText()}.json`);
-        const d = await r.json();
-        if (d.status === 1 && d.product?.product_name) {
-          const name = d.product.product_name;
-          const cats = (d.product.categories_tags||[]).join(' ').toLowerCase();
-          let cat = 'other';
-          if (cats.includes('meat')||cats.includes('poultry')||cats.includes('beef')||cats.includes('pork')) cat='meat';
-          else if (cats.includes('fish')||cats.includes('seafood')) cat='fish';
-          else if (cats.includes('vegetable')||cats.includes('fruit')) cat='vegetable';
-          else if (cats.includes('dairy')||cats.includes('cheese')) cat='dairy';
-          else if (cats.includes('pizza')||cats.includes('prepared')||cats.includes('ready')) cat='prepared';
-          document.getElementById('input-name').value = name;
-          document.getElementById('input-category').value = cat;
-          document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
-          document.getElementById('input-qty').value = '';
-          openModal('add-modal'); showToast(`✅ Found: ${name}`);
-        } else { openModal('add-modal'); showToast('Product not found — enter manually'); }
-      } catch { openModal('add-modal'); showToast('Lookup failed — enter manually'); }
+let camStream=null,codeReader=null;
+async function startScan(){
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    document.getElementById('video').srcObject=camStream;
+    document.getElementById('cam-overlay').classList.add('open');
+    if(!window.ZXing){await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+    codeReader=new ZXing.BrowserMultiFormatReader();
+    codeReader.decodeFromVideoDevice(null,document.getElementById('video'),async result=>{
+      if(!result)return;
+      const barcode=result.getText();codeReader.reset();closeCamera();toast('🔍 Looking up product…');
+      try{
+        const r=await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+        const data=await r.json();
+        if(data.status===1&&data.product?.product_name){
+          const name=data.product.product_name;
+          const cats=(data.product.categories_tags||[]).join(' ').toLowerCase();
+          let cat='other';
+          if(cats.match(/meat|poultry|beef|pork|chicken|turkey/))cat='meat';
+          else if(cats.match(/fish|seafood|shrimp|salmon/))cat='fish';
+          else if(cats.match(/vegetable|fruit|frozen.veg/))cat='vegetable';
+          else if(cats.match(/dairy|cheese|milk|yogurt|butter/))cat='dairy';
+          else if(cats.match(/meal|prepared|pizza|ready|frozen.meal/))cat='prepared';
+          const fn=document.getElementById('f-name'),fc=document.getElementById('f-cat'),fd=document.getElementById('f-date'),fq=document.getElementById('f-qty');
+          if(fn)fn.value=name;if(fc)fc.value=cat;if(fd)fd.value=new Date().toISOString().split('T')[0];if(fq)fq.value='';
+          openM('m-add');toast('✅ Found: '+name);
+        }else{openM('m-add');toast('Not found — enter manually');}
+      }catch{openM('m-add');toast('Lookup failed — enter manually');}
     });
-  } catch { showToast('Camera not available'); }
+  }catch{toast('Camera not available');}
 }
-
-function closeCamera() {
-  document.getElementById('camera-overlay').classList.remove('open');
-  if (codeReader)   { try { codeReader.reset(); } catch {} codeReader = null; }
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+function closeCamera(){
+  document.getElementById('cam-overlay').classList.remove('open');
+  if(codeReader){try{codeReader.reset();}catch{}codeReader=null;}
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
 }
-
-document.getElementById('btn-camera-close').addEventListener('click', closeCamera);
-
-// ── TOAST ─────────────────────────────────────────────────────────────────────
-let toastTimer = null;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+document.getElementById('btn-cam-close').addEventListener('click',closeCamera);
+let toastEl=null,toastTimer=null;
+function toast(msg){
+  if(toastEl){toastEl.remove();clearTimeout(toastTimer);}
+  toastEl=document.createElement('div');
+  toastEl.className='toast';toastEl.textContent=msg;
+  document.body.appendChild(toastEl);
+  void toastEl.offsetWidth;
+  toastEl.style.display='block';
+  toastTimer=setTimeout(()=>{if(toastEl){toastEl.remove();toastEl=null;}},2800);
 }
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 render();
 </script>
-
 </body>
 </html>
