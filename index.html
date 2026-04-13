@@ -16,1051 +16,389 @@
   <link href="https://fonts.googleapis.com/css2?family=Phudu:wght@300;400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      box-sizing: border-box; margin: 0; padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ── THEME VARIABLES ── */
     :root {
       --ice: #4FC3F7;
       --ice-dark: #0288D1;
-      --ice-glow: rgba(79, 195, 247, 0.3);
+      --ice-glow: rgba(79,195,247,0.3);
       --coral: #FF7043;
-      --coral-glow: rgba(255, 112, 67, 0.3);
+      --coral-glow: rgba(255,112,67,0.3);
       --amber: #FFB300;
       --green: #66BB6A;
-
-      /* Dark theme (default) */
       --bg: #0a1628;
       --bg-outer: #060e1a;
       --surface: rgba(255,255,255,0.04);
       --surface-hover: rgba(255,255,255,0.08);
       --border: rgba(255,255,255,0.08);
-      --border-ice: rgba(79, 195, 247, 0.2);
+      --border-ice: rgba(79,195,247,0.2);
       --text: #e8f4f8;
-      --text-muted: rgba(232, 244, 248, 0.45);
+      --text-muted: rgba(232,244,248,0.45);
       --modal-bg: #0f2035;
-      --heading-gradient: linear-gradient(135deg, #ffffff 30%, var(--ice));
-      --phone-ring1: #1c2d42;
-      --phone-ring2: #0d1929;
-      --phone-notch: #0a1422;
-      --phone-btn: #1c2d42;
-      --feat-text: rgba(232, 244, 248, 0.65);
-      --radius: 20px;
-      --radius-sm: 12px;
+      --heading-grad: linear-gradient(135deg,#fff 30%,var(--ice));
+      --phone-r1: #1c2d42; --phone-r2: #0d1929;
+      --phone-notch: #0a1422; --phone-btn: #1c2d42;
+      --feat-text: rgba(232,244,248,0.65);
+      --radius: 20px; --radius-sm: 12px;
     }
 
     @media (prefers-color-scheme: light) {
       :root {
-        --bg: #dff0fa;
-        --bg-outer: #b8d8ef;
+        --bg: #dff0fa; --bg-outer: #b8d8ef;
         --surface: rgba(255,255,255,0.65);
         --surface-hover: rgba(255,255,255,0.9);
-        --border: rgba(10, 22, 40, 0.1);
-        --border-ice: rgba(2, 136, 209, 0.3);
+        --border: rgba(10,22,40,0.1);
+        --border-ice: rgba(2,136,209,0.3);
         --text: #0a1628;
-        --text-muted: rgba(10, 22, 40, 0.5);
+        --text-muted: rgba(10,22,40,0.5);
         --modal-bg: #eef7fd;
-        --heading-gradient: linear-gradient(135deg, #0a1628 30%, var(--ice-dark));
-        --ice-glow: rgba(2, 136, 209, 0.25);
-        --phone-ring1: #a0c4db;
-        --phone-ring2: #85afc8;
-        --phone-notch: #b8d8ef;
-        --phone-btn: #a0c4db;
-        --feat-text: rgba(10, 22, 40, 0.65);
+        --heading-grad: linear-gradient(135deg,#0a1628 30%,var(--ice-dark));
+        --ice-glow: rgba(2,136,209,0.25);
+        --phone-r1: #a0c4db; --phone-r2: #85afc8;
+        --phone-notch: #b8d8ef; --phone-btn: #a0c4db;
+        --feat-text: rgba(10,22,40,0.65);
       }
     }
 
-    html {
-      height: 100%;
-      background: var(--bg);
-    }
+    html { height: 100%; background: var(--bg); }
 
     body {
-      height: 100%;
-      background: var(--bg);
-      -webkit-text-size-adjust: 100%;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      overflow: hidden;
-      overscroll-behavior: none;
+      height: 100%; background: var(--bg);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; overflow: hidden;
+      -webkit-text-size-adjust: 100%; overscroll-behavior: none;
     }
 
-    /* Background atmosphere */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
+      content: ''; position: fixed; inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 20% -10%, rgba(79,195,247,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 110%, rgba(2,136,209,0.1) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(13,31,45,0.8) 0%, transparent 100%);
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,0.12) 0%,transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,0.1) 0%,transparent 60%);
+      pointer-events: none; z-index: 0;
     }
 
     @media (prefers-color-scheme: light) {
       body::before {
         background:
-          radial-gradient(ellipse 80% 60% at 20% -10%, rgba(79,195,247,0.35) 0%, transparent 60%),
-          radial-gradient(ellipse 60% 50% at 80% 110%, rgba(2,136,209,0.2) 0%, transparent 60%),
-          radial-gradient(ellipse 40% 40% at 50% 50%, rgba(220,240,255,0.5) 0%, transparent 100%);
+          radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,0.35) 0%,transparent 60%),
+          radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,0.2) 0%,transparent 60%);
       }
     }
 
-    /* Frost texture */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
-    }
-
-    /* ── MOBILE WRAPPER (passthrough) ── */
+    /* MOBILE: wrappers are invisible pass-through */
     @media (max-width: 599px) {
       .desktop-layout {
-        display: block;
-        width: 100%;
-        height: 100%;
+        display: block; width: 100%; height: 100%;
       }
       .desktop-shell {
-        display: block;
-        width: 100%;
-        height: 100%;
+        display: block; width: 100%; height: 100%;
+        border-radius: 0 !important; overflow: visible !important;
+        box-shadow: none !important; background: transparent !important;
       }
-      .desktop-info { display: none; }
+      .desktop-info { display: none !important; }
     }
 
     #app {
-      position: relative;
-      z-index: 1;
-      height: 100vh;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      max-width: 430px;
-      margin: 0 auto;
-      background: transparent;
+      position: relative; z-index: 1;
+      height: 100vh; height: 100dvh;
+      display: flex; flex-direction: column;
+      max-width: 430px; margin: 0 auto; background: transparent;
     }
 
-    /* ── HEADER ── */
+    /* HEADER */
     header {
       padding: 52px 24px 20px;
       padding-top: max(52px, env(safe-area-inset-top) + 16px);
-      flex-shrink: 0;
-      animation: fadeDown 0.6s ease both;
+      flex-shrink: 0; animation: fadeDown .6s ease both;
     }
-
-    .header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
     .logo-icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--ice), var(--ice-dark));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 0 20px var(--ice-glow);
-      flex-shrink: 0;
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: linear-gradient(135deg,var(--ice),var(--ice-dark));
+      border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 18px; box-shadow: 0 0 20px var(--ice-glow);
     }
-
     .logo-name {
-      font-family: 'Phudu', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      background: var(--heading-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
+      font-family: 'Phudu', sans-serif; font-size: 22px; font-weight: 700;
+      letter-spacing: -.5px; background: var(--heading-grad);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
     }
+    .header-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 300; letter-spacing: .5px; margin-left: 46px; }
 
-    .header-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 300;
-      letter-spacing: 0.5px;
-      margin-left: 46px;
-    }
-
-    .btn-settings {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 17px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      touch-action: manipulation;
-      flex-shrink: 0;
-    }
-
-    .btn-settings:hover {
-      background: var(--surface-hover);
-      color: var(--text);
-      border-color: var(--border-ice);
-    }
-
-    /* ── STATS BAR ── */
-    .stats-bar {
-      display: flex;
-      gap: 10px;
-      padding: 0 24px 16px;
-      flex-shrink: 0;
-      animation: fadeDown 0.6s 0.1s ease both;
-    }
-
+    /* STATS */
+    .stats-bar { display: flex; gap: 10px; padding: 0 24px 16px; flex-shrink: 0; animation: fadeDown .6s .1s ease both; }
     .stat-chip {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: all 0.2s;
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 12px; text-align: center;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     }
-
-    .stat-num {
-      font-family: 'Phudu', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      line-height: 1;
-      margin-bottom: 3px;
-    }
-
-    .stat-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      font-weight: 500;
-    }
-
+    .stat-num { font-family: 'Phudu', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; margin-bottom: 3px; }
+    .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; font-weight: 500; }
     .stat-chip.urgent .stat-num { color: var(--coral); text-shadow: 0 0 12px var(--coral-glow); }
-    .stat-chip.soon .stat-num { color: var(--amber); }
-    .stat-chip.good .stat-num { color: var(--green); }
+    .stat-chip.soon   .stat-num { color: var(--amber); }
+    .stat-chip.good   .stat-num { color: var(--green); }
 
-    /* ── FILTER TABS ── */
+    /* FILTER TABS */
     .filter-tabs {
-      display: flex;
-      gap: 8px;
-      padding: 0 24px 14px;
-      flex-shrink: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      animation: fadeDown 0.6s 0.15s ease both;
+      display: flex; gap: 8px; padding: 0 24px 14px; flex-shrink: 0;
+      overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+      animation: fadeDown .6s .15s ease both;
     }
-
     .filter-tabs::-webkit-scrollbar { display: none; }
-
     .tab {
-      flex-shrink: 0;
-      padding: 6px 14px;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-muted);
-      transition: all 0.2s;
-      white-space: nowrap;
-      touch-action: manipulation;
-      user-select: none;
+      flex-shrink: 0; padding: 6px 14px; border-radius: 100px;
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-muted); white-space: nowrap;
+      touch-action: manipulation; user-select: none;
+      transition: background .15s, color .15s, border-color .15s;
     }
-
     .tab.active {
-      background: var(--ice);
-      color: #0a1628;
-      border-color: var(--ice);
-      font-weight: 600;
-      box-shadow: 0 0 16px var(--ice-glow);
+      background: var(--ice); color: #0a1628; border-color: var(--ice);
+      font-weight: 600; box-shadow: 0 0 16px var(--ice-glow);
     }
 
-    /* ── ITEM LIST ── */
+    /* LIST */
     .list-wrap {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0 24px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border) transparent;
+      flex: 1; overflow-y: auto; padding: 0 24px;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
       -webkit-overflow-scrolling: touch;
     }
-
     .list-wrap::-webkit-scrollbar { width: 3px; }
-    .list-wrap::-webkit-scrollbar-track { background: transparent; }
     .list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 12px;
-      animation: fadeIn 0.4s ease;
-    }
-
-    .empty-icon { font-size: 52px; opacity: 0.4; }
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; animation: fadeIn .4s ease; }
+    .empty-icon { font-size: 52px; opacity: .4; }
     .empty-title { font-family: 'Phudu', sans-serif; font-size: 20px; font-weight: 600; color: var(--text-muted); }
-    .empty-sub { font-size: 13px; color: var(--text-muted); opacity: 0.6; text-align: center; max-width: 200px; line-height: 1.5; }
+    .empty-sub { font-size: 13px; color: var(--text-muted); opacity: .6; text-align: center; max-width: 200px; line-height: 1.5; }
 
     .item-card {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      animation: slideIn 0.35s ease both;
-      position: relative;
-      overflow: hidden;
-      touch-action: manipulation;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      margin-bottom: 10px; cursor: pointer;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      animation: slideIn .35s ease both; position: relative; overflow: hidden;
+      touch-action: manipulation; transition: background .15s, border-color .15s;
     }
-
-    .item-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      border-radius: 3px 0 0 3px;
-    }
-
+    .item-card::before { content: ''; position: absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
     .item-card.urgent::before { background: var(--coral); box-shadow: 0 0 8px var(--coral-glow); }
-    .item-card.soon::before { background: var(--amber); }
-    .item-card.good::before { background: var(--green); }
+    .item-card.soon::before   { background: var(--amber); }
+    .item-card.good::before   { background: var(--green); }
+    .item-card:active { transform: scale(.98); }
 
-    .item-card:active { transform: scale(0.98); }
-
-    .item-emoji {
-      font-size: 28px;
-      flex-shrink: 0;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-    }
-
-    @media (prefers-color-scheme: light) {
-      .item-emoji { background: rgba(0,0,0,0.04); }
-    }
-
+    .item-emoji { font-size: 28px; flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.05); border-radius: 12px; }
     .item-info { flex: 1; min-width: 0; }
-
-    .item-name {
-      font-family: 'Phudu', sans-serif;
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .item-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 3px;
-    }
-
-    .item-qty { font-size: 12px; color: var(--text-muted); font-weight: 300; }
-    .item-dot { width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; opacity: 0.4; }
+    .item-name { font-family: 'Phudu', sans-serif; font-size: 17px; font-weight: 600; letter-spacing: -.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-meta { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+    .item-qty  { font-size: 12px; color: var(--text-muted); font-weight: 300; }
+    .item-dot  { width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; opacity: .4; }
     .item-expiry { font-size: 12px; font-weight: 500; }
-
     .item-card.urgent .item-expiry { color: var(--coral); }
-    .item-card.soon .item-expiry { color: var(--amber); }
-    .item-card.good .item-expiry { color: var(--green); }
+    .item-card.soon   .item-expiry { color: var(--amber); }
+    .item-card.good   .item-expiry { color: var(--green); }
 
     .item-delete {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.05);
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      transition: all 0.2s;
-      flex-shrink: 0;
-      touch-action: manipulation;
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,.05); border: none;
+      color: var(--text-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0; touch-action: manipulation;
+      transition: background .15s, color .15s;
     }
+    .item-delete:active { background: rgba(255,112,67,.2); color: var(--coral); }
 
-    @media (prefers-color-scheme: light) {
-      .item-delete { background: rgba(0,0,0,0.04); }
-    }
-
-    .item-delete:hover, .item-delete:active { background: rgba(255,112,67,0.15); color: var(--coral); }
-
-    /* ── BOTTOM BAR ── */
+    /* BOTTOM BAR */
     .bottom-bar {
       padding: 12px 20px 32px;
       padding-bottom: max(32px, env(safe-area-inset-bottom) + 12px);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      animation: fadeUp 0.6s 0.2s ease both;
+      flex-shrink: 0; display: flex; align-items: center; gap: 10px;
+      animation: fadeUp .6s .2s ease both;
     }
-
     .btn-meal {
-      flex: 1;
-      min-width: 0;
-      height: 54px;
-      padding: 0 14px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border-ice);
-      background: rgba(79,195,247,0.07);
-      color: var(--ice);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.25s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      touch-action: manipulation;
-      white-space: nowrap;
-      overflow: hidden;
+      flex: 1; min-width: 0; height: 54px; padding: 0 14px;
+      border-radius: var(--radius); border: 1px solid var(--border-ice);
+      background: rgba(79,195,247,.07); color: var(--ice);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      gap: 7px; touch-action: manipulation; white-space: nowrap; overflow: hidden;
+      transition: background .15s;
     }
-
-    @media (prefers-color-scheme: light) {
-      .btn-meal { background: rgba(2,136,209,0.08); color: var(--ice-dark); }
-    }
-
-    .btn-meal:active { background: rgba(79,195,247,0.15); }
+    @media (prefers-color-scheme: light) { .btn-meal { background: rgba(2,136,209,.08); color: var(--ice-dark); } }
+    .btn-meal:active { background: rgba(79,195,247,.2); }
 
     .btn-add {
-      width: 54px;
-      height: 54px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, var(--ice), var(--ice-dark));
-      border: none;
-      color: #0a1628;
-      font-size: 26px;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px var(--ice-glow);
-      flex-shrink: 0;
-      touch-action: manipulation;
+      width: 54px; height: 54px; border-radius: 18px; flex-shrink: 0;
+      background: linear-gradient(135deg,var(--ice),var(--ice-dark));
+      border: none; color: #0a1628; font-size: 28px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px var(--ice-glow); touch-action: manipulation;
+      transition: transform .15s;
     }
+    .btn-add:active { transform: scale(.92); }
 
-    .btn-add:active { transform: scale(0.92); }
-
-    /* ── MODALS (base) ── */
+    /* MODALS */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(10,22,40,0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      z-index: 100;
-      display: flex;
-      align-items: flex-end;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
+      position: fixed; inset: 0; background: rgba(10,22,40,.8);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      z-index: 1000; display: flex; align-items: flex-end;
+      opacity: 0; pointer-events: none; transition: opacity .3s ease;
     }
-
-    @media (prefers-color-scheme: light) {
-      .modal-overlay { background: rgba(10,22,40,0.4); }
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
+    @media (prefers-color-scheme: light) { .modal-overlay { background: rgba(10,22,40,.4); } }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
 
     .modal {
-      width: 100%;
-      max-width: 430px;
-      margin: 0 auto;
-      background: var(--modal-bg);
-      border: 1px solid var(--border-ice);
-      border-bottom: none;
-      border-radius: 28px 28px 0 0;
+      width: 100%; max-width: 430px; margin: 0 auto;
+      background: var(--modal-bg); border: 1px solid var(--border-ice);
+      border-bottom: none; border-radius: 28px 28px 0 0;
       padding: 12px 24px 48px;
       padding-bottom: max(48px, env(safe-area-inset-bottom) + 24px);
       transform: translateY(100%);
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      max-height: 92vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      transition: transform .4s cubic-bezier(.4,0,.2,1);
+      max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
-
     .modal-overlay.open .modal { transform: translateY(0); }
 
-    .modal-handle {
-      width: 40px; height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin: 8px auto 24px;
-    }
-
+    .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 8px auto 24px; }
     .modal-title {
-      font-family: 'Phudu', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      background: var(--heading-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
+      font-family: 'Phudu', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 24px;
+      background: var(--heading-grad); -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
     }
 
-    /* ── FORM FIELDS ── */
+    /* FORM */
     .field { margin-bottom: 16px; }
-
-    .field label {
-      display: block;
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
+    .field label { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
     .field input, .field select {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--surface);
-      -webkit-appearance: none;
-      appearance: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      outline: none;
-      transition: all 0.2s;
-      color-scheme: light dark;
+      width: 100%; padding: 14px 16px; background: var(--surface);
+      -webkit-appearance: none; appearance: none;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
+      outline: none; transition: border-color .2s, box-shadow .2s; color-scheme: light dark;
     }
-
-    .field input:focus, .field select:focus {
-      border-color: var(--ice);
-      box-shadow: 0 0 0 3px var(--ice-glow);
-      background: rgba(79,195,247,0.05);
-    }
-
+    .field input:focus, .field select:focus { border-color: var(--ice); box-shadow: 0 0 0 3px var(--ice-glow); background: rgba(79,195,247,.05); }
     .field select option { background: var(--modal-bg); color: var(--text); }
     .field-row { display: flex; gap: 12px; }
     .field-row .field { flex: 1; }
 
-    /* ── AUTOCOMPLETE ── */
+    /* AUTOCOMPLETE */
     .autocomplete-wrap { position: relative; }
-
     .autocomplete-list {
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0; right: 0;
-      background: var(--modal-bg);
-      border: 1px solid var(--border-ice);
-      border-radius: var(--radius-sm);
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 10;
-      display: none;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--modal-bg); border: 1px solid var(--border-ice);
+      border-radius: var(--radius-sm); max-height: 220px; overflow-y: auto;
+      z-index: 10; display: none; box-shadow: 0 8px 24px rgba(0,0,0,.25);
       -webkit-overflow-scrolling: touch;
     }
-
     .autocomplete-list.open { display: block; }
-
     .autocomplete-item {
-      padding: 11px 14px;
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-      touch-action: manipulation;
+      padding: 11px 14px; cursor: pointer; font-size: 14px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border); touch-action: manipulation;
+      transition: background .1s;
     }
-
     .autocomplete-item:last-child { border-bottom: none; }
     .autocomplete-item:active { background: var(--surface-hover); }
-
     .autocomplete-item-name { flex: 1; color: var(--text); }
+    .autocomplete-badge { font-size: 10px; color: var(--ice); background: rgba(79,195,247,.1); padding: 2px 7px; border-radius: 100px; border: 1px solid rgba(79,195,247,.2); white-space: nowrap; }
+    @media (prefers-color-scheme: light) { .autocomplete-badge { color: var(--ice-dark); } }
 
-    .autocomplete-badge {
-      font-size: 10px;
-      color: var(--ice);
-      background: rgba(79,195,247,0.1);
-      padding: 2px 7px;
-      border-radius: 100px;
-      border: 1px solid rgba(79,195,247,0.2);
-      white-space: nowrap;
-    }
-
-    @media (prefers-color-scheme: light) {
-      .autocomplete-badge { color: var(--ice-dark); }
-    }
-
-    /* ── SUBMIT BUTTON ── */
     .btn-submit {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--ice), var(--ice-dark));
-      border: none;
-      border-radius: var(--radius-sm);
-      color: #0a1628;
-      font-family: 'Phudu', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.25s;
-      letter-spacing: 0.3px;
-      touch-action: manipulation;
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg,var(--ice),var(--ice-dark));
+      border: none; border-radius: var(--radius-sm); color: #0a1628;
+      font-family: 'Phudu', sans-serif; font-size: 18px; font-weight: 700;
+      cursor: pointer; letter-spacing: .3px; touch-action: manipulation;
+      transition: opacity .15s, transform .15s;
     }
+    .btn-submit:active { transform: scale(.98); opacity: .9; }
 
-    .btn-submit:active { transform: scale(0.98); opacity: 0.9; }
-
-    /* ── CHOICE MODAL ── */
+    /* CHOICE */
     .btn-choice {
-      width: 100%;
-      padding: 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 12px;
-      transition: all 0.2s;
-      text-align: left;
-      touch-action: manipulation;
+      width: 100%; padding: 16px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      cursor: pointer; display: flex; align-items: center; gap: 16px;
+      margin-bottom: 12px; text-align: left; touch-action: manipulation;
+      transition: background .15s, border-color .15s;
     }
-
-    .btn-choice:active {
-      background: var(--surface-hover);
-      border-color: var(--border-ice);
-    }
-
-    .btn-choice.locked { opacity: 0.7; }
-
+    .btn-choice:active { background: var(--surface-hover); border-color: var(--border-ice); }
     .btn-choice-icon { font-size: 30px; flex-shrink: 0; line-height: 1; }
-
     .btn-choice-text { flex: 1; }
-
-    .btn-choice-label {
-      font-family: 'Phudu', sans-serif;
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
+    .btn-choice-label { font-family: 'Phudu', sans-serif; font-size: 17px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .btn-choice-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-
-    .pro-badge {
-      display: inline-flex;
-      align-items: center;
-      font-size: 9px;
-      font-family: 'DM Sans', sans-serif;
-      background: var(--amber);
-      color: #0a1628;
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
+    .pro-badge { font-size: 9px; font-family: 'DM Sans', sans-serif; background: var(--amber); color: #0a1628; padding: 2px 7px; border-radius: 4px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
     .lock-icon { font-size: 16px; color: var(--text-muted); flex-shrink: 0; }
 
-    /* ── MEAL MODAL ── */
-    .meal-content {
-      font-size: 14px;
-      line-height: 1.7;
-      color: var(--text);
-      max-height: 55vh;
-      overflow-y: auto;
-      padding-right: 4px;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .meal-content h3 {
-      font-family: 'Phudu', sans-serif;
-      font-size: 18px;
-      color: var(--ice);
-      margin: 16px 0 6px;
-      font-weight: 700;
-    }
-
-    @media (prefers-color-scheme: light) {
-      .meal-content h3 { color: var(--ice-dark); }
-    }
-
-    .meal-content p { color: var(--text-muted); margin-bottom: 8px; }
-
-    .meal-loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      padding: 32px 0;
-    }
-
-    .frost-spinner {
-      width: 48px; height: 48px;
-      border: 2px solid var(--border);
-      border-top-color: var(--ice);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
+    /* MEAL */
+    .meal-content { font-size: 14px; line-height: 1.7; color: var(--text); max-height: 55vh; overflow-y: auto; padding-right: 4px; -webkit-overflow-scrolling: touch; }
+    .meal-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
+    .meal-card-img { width: 100%; height: 160px; object-fit: cover; display: block; background: var(--surface-hover); }
+    .meal-card-body { padding: 14px; }
+    .meal-card-title { font-family: 'Phudu', sans-serif; font-size: 18px; font-weight: 700; color: var(--ice); margin-bottom: 6px; }
+    @media (prefers-color-scheme: light) { .meal-card-title { color: var(--ice-dark); } }
+    .meal-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .meal-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .meal-card-tag { font-size: 11px; padding: 3px 9px; border-radius: 100px; background: rgba(79,195,247,.1); color: var(--ice); border: 1px solid rgba(79,195,247,.2); }
+    @media (prefers-color-scheme: light) { .meal-card-tag { color: var(--ice-dark); } }
+    .meal-no-results { text-align: center; padding: 32px 0; color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+    .meal-loading { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 0; }
+    .frost-spinner { width: 48px; height: 48px; border: 2px solid var(--border); border-top-color: var(--ice); border-radius: 50%; animation: spin .8s linear infinite; }
     .meal-loading p { color: var(--text-muted); font-size: 13px; }
 
-    /* ── SETTINGS MODAL ── */
-    .settings-hint {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 8px;
-      line-height: 1.6;
-    }
-
-    .settings-hint a { color: var(--ice); text-decoration: none; }
-
-    @media (prefers-color-scheme: light) {
-      .settings-hint a { color: var(--ice-dark); }
-    }
-
-    /* ── PRO MODAL ── */
+    /* PRO */
     .pro-upsell { text-align: center; padding: 8px 0 4px; }
     .pro-upsell-icon { font-size: 52px; margin-bottom: 16px; }
-    .pro-upsell-title {
-      font-family: 'Phudu', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-    .pro-upsell-desc {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      max-width: 260px;
-      margin: 0 auto 24px;
-    }
-    .btn-pro {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #FFB300, #e65100);
-      border: none;
-      border-radius: var(--radius-sm);
-      color: #fff;
-      font-family: 'Phudu', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.25s;
-      touch-action: manipulation;
-    }
-    .btn-pro:active { opacity: 0.9; transform: scale(0.98); }
+    .pro-upsell-title { font-family: 'Phudu', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .pro-upsell-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 260px; margin: 0 auto 24px; }
+    .btn-pro { width: 100%; padding: 16px; background: linear-gradient(135deg,#FFB300,#e65100); border: none; border-radius: var(--radius-sm); color: #fff; font-family: 'Phudu', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; touch-action: manipulation; transition: opacity .15s, transform .15s; }
+    .btn-pro:active { opacity: .9; transform: scale(.98); }
     .pro-footnote { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
 
-    /* ── CAMERA ── */
-    #camera-overlay {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 200;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-
+    /* CAMERA */
+    #camera-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s; }
     #camera-overlay.open { opacity: 1; pointer-events: all; }
-
     #video { width: 100%; max-width: 430px; }
+    .camera-ui { position: absolute; inset: 0; display: flex; flex-direction: column; pointer-events: none; }
+    .scan-frame { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .scan-box { width: 250px; height: 150px; border: 2px solid var(--ice); border-radius: 16px; box-shadow: 0 0 0 2000px rgba(0,0,0,.55),0 0 30px var(--ice-glow); position: relative; }
+    .scan-line { position: absolute; left: 10px; right: 10px; height: 2px; background: linear-gradient(90deg,transparent,var(--ice),transparent); animation: scanLine 1.8s ease-in-out infinite; border-radius: 2px; }
+    .camera-bottom { padding: 24px; pointer-events: all; text-align: center; }
+    .camera-label { font-size: 13px; color: rgba(255,255,255,.6); margin-bottom: 16px; }
+    .btn-camera-close { padding: 12px 32px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 100px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; touch-action: manipulation; }
 
-    .camera-ui {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      pointer-events: none;
-    }
-
-    .scan-frame {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .scan-box {
-      width: 250px; height: 150px;
-      border: 2px solid var(--ice);
-      border-radius: 16px;
-      box-shadow: 0 0 0 2000px rgba(0,0,0,0.55), 0 0 30px var(--ice-glow);
-      position: relative;
-    }
-
-    .scan-line {
-      position: absolute;
-      left: 10px; right: 10px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--ice), transparent);
-      animation: scanLine 1.8s ease-in-out infinite;
-      border-radius: 2px;
-    }
-
-    .camera-bottom {
-      padding: 24px;
-      pointer-events: all;
-      text-align: center;
-    }
-
-    .camera-label { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
-
-    .btn-camera-close {
-      padding: 12px 32px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 100px;
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    /* ── TOAST ── */
-    .toast {
-      position: fixed;
-      top: 60px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-80px);
-      background: var(--modal-bg);
-      border: 1px solid var(--border-ice);
-      border-radius: 100px;
-      padding: 10px 20px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ice);
-      z-index: 300;
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      white-space: nowrap;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      pointer-events: none;
-    }
-
-    @media (prefers-color-scheme: light) {
-      .toast { color: var(--ice-dark); }
-    }
-
+    /* TOAST */
+    .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(--modal-bg); border: 1px solid var(--border-ice); border-radius: 100px; padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--ice); z-index: 3000; transition: transform .35s cubic-bezier(.4,0,.2,1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.2); pointer-events: none; }
+    @media (prefers-color-scheme: light) { .toast { color: var(--ice-dark); } }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-12px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes scanLine {
-      0%   { top: 10px; opacity: 1; }
-      50%  { opacity: 0.7; }
-      100% { top: calc(100% - 12px); opacity: 1; }
-    }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:none} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:none} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+    @keyframes slideIn  { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:none} }
+    @keyframes spin     { to{transform:rotate(360deg)} }
+    @keyframes scanLine { 0%{top:10px;opacity:1} 50%{opacity:.7} 100%{top:calc(100% - 12px);opacity:1} }
 
-    /* ── DESKTOP LAYOUT ── */
+    /* DESKTOP */
     @media (min-width: 600px) {
-      html, body {
-        overflow: auto;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--bg-outer) !important;
-      }
-
-      .desktop-layout {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        width: 100%;
-        padding: 40px;
-      }
-
-      .desktop-shell {
-        position: relative;
-        width: 390px;
-        height: 844px;
-        border-radius: 52px;
-        overflow: hidden;
-        flex-shrink: 0;
-        background: var(--bg);
-        box-shadow:
-          0 0 0 10px var(--phone-ring1),
-          0 0 0 13px var(--phone-ring2),
-          0 50px 100px rgba(0,0,0,0.5),
-          0 0 80px rgba(79,195,247,0.07);
-      }
-
-      .desktop-shell::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 50%;
-        transform: translateX(-50%);
-        width: 126px; height: 36px;
-        background: var(--phone-notch);
-        border-radius: 0 0 22px 22px;
-        z-index: 200;
-      }
-
-      .desktop-shell::after {
-        content: '';
-        position: absolute;
-        left: -13px; top: 140px;
-        width: 4px; height: 36px;
-        background: var(--phone-btn);
-        border-radius: 4px 0 0 4px;
-        box-shadow: 0 52px 0 var(--phone-btn), 0 104px 0 var(--phone-btn);
-      }
-
-      #app {
-        height: 844px;
-        max-width: 100%;
-        overflow: hidden;
-      }
-
-      .desktop-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin-left: 60px;
-        gap: 28px;
-        max-width: 300px;
-      }
-
-      .desktop-tagline {
-        font-family: 'Phudu', sans-serif;
-        font-size: 38px;
-        font-weight: 700;
-        line-height: 1.15;
-        background: var(--heading-gradient);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-      }
-
-      .desktop-sub {
-        font-size: 15px;
-        color: var(--text-muted);
-        line-height: 1.7;
-        font-weight: 300;
-      }
-
-      .desktop-features { display: flex; flex-direction: column; gap: 14px; }
-
-      .desktop-feature {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        font-size: 14px;
-        color: var(--feat-text);
-      }
-
-      .desktop-feature-icon {
-        width: 36px; height: 36px;
-        background: rgba(79,195,247,0.08);
-        border: 1px solid var(--border-ice);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
-      }
-
-      .desktop-url {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 18px;
-        background: rgba(79,195,247,0.06);
-        border: 1px solid var(--border-ice);
-        border-radius: 100px;
-        font-size: 13px;
-        color: var(--ice);
-        font-weight: 500;
-        width: fit-content;
-      }
+      html, body { overflow: auto; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg-outer) !important; }
+      .desktop-layout { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; padding: 40px; }
+      .desktop-shell { position: relative; width: 390px; height: 844px; border-radius: 52px; overflow: hidden; flex-shrink: 0; background: var(--bg); box-shadow: 0 0 0 10px var(--phone-r1),0 0 0 13px var(--phone-r2),0 50px 100px rgba(0,0,0,.5),0 0 80px rgba(79,195,247,.07); }
+      .desktop-shell::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:126px; height:36px; background:var(--phone-notch); border-radius:0 0 22px 22px; z-index:200; }
+      .desktop-shell::after { content:''; position:absolute; left:-13px; top:140px; width:4px; height:36px; background:var(--phone-btn); border-radius:4px 0 0 4px; box-shadow:0 52px 0 var(--phone-btn),0 104px 0 var(--phone-btn); }
+      #app { height: 844px; max-width: 100%; overflow: hidden; }
+      .desktop-info { display: flex; flex-direction: column; justify-content: center; margin-left: 60px; gap: 28px; max-width: 300px; }
+      .desktop-tagline { font-family:'Phudu',sans-serif; font-size:38px; font-weight:700; line-height:1.15; background:var(--heading-grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
+      .desktop-sub { font-size:15px; color:var(--text-muted); line-height:1.7; font-weight:300; }
+      .desktop-features { display:flex; flex-direction:column; gap:14px; }
+      .desktop-feature { display:flex; align-items:center; gap:14px; font-size:14px; color:var(--feat-text); }
+      .desktop-feature-icon { width:36px; height:36px; flex-shrink:0; background:rgba(79,195,247,.08); border:1px solid var(--border-ice); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+      .desktop-url { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; background:rgba(79,195,247,.06); border:1px solid var(--border-ice); border-radius:100px; font-size:13px; color:var(--ice); font-weight:500; width:fit-content; }
     }
-
-    @media (min-width: 600px) and (prefers-color-scheme: light) {
-      .desktop-url { color: var(--ice-dark); }
-    }
+    @media (min-width:600px) and (prefers-color-scheme:light) { .desktop-url { color:var(--ice-dark); } }
   </style>
 </head>
 <body>
@@ -1068,36 +406,22 @@
 <div class="desktop-layout">
   <div class="desktop-shell">
     <div id="app">
-
-      <!-- Header -->
       <header>
         <div class="header-top">
           <div class="logo">
             <div class="logo-icon">❄️</div>
             <span class="logo-name">Frostly</span>
           </div>
-          <button class="btn-settings" id="btn-settings" title="Settings">⚙️</button>
         </div>
         <div class="header-subtitle">your smart freezer companion</div>
       </header>
 
-      <!-- Stats -->
       <div class="stats-bar">
-        <div class="stat-chip urgent">
-          <div class="stat-num" id="stat-urgent">0</div>
-          <div class="stat-label">Expiring</div>
-        </div>
-        <div class="stat-chip soon">
-          <div class="stat-num" id="stat-soon">0</div>
-          <div class="stat-label">This Month</div>
-        </div>
-        <div class="stat-chip good">
-          <div class="stat-num" id="stat-good">0</div>
-          <div class="stat-label">Good</div>
-        </div>
+        <div class="stat-chip urgent"><div class="stat-num" id="stat-urgent">0</div><div class="stat-label">Expiring</div></div>
+        <div class="stat-chip soon"  ><div class="stat-num" id="stat-soon">0</div><div class="stat-label">This Month</div></div>
+        <div class="stat-chip good"  ><div class="stat-num" id="stat-good">0</div><div class="stat-label">Good</div></div>
       </div>
 
-      <!-- Filter Tabs -->
       <div class="filter-tabs">
         <div class="tab active" data-filter="all">All Items</div>
         <div class="tab" data-filter="urgent">⚠️ Expiring</div>
@@ -1109,59 +433,40 @@
         <div class="tab" data-filter="other">📦 Other</div>
       </div>
 
-      <!-- Item List -->
       <div class="list-wrap" id="item-list">
         <div class="empty-state" id="empty-state">
           <div class="empty-icon">🧊</div>
           <div class="empty-title">Freezer is empty</div>
-          <div class="empty-sub">Tap + to add your first item and track what's inside</div>
+          <div class="empty-sub">Tap + to add your first item</div>
         </div>
       </div>
 
-      <!-- Bottom Bar -->
       <div class="bottom-bar">
-        <button class="btn-meal" id="btn-meal">
-          <span>🍽️</span> What can I cook?
-        </button>
-        <button class="btn-add" id="btn-add">+</button>
+        <button class="btn-meal" id="btn-meal"><span>🍽️</span> What can I cook?</button>
+        <button class="btn-add"  id="btn-add">+</button>
       </div>
-
     </div>
-  </div><!-- /desktop-shell -->
+  </div>
 
-  <!-- Desktop Info Panel -->
   <div class="desktop-info">
     <div class="desktop-tagline">Your smart freezer, finally.</div>
     <div class="desktop-sub">Track what's inside, get expiry alerts, and discover meals from what you already have.</div>
     <div class="desktop-features">
-      <div class="desktop-feature">
-        <div class="desktop-feature-icon">❄️</div>
-        <span>Track items with auto expiry dates</span>
-      </div>
-      <div class="desktop-feature">
-        <div class="desktop-feature-icon">📷</div>
-        <span>Scan barcodes to add instantly</span>
-      </div>
-      <div class="desktop-feature">
-        <div class="desktop-feature-icon">🍽️</div>
-        <span>AI meal ideas from expiring items</span>
-      </div>
-      <div class="desktop-feature">
-        <div class="desktop-feature-icon">🔒</div>
-        <span>100% private — data stays on your device</span>
-      </div>
+      <div class="desktop-feature"><div class="desktop-feature-icon">❄️</div><span>Track items with auto expiry dates</span></div>
+      <div class="desktop-feature"><div class="desktop-feature-icon">📷</div><span>Scan barcodes to add instantly</span></div>
+      <div class="desktop-feature"><div class="desktop-feature-icon">🍽️</div><span>Recipe ideas from expiring items</span></div>
+      <div class="desktop-feature"><div class="desktop-feature-icon">🔒</div><span>100% private — data stays on your device</span></div>
     </div>
     <div class="desktop-url">📱 Open on your phone for the best experience</div>
   </div>
-</div><!-- /desktop-layout -->
+</div>
 
 
-<!-- ── CHOICE MODAL (+ button) ── -->
+<!-- CHOICE MODAL -->
 <div class="modal-overlay" id="choice-modal">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">Add to Freezer</div>
-
     <button class="btn-choice" id="btn-choice-manual">
       <span class="btn-choice-icon">✏️</span>
       <div class="btn-choice-text">
@@ -1169,14 +474,10 @@
         <div class="btn-choice-sub">Search or type item details</div>
       </div>
     </button>
-
-    <button class="btn-choice locked" id="btn-choice-scan">
+    <button class="btn-choice" id="btn-choice-scan">
       <span class="btn-choice-icon">📷</span>
       <div class="btn-choice-text">
-        <div class="btn-choice-label">
-          Scan Barcode
-          <span class="pro-badge">PRO</span>
-        </div>
+        <div class="btn-choice-label">Scan Barcode <span class="pro-badge">PRO</span></div>
         <div class="btn-choice-sub">Auto-fill from product database</div>
       </div>
       <span class="lock-icon">🔒</span>
@@ -1185,7 +486,7 @@
 </div>
 
 
-<!-- ── ADD ITEM MODAL ── -->
+<!-- ADD ITEM MODAL -->
 <div class="modal-overlay" id="add-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -1227,7 +528,7 @@
 </div>
 
 
-<!-- ── MEAL SUGGESTIONS MODAL ── -->
+<!-- MEAL MODAL -->
 <div class="modal-overlay" id="meal-modal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -1237,36 +538,14 @@
 </div>
 
 
-<!-- ── SETTINGS MODAL ── -->
-<div class="modal-overlay" id="settings-modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">⚙️ Settings</div>
-
-    <div class="field">
-      <label>Claude API Key</label>
-      <input type="password" id="input-api-key" placeholder="sk-ant-api03-..." autocomplete="off" />
-      <div class="settings-hint">
-        Required for "What can I cook?" AI suggestions.<br>
-        Get yours at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
-      </div>
-    </div>
-
-    <button class="btn-submit" id="btn-save-settings">Save Settings ✓</button>
-  </div>
-</div>
-
-
-<!-- ── PRO UPSELL MODAL ── -->
+<!-- PRO MODAL -->
 <div class="modal-overlay" id="pro-modal">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="pro-upsell">
       <div class="pro-upsell-icon">📷</div>
       <div class="pro-upsell-title">Scan to Add</div>
-      <div class="pro-upsell-desc">
-        Point your camera at any barcode and Frostly will auto-fill the item name and category from the Open Food Facts database.
-      </div>
+      <div class="pro-upsell-desc">Point your camera at any barcode and Frostly auto-fills the item name and category — no typing needed.</div>
       <button class="btn-pro" id="btn-upgrade">Upgrade to Pro — $2.99</button>
       <div class="pro-footnote">One-time purchase. No subscription.</div>
     </div>
@@ -1274,15 +553,11 @@
 </div>
 
 
-<!-- ── CAMERA OVERLAY ── -->
+<!-- CAMERA -->
 <div id="camera-overlay">
   <video id="video" autoplay muted playsinline></video>
   <div class="camera-ui">
-    <div class="scan-frame">
-      <div class="scan-box">
-        <div class="scan-line"></div>
-      </div>
-    </div>
+    <div class="scan-frame"><div class="scan-box"><div class="scan-line"></div></div></div>
     <div class="camera-bottom">
       <div class="camera-label">Align barcode within the frame</div>
       <button class="btn-camera-close" id="btn-camera-close">Cancel</button>
@@ -1290,82 +565,74 @@
   </div>
 </div>
 
-
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 
 <script>
-// ── CONSTANTS ─────────────────────────────────────────
-const EXPIRY_DAYS = {
-  meat: 90, fish: 60, vegetable: 120,
-  dairy: 30, prepared: 90, other: 180
+// ── EXPIRY DATA (USDA FoodKeeper, frozen storage in days) ─────────────────────
+const FOOD_EXPIRY = {
+  'chicken breast':270,'chicken thighs':270,'chicken wings':270,'whole chicken':365,
+  'ground chicken':90,'turkey breast':270,'ground turkey':90,'ground beef':120,
+  'beef steak':365,'beef roast':365,'beef ribs':120,'pork chops':180,
+  'pork roast':365,'pork ribs':180,'bacon':30,'ham':60,'sausage':60,
+  'hot dogs':60,'lamb chops':270,'veal':270,'venison':365,
+  'salmon':90,'salmon fillet':90,'cod':180,'cod fillet':180,'tuna':90,
+  'tuna steak':90,'shrimp':365,'prawns':365,'scallops':90,'crab':90,
+  'lobster':90,'fish fillets':180,'fish fingers':180,'fish sticks':180,
+  'broccoli':365,'spinach':365,'peas':365,'corn':365,'green beans':365,
+  'edamame':365,'cauliflower':365,'mixed vegetables':365,'carrots':365,
+  'kale':365,'asparagus':365,'brussels sprouts':365,'zucchini':365,
+  'strawberries':365,'blueberries':365,'raspberries':365,'blackberries':365,
+  'mixed berries':365,'mango':365,'mango chunks':365,'peaches':365,'cherries':365,'banana':90,
+  'butter':365,'cheese':180,'shredded cheese':180,'ice cream':60,'frozen yogurt':60,
+  'pizza':60,'lasagna':90,'soup':60,'chili':90,'meatballs':90,'burritos':90,
+  'dumplings':90,'spring rolls':90,'egg rolls':90,'waffles':90,'pancakes':90,'pot pies':90,
+  'bread':90,'bagels':90,'rice':180,'pasta':180,
 };
 
-const CATEGORY_EMOJI = {
-  meat: '🥩', fish: '🐟', vegetable: '🥦',
-  dairy: '🧀', prepared: '🍲', other: '📦'
-};
+const EXPIRY_DAYS = { meat:270, fish:120, vegetable:300, dairy:90, prepared:90, other:180 };
 
-// Local fallback for autocomplete
+const CATEGORY_EMOJI = { meat:'🥩', fish:'🐟', vegetable:'🥦', dairy:'🧀', prepared:'🍲', other:'📦' };
+
 const COMMON_ITEMS = [
-  { name: 'Chicken Breast', category: 'meat' },
-  { name: 'Chicken Thighs', category: 'meat' },
-  { name: 'Ground Beef', category: 'meat' },
-  { name: 'Ground Turkey', category: 'meat' },
-  { name: 'Pork Chops', category: 'meat' },
-  { name: 'Bacon', category: 'meat' },
-  { name: 'Beef Steak', category: 'meat' },
-  { name: 'Lamb Chops', category: 'meat' },
-  { name: 'Salmon Fillet', category: 'fish' },
-  { name: 'Shrimp', category: 'fish' },
-  { name: 'Cod Fillet', category: 'fish' },
-  { name: 'Tuna Steak', category: 'fish' },
-  { name: 'Fish Fingers', category: 'fish' },
-  { name: 'Prawns', category: 'fish' },
-  { name: 'Broccoli', category: 'vegetable' },
-  { name: 'Spinach', category: 'vegetable' },
-  { name: 'Peas', category: 'vegetable' },
-  { name: 'Corn', category: 'vegetable' },
-  { name: 'Mixed Vegetables', category: 'vegetable' },
-  { name: 'Edamame', category: 'vegetable' },
-  { name: 'Green Beans', category: 'vegetable' },
-  { name: 'Cauliflower', category: 'vegetable' },
-  { name: 'Strawberries', category: 'vegetable' },
-  { name: 'Blueberries', category: 'vegetable' },
-  { name: 'Mango Chunks', category: 'vegetable' },
-  { name: 'Mixed Berries', category: 'vegetable' },
-  { name: 'Butter', category: 'dairy' },
-  { name: 'Cheese Block', category: 'dairy' },
-  { name: 'Ice Cream', category: 'dairy' },
-  { name: 'Frozen Yogurt', category: 'dairy' },
-  { name: 'Pizza', category: 'prepared' },
-  { name: 'Lasagna', category: 'prepared' },
-  { name: 'Meatballs', category: 'prepared' },
-  { name: 'Burritos', category: 'prepared' },
-  { name: 'Soup', category: 'prepared' },
-  { name: 'Dumplings', category: 'prepared' },
-  { name: 'Spring Rolls', category: 'prepared' },
-  { name: 'Bread', category: 'other' },
-  { name: 'Waffles', category: 'other' },
-  { name: 'Pancakes', category: 'other' },
-  { name: 'Rice', category: 'other' },
+  {name:'Chicken Breast',category:'meat'},{name:'Chicken Thighs',category:'meat'},
+  {name:'Ground Beef',category:'meat'},{name:'Ground Turkey',category:'meat'},
+  {name:'Pork Chops',category:'meat'},{name:'Bacon',category:'meat'},
+  {name:'Beef Steak',category:'meat'},{name:'Sausage',category:'meat'},
+  {name:'Salmon Fillet',category:'fish'},{name:'Shrimp',category:'fish'},
+  {name:'Cod Fillet',category:'fish'},{name:'Tuna Steak',category:'fish'},
+  {name:'Fish Fingers',category:'fish'},{name:'Prawns',category:'fish'},
+  {name:'Broccoli',category:'vegetable'},{name:'Spinach',category:'vegetable'},
+  {name:'Peas',category:'vegetable'},{name:'Corn',category:'vegetable'},
+  {name:'Mixed Vegetables',category:'vegetable'},{name:'Green Beans',category:'vegetable'},
+  {name:'Edamame',category:'vegetable'},{name:'Cauliflower',category:'vegetable'},
+  {name:'Strawberries',category:'vegetable'},{name:'Blueberries',category:'vegetable'},
+  {name:'Mixed Berries',category:'vegetable'},{name:'Mango Chunks',category:'vegetable'},
+  {name:'Butter',category:'dairy'},{name:'Cheese Block',category:'dairy'},
+  {name:'Ice Cream',category:'dairy'},
+  {name:'Pizza',category:'prepared'},{name:'Lasagna',category:'prepared'},
+  {name:'Meatballs',category:'prepared'},{name:'Soup',category:'prepared'},
+  {name:'Dumplings',category:'prepared'},{name:'Spring Rolls',category:'prepared'},
+  {name:'Waffles',category:'other'},{name:'Bread',category:'other'},
+  {name:'Pancakes',category:'other'},{name:'Rice',category:'other'},
 ];
 
-// ── STATE ─────────────────────────────────────────────
-let items = JSON.parse(localStorage.getItem('frostly_items') || '[]');
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let items = [];
+try { items = JSON.parse(localStorage.getItem('frostly_items') || '[]'); } catch {}
 let currentFilter = 'all';
 
-function save() {
-  localStorage.setItem('frostly_items', JSON.stringify(items));
+function save() { try { localStorage.setItem('frostly_items', JSON.stringify(items)); } catch {} }
+
+function getExpiryDays(item) {
+  return FOOD_EXPIRY[item.name.toLowerCase().trim()] || EXPIRY_DAYS[item.category] || 180;
 }
 
-// ── HELPERS ───────────────────────────────────────────
 function daysLeft(item) {
   const added = new Date(item.dateAdded);
   const expiry = new Date(added);
-  expiry.setDate(expiry.getDate() + EXPIRY_DAYS[item.category]);
-  return Math.ceil((expiry - new Date()) / (1000 * 60 * 60 * 24));
+  expiry.setDate(expiry.getDate() + getExpiryDays(item));
+  return Math.ceil((expiry - new Date()) / 86400000);
 }
 
 function urgency(days) {
@@ -1375,42 +642,31 @@ function urgency(days) {
 }
 
 function expiryLabel(days) {
-  if (days < 0) return 'Expired!';
+  if (days < 0)   return 'Expired!';
   if (days === 0) return 'Expires today!';
   if (days === 1) return 'Expires tomorrow';
   if (days <= 14) return `${days} days left`;
-  if (days < 60) return `${Math.ceil(days / 7)} weeks left`;
-  return `${Math.ceil(days / 30)} months left`;
+  if (days < 60)  return `${Math.ceil(days/7)} weeks left`;
+  return `${Math.ceil(days/30)} months left`;
 }
 
-// ── RENDER ────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function render() {
-  const list = document.getElementById('item-list');
+  const list  = document.getElementById('item-list');
   const empty = document.getElementById('empty-state');
 
   let filtered = [...items];
-  if (currentFilter === 'urgent') {
-    filtered = items.filter(i => urgency(daysLeft(i)) === 'urgent');
-  } else if (currentFilter !== 'all') {
-    filtered = items.filter(i => i.category === currentFilter);
-  }
-  filtered.sort((a, b) => daysLeft(a) - daysLeft(b));
+  if      (currentFilter === 'urgent') filtered = items.filter(i => urgency(daysLeft(i)) === 'urgent');
+  else if (currentFilter !== 'all')    filtered = items.filter(i => i.category === currentFilter);
+  filtered.sort((a,b) => daysLeft(a) - daysLeft(b));
 
-  // Stats
-  document.getElementById('stat-urgent').textContent =
-    items.filter(i => urgency(daysLeft(i)) === 'urgent').length;
-  document.getElementById('stat-soon').textContent =
-    items.filter(i => urgency(daysLeft(i)) === 'soon').length;
-  document.getElementById('stat-good').textContent =
-    items.filter(i => urgency(daysLeft(i)) === 'good').length;
+  document.getElementById('stat-urgent').textContent = items.filter(i => urgency(daysLeft(i)) === 'urgent').length;
+  document.getElementById('stat-soon').textContent   = items.filter(i => urgency(daysLeft(i)) === 'soon').length;
+  document.getElementById('stat-good').textContent   = items.filter(i => urgency(daysLeft(i)) === 'good').length;
 
-  // Clear cards
   list.querySelectorAll('.item-card').forEach(el => el.remove());
 
-  if (filtered.length === 0) {
-    empty.style.display = 'flex';
-    return;
-  }
+  if (!filtered.length) { empty.style.display = 'flex'; return; }
   empty.style.display = 'none';
 
   filtered.forEach((item, i) => {
@@ -1429,169 +685,123 @@ function render() {
           <span class="item-expiry">${expiryLabel(days)}</span>
         </div>
       </div>
-      <button class="item-delete" data-id="${item.id}" title="Remove">✕</button>
+      <button class="item-delete" data-id="${item.id}">✕</button>
     `;
     list.appendChild(card);
   });
 
   list.querySelectorAll('.item-delete').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', e => {
       e.stopPropagation();
       items = items.filter(i => i.id !== btn.dataset.id);
-      save();
-      showToast('Item removed');
-      render();
+      save(); showToast('Item removed'); render();
     });
   });
 }
 
-// ── MODAL HELPERS ─────────────────────────────────────
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-}
-
+// ── MODALS ────────────────────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
-  if (id === 'add-modal') closeAutocomplete();
+  if (id === 'add-modal') closeAC();
 }
 
-// Close on overlay click
-['choice-modal', 'add-modal', 'meal-modal', 'settings-modal', 'pro-modal'].forEach(id => {
-  document.getElementById(id).addEventListener('click', (e) => {
+['choice-modal','add-modal','meal-modal','pro-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal(id);
   });
 });
 
-// ── ADD BUTTON → CHOICE MODAL ─────────────────────────
-document.getElementById('btn-add').addEventListener('click', () => {
-  openModal('choice-modal');
-});
+// ── BUTTONS ───────────────────────────────────────────────────────────────────
+document.getElementById('btn-add').addEventListener('click', () => openModal('choice-modal'));
 
-// Choice: Manual
 document.getElementById('btn-choice-manual').addEventListener('click', () => {
   closeModal('choice-modal');
   setTimeout(() => {
     document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
     document.getElementById('input-name').value = '';
-    document.getElementById('input-qty').value = '';
+    document.getElementById('input-qty').value  = '';
     document.getElementById('input-category').value = 'meat';
-    closeAutocomplete();
     openModal('add-modal');
-    setTimeout(() => document.getElementById('input-name').focus(), 400);
+    setTimeout(() => document.getElementById('input-name').focus(), 420);
   }, 280);
 });
 
-// Choice: Scan (Pro gate)
 document.getElementById('btn-choice-scan').addEventListener('click', () => {
   const isPro = localStorage.getItem('frostly_pro') === 'true';
-  if (isPro) {
-    closeModal('choice-modal');
-    setTimeout(() => startScan(), 280);
-  } else {
-    closeModal('choice-modal');
-    setTimeout(() => openModal('pro-modal'), 280);
-  }
+  closeModal('choice-modal');
+  setTimeout(() => isPro ? startScan() : openModal('pro-modal'), 280);
 });
 
-// Pro upgrade button (placeholder — Stripe not yet integrated)
-document.getElementById('btn-upgrade').addEventListener('click', () => {
-  showToast('Payment coming soon!');
-});
+document.getElementById('btn-upgrade').addEventListener('click', () => showToast('Payment coming soon!'));
 
-// ── AUTOCOMPLETE ──────────────────────────────────────
-let acTimer = null;
-let acSuggestions = [];
+// ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
+let acTimer = null, acResults = [];
 
-document.getElementById('input-name').addEventListener('input', (e) => {
+document.getElementById('input-name').addEventListener('input', e => {
   const val = e.target.value.trim();
-  if (!val) { closeAutocomplete(); return; }
-
-  const local = COMMON_ITEMS.filter(i =>
-    i.name.toLowerCase().includes(val.toLowerCase())
-  ).slice(0, 5);
-
-  showAutocomplete(local);
-
+  if (!val) { closeAC(); return; }
+  const local = COMMON_ITEMS.filter(i => i.name.toLowerCase().includes(val.toLowerCase())).slice(0,5);
+  renderAC(local);
   clearTimeout(acTimer);
-  if (val.length >= 3) {
-    acTimer = setTimeout(() => fetchOFF(val), 450);
-  }
+  if (val.length >= 3) acTimer = setTimeout(() => fetchAC(val), 480);
 });
 
-async function fetchOFF(query) {
+async function fetchAC(query) {
   try {
-    const res = await fetch(
-      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&page_size=5&search_simple=1&action=process`
-    );
-    const data = await res.json();
-    const offItems = (data.products || [])
-      .filter(p => p.product_name && p.product_name.trim())
-      .map(p => ({ name: p.product_name.trim(), category: null }))
-      .slice(0, 4);
-
-    const local = COMMON_ITEMS.filter(i =>
-      i.name.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, 3);
-
+    const r = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&page_size=5&search_simple=1&action=process`);
+    const d = await r.json();
+    const off = (d.products||[]).filter(p=>p.product_name&&p.product_name.trim()).map(p=>({name:p.product_name.trim(),category:null})).slice(0,4);
+    const local = COMMON_ITEMS.filter(i=>i.name.toLowerCase().includes(query.toLowerCase())).slice(0,3);
     const merged = [...local];
-    offItems.forEach(o => {
-      if (!merged.find(m => m.name.toLowerCase() === o.name.toLowerCase())) {
-        merged.push(o);
-      }
-    });
-
-    showAutocomplete(merged.slice(0, 6));
-  } catch {
-    // Keep showing local results, silently fail
-  }
+    off.forEach(o => { if (!merged.find(m=>m.name.toLowerCase()===o.name.toLowerCase())) merged.push(o); });
+    renderAC(merged.slice(0,6));
+  } catch {}
 }
 
-function showAutocomplete(suggestions) {
+function renderAC(suggestions) {
   const list = document.getElementById('autocomplete-list');
-  if (!suggestions.length) { closeAutocomplete(); return; }
-
-  acSuggestions = suggestions;
-  list.innerHTML = suggestions.map((item, i) => `
+  if (!suggestions.length) { closeAC(); return; }
+  acResults = suggestions;
+  list.innerHTML = suggestions.map((item,i) => `
     <div class="autocomplete-item" data-index="${i}">
-      <span>${CATEGORY_EMOJI[item.category] || '🍽️'}</span>
+      <span>${CATEGORY_EMOJI[item.category]||'🍽️'}</span>
       <span class="autocomplete-item-name">${item.name}</span>
-      ${item.category ? `<span class="autocomplete-badge">${item.category}</span>` : ''}
+      ${item.category?`<span class="autocomplete-badge">${item.category}</span>`:''}
     </div>
   `).join('');
-
   list.classList.add('open');
-
   list.querySelectorAll('.autocomplete-item').forEach(el => {
-    el.addEventListener('mousedown', (e) => {
-      e.preventDefault(); // prevent input blur before click fires
-      const selected = acSuggestions[parseInt(el.dataset.index)];
-      document.getElementById('input-name').value = selected.name;
-      if (selected.category) {
-        document.getElementById('input-category').value = selected.category;
-      }
-      closeAutocomplete();
-    });
+    const pick = () => {
+      const sel = acResults[+el.dataset.index];
+      document.getElementById('input-name').value = sel.name;
+      if (sel.category) document.getElementById('input-category').value = sel.category;
+      closeAC();
+    };
+    el.addEventListener('mousedown', e => { e.preventDefault(); pick(); });
+    el.addEventListener('touchend',  e => { e.preventDefault(); pick(); });
   });
 }
 
-function closeAutocomplete() {
+function closeAC() {
   const list = document.getElementById('autocomplete-list');
-  list.classList.remove('open');
-  list.innerHTML = '';
-  acSuggestions = [];
-  clearTimeout(acTimer);
+  list.classList.remove('open'); list.innerHTML = ''; acResults = []; clearTimeout(acTimer);
 }
 
-document.getElementById('input-name').addEventListener('blur', () => {
-  // Delay to allow mousedown on list items to fire first
-  setTimeout(closeAutocomplete, 200);
-});
+document.getElementById('input-name').addEventListener('blur', () => setTimeout(closeAC, 150));
 
-// ── ADD ITEM ──────────────────────────────────────────
-document.getElementById('btn-submit').addEventListener('click', () => {
-  const name = document.getElementById('input-name').value.trim();
-  if (!name) { document.getElementById('input-name').focus(); return; }
+// ── ADD ITEM ──────────────────────────────────────────────────────────────────
+document.getElementById('btn-submit').addEventListener('click', addItem);
 
+function addItem() {
+  const nameEl = document.getElementById('input-name');
+  const name   = nameEl.value.trim();
+  if (!name) {
+    nameEl.style.borderColor = 'var(--coral)';
+    setTimeout(() => nameEl.style.borderColor = '', 1200);
+    nameEl.focus();
+    return;
+  }
   items.unshift({
     id: Date.now().toString(),
     name,
@@ -1599,18 +809,12 @@ document.getElementById('btn-submit').addEventListener('click', () => {
     quantity: document.getElementById('input-qty').value.trim(),
     dateAdded: document.getElementById('input-date').value || new Date().toISOString().split('T')[0]
   });
+  save(); closeModal('add-modal'); showToast('❄️ Added to freezer!'); render();
+}
 
-  save();
-  closeModal('add-modal');
-  showToast('❄️ Added to freezer!');
-  render();
-});
+document.getElementById('input-name').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
 
-document.getElementById('input-name').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') document.getElementById('btn-submit').click();
-});
-
-// ── FILTER TABS ───────────────────────────────────────
+// ── FILTER TABS ───────────────────────────────────────────────────────────────
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1620,189 +824,126 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-// ── SETTINGS ──────────────────────────────────────────
-document.getElementById('btn-settings').addEventListener('click', () => {
-  const saved = localStorage.getItem('frostly_api_key') || '';
-  document.getElementById('input-api-key').value = saved;
-  openModal('settings-modal');
-});
-
-document.getElementById('btn-save-settings').addEventListener('click', () => {
-  const key = document.getElementById('input-api-key').value.trim();
-  if (key) {
-    localStorage.setItem('frostly_api_key', key);
-    showToast('✅ Settings saved!');
-  } else {
-    localStorage.removeItem('frostly_api_key');
-    showToast('API key removed');
-  }
-  closeModal('settings-modal');
-});
-
-// ── MEAL SUGGESTIONS ──────────────────────────────────
+// ── MEAL SUGGESTIONS (TheMealDB — free, no API key) ───────────────────────────
 document.getElementById('btn-meal').addEventListener('click', async () => {
-  if (items.length === 0) {
-    showToast('Add some items first!');
-    return;
-  }
+  if (!items.length) { showToast('Add some items first!'); return; }
 
-  const apiKey = localStorage.getItem('frostly_api_key');
-  if (!apiKey) {
-    showToast('Add your Claude API key in ⚙️ Settings');
-    openModal('settings-modal');
-    return;
-  }
-
-  const mealContent = document.getElementById('meal-content');
-  mealContent.innerHTML = `
-    <div class="meal-loading">
-      <div class="frost-spinner"></div>
-      <p>Finding recipes from your freezer…</p>
-    </div>
-  `;
+  const mc = document.getElementById('meal-content');
+  mc.innerHTML = `<div class="meal-loading"><div class="frost-spinner"></div><p>Finding recipes from your freezer…</p></div>`;
   openModal('meal-modal');
 
-  const sorted = [...items].sort((a, b) => daysLeft(a) - daysLeft(b));
-  const inventory = sorted.slice(0, 12).map(i =>
-    `${i.name} (${i.quantity || 'some'}, expires in ${daysLeft(i)} days)`
-  ).join(', ');
+  const candidates = [...items]
+    .sort((a,b) => daysLeft(a) - daysLeft(b))
+    .slice(0,4)
+    .map(i => i.name.split(' ')[0].toLowerCase());
 
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: `I have these items in my freezer: ${inventory}.
+  const seen = new Set(), meals = [];
 
-Suggest 3 simple meal ideas that use the items expiring soonest. For each meal give:
-- A catchy name
-- 2-sentence description
-- Which freezer items it uses
-
-Format with HTML using <h3> for meal names and <p> for descriptions. Keep it warm and friendly.`
-        }]
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      mealContent.innerHTML = `<p style="color:var(--coral)">API error: ${data.error.message || 'Check your API key in Settings.'}</p>`;
-      return;
-    }
-
-    const text = (data.content || []).map(c => c.text || '').join('') || 'Could not get suggestions.';
-    mealContent.innerHTML = text;
-  } catch (err) {
-    mealContent.innerHTML = '<p style="color:var(--text-muted)">Could not connect. Check your internet connection.</p>';
+  for (const ing of candidates) {
+    if (meals.length >= 4) break;
+    try {
+      const r = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ing)}`);
+      const d = await r.json();
+      for (const m of (d.meals||[])) {
+        if (!seen.has(m.idMeal) && meals.length < 4) { seen.add(m.idMeal); meals.push(m); }
+      }
+    } catch {}
   }
+
+  if (!meals.length) {
+    mc.innerHTML = `<div class="meal-no-results"><div style="font-size:36px;margin-bottom:12px">🤷</div>No matching recipes found.<br>Try adding more common ingredients.</div>`;
+    return;
+  }
+
+  const details = await Promise.all(meals.map(async m => {
+    try {
+      const r = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${m.idMeal}`);
+      const d = await r.json();
+      return d.meals?.[0] || m;
+    } catch { return m; }
+  }));
+
+  mc.innerHTML = details.map(meal => {
+    const desc = meal.strInstructions
+      ? meal.strInstructions.replace(/\r?\n/g,' ').split('.').slice(0,2).join('.').trim() + '.'
+      : '';
+    return `
+      <div class="meal-card">
+        ${meal.strMealThumb ? `<img class="meal-card-img" src="${meal.strMealThumb}/preview" alt="${meal.strMeal}" loading="lazy">` : ''}
+        <div class="meal-card-body">
+          <div class="meal-card-title">${meal.strMeal}</div>
+          ${desc ? `<div class="meal-card-desc">${desc}</div>` : ''}
+          <div class="meal-card-tags">
+            ${meal.strArea     ? `<span class="meal-card-tag">${meal.strArea}</span>`     : ''}
+            ${meal.strCategory ? `<span class="meal-card-tag">${meal.strCategory}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
 });
 
-// ── BARCODE SCAN ──────────────────────────────────────
-let cameraStream = null;
-let codeReader = null;
+// ── CAMERA / SCAN ─────────────────────────────────────────────────────────────
+let cameraStream = null, codeReader = null;
 
 async function startScan() {
   try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'environment' } });
     document.getElementById('video').srcObject = cameraStream;
     document.getElementById('camera-overlay').classList.add('open');
-
     if (!window.ZXing) {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';
-      document.head.appendChild(script);
-      await new Promise((res, rej) => {
-        script.onload = res;
-        script.onerror = () => rej(new Error('ZXing failed to load'));
+      await new Promise((res,rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';
+        s.onload = res; s.onerror = rej; document.head.appendChild(s);
       });
     }
-
     codeReader = new ZXing.BrowserMultiFormatReader();
-    const videoEl = document.getElementById('video');
-
-    codeReader.decodeFromVideoDevice(null, videoEl, async (result, err) => {
-      if (result) {
-        const barcode = result.getText();
-        codeReader.reset();
-        closeCamera();
-
-        showToast('🔍 Looking up product…');
-
-        try {
-          const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-          const data = await res.json();
-          if (data.status === 1 && data.product?.product_name) {
-            const name = data.product.product_name;
-
-            // Auto-detect category from OFF categories
-            const cats = (data.product.categories_tags || []).join(' ').toLowerCase();
-            let category = 'other';
-            if (cats.includes('meat') || cats.includes('poultry') || cats.includes('beef') || cats.includes('pork')) category = 'meat';
-            else if (cats.includes('fish') || cats.includes('seafood') || cats.includes('shrimp')) category = 'fish';
-            else if (cats.includes('vegetable') || cats.includes('fruit') || cats.includes('frozen-vegetable')) category = 'vegetable';
-            else if (cats.includes('dairy') || cats.includes('cheese') || cats.includes('milk') || cats.includes('yogurt')) category = 'dairy';
-            else if (cats.includes('meal') || cats.includes('prepared') || cats.includes('pizza') || cats.includes('ready')) category = 'prepared';
-
-            document.getElementById('input-name').value = name;
-            document.getElementById('input-category').value = category;
-
-            document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('input-qty').value = '';
-
-            openModal('add-modal');
-            showToast(`✅ Found: ${name}`);
-          } else {
-            openModal('add-modal');
-            showToast('Product not found — enter manually');
-          }
-        } catch {
-          openModal('add-modal');
-          showToast('Lookup failed — enter manually');
-        }
-      }
+    codeReader.decodeFromVideoDevice(null, document.getElementById('video'), async result => {
+      if (!result) return;
+      codeReader.reset(); closeCamera();
+      showToast('🔍 Looking up product…');
+      try {
+        const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${result.getText()}.json`);
+        const d = await r.json();
+        if (d.status === 1 && d.product?.product_name) {
+          const name = d.product.product_name;
+          const cats = (d.product.categories_tags||[]).join(' ').toLowerCase();
+          let cat = 'other';
+          if (cats.includes('meat')||cats.includes('poultry')||cats.includes('beef')||cats.includes('pork')) cat='meat';
+          else if (cats.includes('fish')||cats.includes('seafood')) cat='fish';
+          else if (cats.includes('vegetable')||cats.includes('fruit')) cat='vegetable';
+          else if (cats.includes('dairy')||cats.includes('cheese')) cat='dairy';
+          else if (cats.includes('pizza')||cats.includes('prepared')||cats.includes('ready')) cat='prepared';
+          document.getElementById('input-name').value = name;
+          document.getElementById('input-category').value = cat;
+          document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
+          document.getElementById('input-qty').value = '';
+          openModal('add-modal'); showToast(`✅ Found: ${name}`);
+        } else { openModal('add-modal'); showToast('Product not found — enter manually'); }
+      } catch { openModal('add-modal'); showToast('Lookup failed — enter manually'); }
     });
-  } catch (err) {
-    showToast('Camera not available');
-  }
+  } catch { showToast('Camera not available'); }
 }
 
 function closeCamera() {
   document.getElementById('camera-overlay').classList.remove('open');
-  if (codeReader) { try { codeReader.reset(); } catch {} codeReader = null; }
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(t => t.stop());
-    cameraStream = null;
-  }
+  if (codeReader)   { try { codeReader.reset(); } catch {} codeReader = null; }
+  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
 }
 
 document.getElementById('btn-camera-close').addEventListener('click', closeCamera);
 
-// ── TOAST ─────────────────────────────────────────────
+// ── TOAST ─────────────────────────────────────────────────────────────────────
 let toastTimer = null;
 function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ── SERVICE WORKER ────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-
-// ── INIT ──────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 render();
 </script>
 
