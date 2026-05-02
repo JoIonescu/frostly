@@ -33,12 +33,12 @@
   @media(prefers-color-scheme:light){:root{
     --bg:#d8eef9;--bg2:#b0cfea;
     --surf:rgba(255,255,255,.72);--surfh:rgba(255,255,255,.92);
-    --bdr:rgba(10,22,40,.1);--bdri:rgba(2,136,209,.28);
-    --tx:#0d1f2d;--txm:rgba(10,22,40,.48);
+    --bdr:rgba(10,22,40,.12);--bdri:rgba(2,136,209,.35);
+    --tx:#0d1f2d;--txm:rgba(10,22,40,.68);
     --modal:#eaf5fd;--glow:rgba(2,136,209,.22);
     --ha:#0d1f2d;--hb:#0288D1;
     --pr1:#9dc4dc;--pr2:#83b2cc;--pn:#b0cfea;--ps:#9dc4dc;
-    --pt:rgba(10,22,40,.6)
+    --pt:rgba(10,22,40,.65)
   }}
   html{height:100%;background:var(--bg)}
   body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px}
@@ -110,7 +110,8 @@
   .handle{width:40px;height:4px;background:var(--bdr);border-radius:2px;margin:8px auto 24px}
   .sheet-title{font-family:'Phudu',sans-serif;font-size:24px;font-weight:700;margin-bottom:24px;background:linear-gradient(135deg,var(--ha) 40%,var(--hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
   .field{margin-bottom:16px}
-  .field label{display:block;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--txm);margin-bottom:8px}
+  .field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--txm);margin-bottom:8px}
+  @media(prefers-color-scheme:light){.field label{color:var(--tx)}}
   .field input,.field select{width:100%;padding:14px 16px;background:var(--surf);-webkit-appearance:none;appearance:none;border:1px solid var(--bdr);border-radius:var(--rsm);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark}
   .field input:focus,.field select:focus{border-color:var(--ice);box-shadow:0 0 0 3px var(--glow);background:rgba(79,195,247,.05)}
   .field select option{background:var(--modal);color:var(--tx)}
@@ -135,6 +136,16 @@
   .bc-sub{font-size:12px;color:var(--txm);margin-top:3px}
   .pro-badge{font-size:9px;font-family:'DM Sans',sans-serif;background:var(--amber);color:#0a1628;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
   .meal-wrap{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .meal-filter{display:flex;gap:8px;margin-bottom:16px}
+  .mf-pill{flex:1;padding:8px 10px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:var(--surf);color:var(--txm);text-align:center;touch-action:manipulation;transition:all .2s;user-select:none;-webkit-user-select:none}
+  .mf-pill.active{font-weight:600}
+  .mf-pill.all.active{background:var(--ice);color:#0a1628;border-color:var(--ice);box-shadow:0 0 12px var(--glow)}
+  .mf-pill.meat.active{background:rgba(255,112,67,.15);color:var(--coral);border-color:rgba(255,112,67,.4)}
+  .mf-pill.veg.active{background:rgba(102,187,106,.15);color:var(--green);border-color:rgba(102,187,106,.4)}
+  @media(prefers-color-scheme:light){
+    .mf-pill.meat.active{background:rgba(255,112,67,.12);color:#c0391a;border-color:rgba(255,112,67,.5)}
+    .mf-pill.veg.active{background:rgba(102,187,106,.12);color:#2e7d32;border-color:rgba(102,187,106,.5)}
+  }
   .meal-top{font-size:12px;color:var(--txm);margin-bottom:14px;text-align:center}
   .rc{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:14px 16px;margin-bottom:10px}
   .rc-head{display:flex;align-items:center;gap:10px;margin-bottom:7px}
@@ -144,14 +155,38 @@
   .rc-desc{font-size:13px;color:var(--txm);line-height:1.6;margin-bottom:8px}
   .rc-chips{display:flex;flex-wrap:wrap;gap:6px}
   .rc-chip{font-size:11px;background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.18);color:var(--ice);padding:3px 9px;border-radius:100px}
-  @media(prefers-color-scheme:light){.rc-chip{color:var(--ice-dark)}}
+  @media(prefers-color-scheme:light){.rc-chip{background:rgba(2,136,209,.1);border-color:rgba(2,136,209,.3);color:var(--ice-dark)}}
+  .rc-chip.urgent{background:rgba(255,112,67,.1);border-color:rgba(255,112,67,.25);color:var(--coral)}
+  @media(prefers-color-scheme:light){.rc-chip.urgent{background:rgba(255,112,67,.12);color:var(--coral)}}
   .pro-up{text-align:center;padding:8px 0 4px}
   .pro-ico{font-size:52px;margin-bottom:16px}
   .pro-ttl{font-family:'Phudu',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px;color:var(--tx)}
-  .pro-desc{font-size:14px;color:var(--txm);line-height:1.6;max-width:260px;margin:0 auto 24px}
+  .pro-desc{font-size:14px;color:var(--txm);line-height:1.6;max-width:260px;margin:0 auto 20px}
   .btn-upgrade{width:100%;padding:16px;background:linear-gradient(135deg,#FFB300,#e65100);border:none;border-radius:var(--rsm);color:#fff;font-family:'Phudu',sans-serif;font-size:18px;font-weight:700;cursor:pointer;touch-action:manipulation}
   .btn-upgrade:active{opacity:.9;transform:scale(.98)}
-  .pro-fn{font-size:12px;color:var(--txm);margin-top:10px}
+  .pro-fn{font-size:12px;color:var(--txm);margin-top:10px;margin-bottom:4px}
+  .pro-divider{display:flex;align-items:center;gap:10px;margin:16px 0}
+  .pro-divider::before,.pro-divider::after{content:'';flex:1;height:1px;background:var(--bdr)}
+  .pro-divider span{font-size:11px;color:var(--txm);white-space:nowrap}
+  .pro-code-toggle{font-size:13px;color:var(--ice);cursor:pointer;touch-action:manipulation;text-align:center;display:block;padding:4px;text-decoration:underline;text-underline-offset:3px}
+  @media(prefers-color-scheme:light){.pro-code-toggle{color:var(--ice-dark)}}
+  .pro-code-wrap{margin-top:12px;overflow:hidden;max-height:0;transition:max-height .35s ease}
+  .pro-code-wrap.open{max-height:80px}
+  .pro-code-row{display:flex;gap:8px}
+  .pro-code-row input{flex:1;padding:12px 14px;background:var(--surf);-webkit-appearance:none;appearance:none;border:1px solid var(--bdr);border-radius:var(--rsm);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark}
+  .pro-code-row input:focus{border-color:var(--ice);box-shadow:0 0 0 3px var(--glow)}
+  .btn-code-go{width:50px;height:50px;border-radius:var(--rsm);background:linear-gradient(135deg,var(--ice),var(--ice-dark));border:none;color:#0a1628;font-size:22px;cursor:pointer;flex-shrink:0;touch-action:manipulation;display:flex;align-items:center;justify-content:center}
+  .btn-code-go:active{opacity:.88;transform:scale(.95)}
+  .scan-unlocked-note{font-size:12px;color:var(--green);text-align:center;margin-top:6px;display:none}
+  .scan-unlocked-note.show{display:block}
+  /* scan button appearance based on pro status */
+  #b-scan.unlocked .pro-badge{display:none}
+  #b-scan.unlocked .bc-lock{display:none}
+  #b-scan.unlocked{border-color:var(--bdri)}
+  /* scan loading state */
+  .cam-loading{position:absolute;inset:0;background:rgba(3,13,26,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5}
+  .cam-loading p{font-size:14px;color:var(--txm);text-align:center;max-width:220px}
+  .cam-spinner{width:40px;height:40px;border:2px solid var(--bdr);border-top-color:var(--ice);border-radius:50%;animation:spin .8s linear infinite}
   #cam-overlay{display:none;position:fixed;inset:0;background:#000;z-index:200;flex-direction:column;align-items:center;justify-content:center}
   #cam-overlay.open{display:flex}
   #video{width:100%;max-width:430px}
@@ -298,6 +333,11 @@
   <div class="sheet">
     <div class="handle"></div>
     <div class="sheet-title">🍽️ Meal Ideas</div>
+    <div class="meal-filter">
+      <div class="mf-pill all active" data-mf="all">🍽️ All</div>
+      <div class="mf-pill meat" data-mf="meat">🥩 With meat</div>
+      <div class="mf-pill veg" data-mf="veg">🥗 No meat</div>
+    </div>
     <div class="meal-wrap" id="meal-content"></div>
   </div>
 </div>
@@ -442,6 +482,7 @@ const COMMON=[
 ];
 let items=[];try{items=JSON.parse(localStorage.getItem('frostly_items')||'[]');}catch{}
 let filter='all';
+let meatFilter='all'; // 'all' | 'meat' | 'veg'
 function save(){try{localStorage.setItem('frostly_items',JSON.stringify(items));}catch{}}
 function daysLeft(item){try{const a=new Date(item.dateAdded);const e=new Date(a.getTime()+getExp(item)*86400000);return Math.ceil((e-Date.now())/86400000);}catch{return 999;}}
 function urg(d){return d<=14?'urgent':d<=45?'soon':'good';}
@@ -449,7 +490,19 @@ function expLabel(d){if(d<0)return 'Expired!';if(d===0)return 'Expires today!';i
 function matchRecipes(){
   if(!items.length)return[];
   const pool=items.map(i=>({...i,d:daysLeft(i),nl:i.name.toLowerCase(),sc:urg(daysLeft(i))==='urgent'?30:urg(daysLeft(i))==='soon'?12:2}));
-  const scored=RECIPES.map(r=>{
+
+  // Apply meat filter before scoring
+  const MEAT_CATS=['meat','fish'];
+  let recipes=RECIPES;
+  if(meatFilter==='meat'){
+    // must include at least one meat or fish category
+    recipes=RECIPES.filter(r=>r.c.some(cat=>MEAT_CATS.includes(cat)));
+  } else if(meatFilter==='veg'){
+    // must NOT include meat or fish in categories
+    recipes=RECIPES.filter(r=>!r.c.some(cat=>MEAT_CATS.includes(cat)));
+  }
+
+  const scored=recipes.map(r=>{
     let pts=0;const used=new Map();
     r.k.forEach(kw=>pool.forEach(item=>{if(item.nl.includes(kw)||kw.includes(item.nl.split(' ')[0])){if(!used.has(item.id)){pts+=12+item.sc;used.set(item.id,item);}}}));
     r.c.forEach(cat=>pool.forEach(item=>{if(item.category===cat&&!used.has(item.id)){pts+=2+item.sc*.15;used.set(item.id,item);}}));
@@ -458,9 +511,15 @@ function matchRecipes(){
   return scored.filter(r=>r.pts>8).sort((a,b)=>b.pts-a.pts).slice(0,8);
 }
 function mealHTML(list){
-  if(!list.length)return'<p style="color:var(--txm);text-align:center;padding:24px 0;font-size:13px">Add more items to get ideas!</p>';
-  const info=`<div class="meal-top">Based on ${items.length} item${items.length!==1?'s':''} — soonest-expiring prioritised</div>`;
-  return info+list.map(r=>`<div class="rc"><div class="rc-head"><span class="rc-emo">${r.e}</span><div><div class="rc-name">${r.n}</div><div class="rc-time">⏱ ${r.t}</div></div></div><div class="rc-desc">${r.d}</div><div class="rc-chips">${r.used.slice(0,5).map(item=>`<span class="rc-chip">${EMO[item.category]||'📦'} ${item.name}${item.d<=14?' ⚠️':''}</span>`).join('')}</div></div>`).join('');
+  const filterLabel=meatFilter==='meat'?' (with meat)':meatFilter==='veg'?' (no meat)':'';
+  if(!list.length){
+    const hint=meatFilter!=='all'
+      ? `No recipes found${filterLabel} matching your current items. Try switching to "All".`
+      : 'Add more items to get ideas!';
+    return`<p style="color:var(--txm);text-align:center;padding:24px 0;font-size:13px">${hint}</p>`;
+  }
+  const info=`<div class="meal-top">Based on ${items.length} item${items.length!==1?'s':''}${filterLabel} — soonest-expiring prioritised</div>`;
+  return info+list.map(r=>`<div class="rc"><div class="rc-head"><span class="rc-emo">${r.e}</span><div><div class="rc-name">${r.n}</div><div class="rc-time">⏱ ${r.t}</div></div></div><div class="rc-desc">${r.d}</div><div class="rc-chips">${r.used.slice(0,5).map(item=>`<span class="rc-chip${item.d<=14?' urgent':''}">${EMO[item.category]||'📦'} ${item.name}${item.d<=14?' ⚠️':''}</span>`).join('')}</div></div>`).join('');
 }
 function render(){
   let shown=[...items];
@@ -527,9 +586,25 @@ document.querySelectorAll('.tab').forEach(tab=>{
 });
 document.getElementById('btn-meal').addEventListener('click',()=>{
   if(!items.length){toast('Add some items first!');return;}
+  // Reset filter to 'all' each time modal opens
+  meatFilter='all';
+  document.querySelectorAll('.mf-pill').forEach(p=>{
+    p.classList.toggle('active', p.dataset.mf==='all');
+  });
   const mc=document.getElementById('meal-content');
   if(mc)mc.innerHTML=mealHTML(matchRecipes());
   openM('m-meal');
+});
+
+// Meal filter pill clicks
+document.querySelectorAll('.mf-pill').forEach(pill=>{
+  pill.addEventListener('click',()=>{
+    meatFilter=pill.dataset.mf;
+    document.querySelectorAll('.mf-pill').forEach(p=>p.classList.remove('active'));
+    pill.classList.add('active');
+    const mc=document.getElementById('meal-content');
+    if(mc)mc.innerHTML=mealHTML(matchRecipes());
+  });
 });
 let acTimer=null,acData=[];
 function showAC(list){
