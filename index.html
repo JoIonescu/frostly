@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -290,7 +291,7 @@
     <button class="btn-choice" id="b-scan">
       <span class="bc-ico">📷</span>
       <div class="bc-tx"><div class="bc-lbl">Scan Barcode <span class="pro-badge">PRO</span></div><div class="bc-sub">Auto-fill from product database</div></div>
-      <span style="font-size:16px;color:var(--txm)">🔒</span>
+      <span class="bc-lock" style="font-size:16px;color:var(--txm)">🔒</span>
     </button>
   </div>
 </div>
@@ -347,9 +348,18 @@
     <div class="pro-up">
       <div class="pro-ico">📷</div>
       <div class="pro-ttl">Unlock Barcode Scan</div>
-      <div class="pro-desc">Point your camera at any barcode. Frostly looks it up and fills everything in automatically.</div>
-      <button class="btn-upgrade" id="btn-upgrade">Upgrade to Pro — $2.99</button>
-      <div class="pro-fn">One-time purchase. No subscription.</div>
+      <div class="pro-desc">Point your camera at any product barcode. Frostly looks it up in Open Food Facts and fills everything in automatically.</div>
+      <button class="btn-upgrade" id="btn-upgrade">Unlock for $2.99 →</button>
+      <div class="pro-fn">One-time purchase · No subscription · Instant unlock</div>
+      <div class="pro-divider"><span>already purchased?</span></div>
+      <span class="pro-code-toggle" id="btn-show-code">Enter unlock code</span>
+      <div class="pro-code-wrap" id="pro-code-wrap">
+        <div class="pro-code-row">
+          <input type="text" id="pro-code-input" placeholder="FROSTLY-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false"/>
+          <button class="btn-code-go" id="btn-code-go">→</button>
+        </div>
+        <div class="scan-unlocked-note" id="code-feedback"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -361,6 +371,11 @@
       <div class="cam-lbl">Align barcode within the frame</div>
       <button class="btn-cam-close" id="btn-cam-close">Cancel</button>
     </div>
+  </div>
+  <!-- Loading overlay while camera initialises -->
+  <div class="cam-loading" id="cam-loading">
+    <div class="cam-spinner"></div>
+    <p>Starting camera…</p>
   </div>
 </div>
 <script>
@@ -491,196 +506,432 @@ function matchRecipes(){
   if(!items.length)return[];
   const pool=items.map(i=>({...i,d:daysLeft(i),nl:i.name.toLowerCase(),sc:urg(daysLeft(i))==='urgent'?30:urg(daysLeft(i))==='soon'?12:2}));
 
-  // Apply meat filter before scoring
-  const MEAT_CATS=['meat','fish'];
-  let recipes=RECIPES;
-  if(meatFilter==='meat'){
-    // must include at least one meat or fish category
-    recipes=RECIPES.filter(r=>r.c.some(cat=>MEAT_CATS.includes(cat)));
-  } else if(meatFilter==='veg'){
-    // must NOT include meat or fish in categories
-    recipes=RECIPES.filter(r=>!r.c.some(cat=>MEAT_CATS.includes(cat)));
-  }
+// Apply meat filter before scoring
+const MEAT_CATS=[‘meat’,‘fish’];
+let recipes=RECIPES;
+if(meatFilter===‘meat’){
+// must include at least one meat or fish category
+recipes=RECIPES.filter(r=>r.c.some(cat=>MEAT_CATS.includes(cat)));
+} else if(meatFilter===‘veg’){
+// must NOT include meat or fish in categories
+recipes=RECIPES.filter(r=>!r.c.some(cat=>MEAT_CATS.includes(cat)));
+}
 
-  const scored=recipes.map(r=>{
-    let pts=0;const used=new Map();
-    r.k.forEach(kw=>pool.forEach(item=>{if(item.nl.includes(kw)||kw.includes(item.nl.split(' ')[0])){if(!used.has(item.id)){pts+=12+item.sc;used.set(item.id,item);}}}));
-    r.c.forEach(cat=>pool.forEach(item=>{if(item.category===cat&&!used.has(item.id)){pts+=2+item.sc*.15;used.set(item.id,item);}}));
-    return{...r,pts,used:[...used.values()]};
-  });
-  return scored.filter(r=>r.pts>8).sort((a,b)=>b.pts-a.pts).slice(0,8);
+const scored=recipes.map(r=>{
+let pts=0;const used=new Map();
+r.k.forEach(kw=>pool.forEach(item=>{if(item.nl.includes(kw)||kw.includes(item.nl.split(’ ‘)[0])){if(!used.has(item.id)){pts+=12+item.sc;used.set(item.id,item);}}}));
+r.c.forEach(cat=>pool.forEach(item=>{if(item.category===cat&&!used.has(item.id)){pts+=2+item.sc*.15;used.set(item.id,item);}}));
+return{…r,pts,used:[…used.values()]};
+});
+return scored.filter(r=>r.pts>8).sort((a,b)=>b.pts-a.pts).slice(0,8);
 }
 function mealHTML(list){
-  const filterLabel=meatFilter==='meat'?' (with meat)':meatFilter==='veg'?' (no meat)':'';
-  if(!list.length){
-    const hint=meatFilter!=='all'
-      ? `No recipes found${filterLabel} matching your current items. Try switching to "All".`
-      : 'Add more items to get ideas!';
-    return`<p style="color:var(--txm);text-align:center;padding:24px 0;font-size:13px">${hint}</p>`;
-  }
-  const info=`<div class="meal-top">Based on ${items.length} item${items.length!==1?'s':''}${filterLabel} — soonest-expiring prioritised</div>`;
-  return info+list.map(r=>`<div class="rc"><div class="rc-head"><span class="rc-emo">${r.e}</span><div><div class="rc-name">${r.n}</div><div class="rc-time">⏱ ${r.t}</div></div></div><div class="rc-desc">${r.d}</div><div class="rc-chips">${r.used.slice(0,5).map(item=>`<span class="rc-chip${item.d<=14?' urgent':''}">${EMO[item.category]||'📦'} ${item.name}${item.d<=14?' ⚠️':''}</span>`).join('')}</div></div>`).join('');
+const filterLabel=meatFilter===‘meat’?’ (with meat)’:meatFilter===‘veg’?’ (no meat)’:’’;
+if(!list.length){
+const hint=meatFilter!==‘all’
+? `No recipes found${filterLabel} matching your current items. Try switching to "All".`
+: ‘Add more items to get ideas!’;
+return`<p style="color:var(--txm);text-align:center;padding:24px 0;font-size:13px">${hint}</p>`;
+}
+const info=`<div class="meal-top">Based on ${items.length} item${items.length!==1?'s':''}${filterLabel} — soonest-expiring prioritised</div>`;
+return info+list.map(r=>`<div class="rc"><div class="rc-head"><span class="rc-emo">${r.e}</span><div><div class="rc-name">${r.n}</div><div class="rc-time">⏱ ${r.t}</div></div></div><div class="rc-desc">${r.d}</div><div class="rc-chips">${r.used.slice(0,5).map(item=>`<span class="rc-chip${item.d<=14?' urgent':''}">${EMO[item.category]||‘📦’} ${item.name}${item.d<=14?’ ⚠️’:’’}</span>`).join('')}</div></div>`).join(’’);
 }
 function render(){
-  let shown=[...items];
-  if(filter==='urgent')shown=items.filter(i=>urg(daysLeft(i))==='urgent');
-  else if(filter!=='all')shown=items.filter(i=>i.category===filter);
-  shown.sort((a,b)=>daysLeft(a)-daysLeft(b));
-  const su=document.getElementById('s-u'),ss=document.getElementById('s-s'),sg=document.getElementById('s-g');
-  if(su)su.textContent=items.filter(i=>urg(daysLeft(i))==='urgent').length;
-  if(ss)ss.textContent=items.filter(i=>urg(daysLeft(i))==='soon').length;
-  if(sg)sg.textContent=items.filter(i=>urg(daysLeft(i))==='good').length;
-  const list=document.getElementById('list'),empty=document.getElementById('empty');
-  if(!list||!empty)return;
-  list.querySelectorAll('.card').forEach(el=>el.remove());
-  if(!shown.length){empty.style.display='flex';return;}
-  empty.style.display='none';
-  shown.forEach((item,i)=>{
-    const d=daysLeft(item),u=urg(d),el=document.createElement('div');
-    el.className=`card ${u}`;el.style.animationDelay=`${i*.04}s`;
-    el.innerHTML=`<div class="card-ico">${EMO[item.category]||'📦'}</div><div class="card-info"><div class="card-name">${item.name}</div><div class="card-meta"><span class="card-qty">${item.quantity||'—'}</span><div class="card-dot"></div><span class="card-exp">${expLabel(d)}</span></div></div><button class="card-del" data-id="${item.id}">✕</button>`;
-    list.appendChild(el);
-  });
-  list.querySelectorAll('.card-del').forEach(btn=>{
-    btn.addEventListener('click',e=>{e.stopPropagation();items=items.filter(i=>i.id!==btn.dataset.id);save();toast('Item removed');render();});
+let shown=[…items];
+if(filter===‘urgent’)shown=items.filter(i=>urg(daysLeft(i))===‘urgent’);
+else if(filter!==‘all’)shown=items.filter(i=>i.category===filter);
+shown.sort((a,b)=>daysLeft(a)-daysLeft(b));
+const su=document.getElementById(‘s-u’),ss=document.getElementById(‘s-s’),sg=document.getElementById(‘s-g’);
+if(su)su.textContent=items.filter(i=>urg(daysLeft(i))===‘urgent’).length;
+if(ss)ss.textContent=items.filter(i=>urg(daysLeft(i))===‘soon’).length;
+if(sg)sg.textContent=items.filter(i=>urg(daysLeft(i))===‘good’).length;
+const list=document.getElementById(‘list’),empty=document.getElementById(‘empty’);
+if(!list||!empty)return;
+list.querySelectorAll(’.card’).forEach(el=>el.remove());
+if(!shown.length){empty.style.display=‘flex’;return;}
+empty.style.display=‘none’;
+shown.forEach((item,i)=>{
+const d=daysLeft(item),u=urg(d),el=document.createElement(‘div’);
+el.className=`card ${u}`;el.style.animationDelay=`${i*.04}s`;
+el.innerHTML=`<div class="card-ico">${EMO[item.category]||'📦'}</div><div class="card-info"><div class="card-name">${item.name}</div><div class="card-meta"><span class="card-qty">${item.quantity||'—'}</span><div class="card-dot"></div><span class="card-exp">${expLabel(d)}</span></div></div><button class="card-del" data-id="${item.id}">✕</button>`;
+list.appendChild(el);
+});
+list.querySelectorAll(’.card-del’).forEach(btn=>{
+btn.addEventListener(‘click’,e=>{e.stopPropagation();items=items.filter(i=>i.id!==btn.dataset.id);save();toast(‘Item removed’);render();});
+});
+}
+function openM(id){const el=document.getElementById(id);if(el)el.classList.add(‘open’);}
+function closeM(id){const el=document.getElementById(id);if(el)el.classList.remove(‘open’);if(id===‘m-add’)closeAC();}
+[‘m-choice’,‘m-add’,‘m-meal’,‘m-pro’].forEach(id=>{
+const el=document.getElementById(id);
+if(el)el.addEventListener(‘click’,e=>{if(e.target===el)closeM(id);});
+});
+document.getElementById(‘btn-add’).addEventListener(‘click’,()=>openM(‘m-choice’));
+document.getElementById(‘b-manual’).addEventListener(‘click’,()=>{
+closeM(‘m-choice’);
+setTimeout(()=>{
+const today=new Date().toISOString().split(‘T’)[0];
+const fn=document.getElementById(‘f-name’),fd=document.getElementById(‘f-date’),fq=document.getElementById(‘f-qty’),fc=document.getElementById(‘f-cat’);
+if(fn)fn.value=’’;if(fd)fd.value=today;if(fq)fq.value=’’;if(fc)fc.value=‘meat’;
+closeAC();openM(‘m-add’);
+setTimeout(()=>{if(fn)fn.focus();},380);
+},320);
+});
+document.getElementById(‘b-scan’).addEventListener(‘click’,()=>{
+closeM(‘m-choice’);
+const pro=localStorage.getItem(‘frostly_pro’)===‘true’;
+setTimeout(()=>pro?startScan():openM(‘m-pro’),320);
+});
+// ── PRO STATUS ───────────────────────────────────────────
+// Valid codes — in production these would be verified server-side.
+// Each code is a SHA-256 prefix of “FROSTLY-” + a secret salt.
+// For now we use a fixed set you can hand out after Stripe payment.
+const VALID_CODES = [
+‘FROSTLY-2C4A-9F1B’,
+‘FROSTLY-7E3D-5A82’,
+‘FROSTLY-B1F6-4D0C’,
+‘FROSTLY-A3E8-2B19’,
+‘FROSTLY-5C7F-8E4D’,
+‘FROSTLY-9D2A-1F63’,
+‘FROSTLY-3B8E-6C5A’,
+‘FROSTLY-F4D1-7A2E’,
+‘FROSTLY-6E9C-0B3F’,
+‘FROSTLY-1A5D-8F7C’,
+];
+
+function isPro(){
+// Re-validate the stored code on every load — more resilient than trusting a bare flag
+const stored = localStorage.getItem(‘frostly_pro_code’);
+if(stored && VALID_CODES.includes(stored)) return true;
+// Legacy: support bare ‘true’ flag from older versions
+return localStorage.getItem(‘frostly_pro’) === ‘true’;
+}
+
+function unlockPro(code){
+localStorage.setItem(‘frostly_pro’,‘true’);
+if(code) localStorage.setItem(‘frostly_pro_code’, code.toUpperCase());
+// Update scan button to unlocked state
+const btn = document.getElementById(‘b-scan’);
+if(btn){
+btn.classList.add(‘unlocked’);
+const lbl = btn.querySelector(’.bc-lbl’);
+if(lbl) lbl.innerHTML = ‘Scan Barcode <span style="font-size:10px;color:var(--green);background:rgba(102,187,106,.15);border:1px solid rgba(102,187,106,.3);padding:2px 7px;border-radius:4px;font-family:\'DM Sans\',sans-serif;font-weight:700">UNLOCKED</span>’;
+const sub = btn.querySelector(’.bc-sub’);
+if(sub) sub.textContent = ‘Tap to scan any product barcode’;
+}
+}
+
+// Apply pro state on load
+if(isPro()) unlockPro();
+
+// ── STRIPE BUTTON ────────────────────────────────────────
+// Replace the href below with your real Stripe payment link.
+// After payment, Stripe can redirect to frostlyme.vercel.app?unlocked=CODE
+// and you auto-unlock from the URL param (see bottom of this block).
+document.getElementById(‘btn-upgrade’).addEventListener(‘click’,()=>{
+// TEMP: no Stripe yet — open placeholder. Replace with:
+// window.location.href = ‘https://buy.stripe.com/YOUR_LINK’;
+toast(‘Stripe link coming — use an unlock code below for now’);
+// Show the code field automatically
+const wrap = document.getElementById(‘pro-code-wrap’);
+if(wrap && !wrap.classList.contains(‘open’)){
+wrap.classList.add(‘open’);
+setTimeout(()=>document.getElementById(‘pro-code-input’)?.focus(),200);
+}
+});
+
+// ── UNLOCK CODE TOGGLE ───────────────────────────────────
+document.getElementById(‘btn-show-code’).addEventListener(‘click’,()=>{
+const wrap = document.getElementById(‘pro-code-wrap’);
+if(!wrap) return;
+wrap.classList.toggle(‘open’);
+if(wrap.classList.contains(‘open’)){
+setTimeout(()=>document.getElementById(‘pro-code-input’)?.focus(),200);
+}
+});
+
+// ── UNLOCK CODE VALIDATION ───────────────────────────────
+function tryUnlockCode(){
+const input = document.getElementById(‘pro-code-input’);
+const feedback = document.getElementById(‘code-feedback’);
+if(!input || !feedback) return;
+
+const code = input.value.trim().toUpperCase();
+if(!code){ input.focus(); return; }
+
+// Check against valid codes
+// In production: POST to /api/verify-code and check server-side
+const usedCodes = JSON.parse(localStorage.getItem(‘frostly_used_codes’) || ‘[]’);
+
+if(!VALID_CODES.includes(code)){
+input.style.borderColor = ‘var(–coral)’;
+feedback.textContent = ‘✗  Invalid code — check and try again’;
+feedback.style.color = ‘var(–coral)’;
+feedback.classList.add(‘show’);
+setTimeout(()=>{ input.style.borderColor=’’; },1600);
+return;
+}
+
+if(usedCodes.includes(code)){
+input.style.borderColor = ‘var(–amber)’;
+feedback.textContent = ‘⚠️  Code already used on this device’;
+feedback.style.color = ‘var(–amber)’;
+feedback.classList.add(‘show’);
+setTimeout(()=>{ input.style.borderColor=’’; },1600);
+return;
+}
+
+// Valid and unused — unlock
+usedCodes.push(code);
+localStorage.setItem(‘frostly_used_codes’, JSON.stringify(usedCodes));
+unlockPro();
+
+feedback.textContent = ‘✅  Barcode scan unlocked!’;
+feedback.style.color = ‘var(–green)’;
+feedback.classList.add(‘show’);
+
+setTimeout(()=>{
+closeM(‘m-pro’);
+toast(‘📷 Barcode scan unlocked — tap Scan Barcode!’);
+}, 900);
+}
+
+document.getElementById(‘btn-code-go’).addEventListener(‘click’, tryUnlockCode);
+document.getElementById(‘pro-code-input’)?.addEventListener(‘keydown’, e=>{
+if(e.key === ‘Enter’){ e.preventDefault(); tryUnlockCode(); }
+});
+
+// ── AUTO-UNLOCK FROM URL PARAM ───────────────────────────
+// After Stripe redirects back with ?unlocked=CODE in the URL
+(function checkUrlUnlock(){
+const params = new URLSearchParams(window.location.search);
+const code = params.get(‘unlocked’);
+if(code && VALID_CODES.includes(code.toUpperCase()) && !isPro()){
+unlockPro();
+toast(‘📷 Barcode scan unlocked — welcome to Pro!’);
+// Clean the URL so the code doesn’t stay visible
+window.history.replaceState({}, ‘’, window.location.pathname);
+}
+})();
+
+// ── SCAN BUTTON CLICK ────────────────────────────────────
+document.getElementById(‘b-scan’).addEventListener(‘click’,()=>{
+closeM(‘m-choice’);
+if(isPro()){
+setTimeout(()=>startScan(), 320);
+} else {
+setTimeout(()=>openM(‘m-pro’), 320);
+}
+});
+
+// ── CAMERA / SCAN ────────────────────────────────────────
+let camStream = null;
+let codeReader = null;
+
+async function startScan(){
+const overlay  = document.getElementById(‘cam-overlay’);
+const loading  = document.getElementById(‘cam-loading’);
+const loadingP = loading?.querySelector(‘p’);
+
+// Show overlay immediately with loading state
+if(overlay) overlay.classList.add(‘open’);
+if(loading) loading.style.display = ‘flex’;
+
+try {
+// 1 — Request camera (rear-facing preferred)
+camStream = await navigator.mediaDevices.getUserMedia({
+video: { facingMode: { ideal: ‘environment’ }, width: { ideal: 1280 } }
+});
+
+```
+const video = document.getElementById('video');
+video.srcObject = camStream;
+
+// 2 — Load ZXing from CDN if not already loaded
+if(!window.ZXing){
+  if(loadingP) loadingP.textContent = 'Loading scanner…';
+  await new Promise((res, rej)=>{
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';
+    s.onload = res;
+    s.onerror = ()=> rej(new Error('Could not load barcode scanner'));
+    document.head.appendChild(s);
   });
 }
-function openM(id){const el=document.getElementById(id);if(el)el.classList.add('open');}
-function closeM(id){const el=document.getElementById(id);if(el)el.classList.remove('open');if(id==='m-add')closeAC();}
-['m-choice','m-add','m-meal','m-pro'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el)el.addEventListener('click',e=>{if(e.target===el)closeM(id);});
+
+// 3 — Wait for video to be playing before decoding
+await new Promise(res => {
+  if(video.readyState >= 2){ res(); return; }
+  video.addEventListener('canplay', res, { once: true });
 });
-document.getElementById('btn-add').addEventListener('click',()=>openM('m-choice'));
-document.getElementById('b-manual').addEventListener('click',()=>{
-  closeM('m-choice');
-  setTimeout(()=>{
-    const today=new Date().toISOString().split('T')[0];
-    const fn=document.getElementById('f-name'),fd=document.getElementById('f-date'),fq=document.getElementById('f-qty'),fc=document.getElementById('f-cat');
-    if(fn)fn.value='';if(fd)fd.value=today;if(fq)fq.value='';if(fc)fc.value='meat';
-    closeAC();openM('m-add');
-    setTimeout(()=>{if(fn)fn.focus();},380);
-  },320);
+
+// Hide loading spinner — camera is live
+if(loading) loading.style.display = 'none';
+
+// 4 — Start decoding
+codeReader = new ZXing.BrowserMultiFormatReader();
+codeReader.decodeFromVideoDevice(null, video, async (result, err) => {
+  // err fires on every frame that doesn't contain a barcode — that's normal, ignore it
+  if(!result) return;
+
+  const barcode = result.getText();
+  codeReader.reset();
+  closeCamera();
+  toast('🔍 Looking up product…');
+
+  try {
+    const res = await fetch(
+      `https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(barcode)}.json`
+    );
+    const data = await res.json();
+
+    // Pre-fill the add form
+    const fn = document.getElementById('f-name');
+    const fc = document.getElementById('f-cat');
+    const fd = document.getElementById('f-date');
+    const fq = document.getElementById('f-qty');
+
+    if(fd) fd.value = new Date().toISOString().split('T')[0];
+    if(fq) fq.value = '';
+
+    if(data.status === 1 && data.product?.product_name){
+      const name = data.product.product_name;
+      const cats = (data.product.categories_tags || []).join(' ').toLowerCase();
+
+      let cat = 'other';
+      if(cats.match(/meat|poultry|beef|pork|chicken|turkey|lamb/)) cat = 'meat';
+      else if(cats.match(/fish|seafood|shrimp|salmon|prawn/))       cat = 'fish';
+      else if(cats.match(/vegetable|vegetable|fruit|frozen.veg/))   cat = 'vegetable';
+      else if(cats.match(/dairy|cheese|milk|yogurt|butter/))        cat = 'dairy';
+      else if(cats.match(/meal|prepared|pizza|ready|frozen.meal/))  cat = 'prepared';
+
+      if(fn) fn.value = name;
+      if(fc) fc.value = cat;
+      openM('m-add');
+      toast(`✅ Found: ${name}`);
+    } else {
+      // Barcode scanned but product not in Open Food Facts
+      if(fn) fn.value = '';
+      if(fc) fc.value = 'other';
+      openM('m-add');
+      toast('Product not found — enter name manually');
+    }
+  } catch {
+    openM('m-add');
+    toast('Lookup failed — enter name manually');
+  }
 });
-document.getElementById('b-scan').addEventListener('click',()=>{
-  closeM('m-choice');
-  const pro=localStorage.getItem('frostly_pro')==='true';
-  setTimeout(()=>pro?startScan():openM('m-pro'),320);
+```
+
+} catch(err) {
+closeCamera();
+
+```
+// Specific error messages for each camera failure mode
+if(err.name === 'NotAllowedError'){
+  toast('Camera access denied — check your browser settings');
+} else if(err.name === 'NotFoundError'){
+  toast('No camera found on this device');
+} else if(err.name === 'NotReadableError'){
+  toast('Camera in use by another app');
+} else if(err.message?.includes('Could not load')){
+  toast('Scanner failed to load — check your connection');
+} else {
+  toast('Could not start camera');
+}
+```
+
+}
+}
+
+function closeCamera(){
+const overlay = document.getElementById(‘cam-overlay’);
+const loading = document.getElementById(‘cam-loading’);
+if(overlay) overlay.classList.remove(‘open’);
+if(loading) loading.style.display = ‘none’;
+if(codeReader){ try{ codeReader.reset(); }catch{} codeReader = null; }
+if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+}
+
+document.getElementById(‘btn-cam-close’).addEventListener(‘click’, closeCamera);
+
+document.getElementById(‘btn-submit’).addEventListener(‘click’,function(){
+const fn=document.getElementById(‘f-name’),fc=document.getElementById(‘f-cat’),fq=document.getElementById(‘f-qty’),fd=document.getElementById(‘f-date’);
+const name=fn?fn.value.trim():’’;
+if(!name){if(fn){fn.style.borderColor=‘var(–coral)’;fn.focus();setTimeout(()=>{fn.style.borderColor=’’;},1600);}return;}
+const today=new Date().toISOString().split(‘T’)[0];
+items.unshift({id:Date.now().toString(),name,category:fc?fc.value:‘other’,quantity:fq?fq.value.trim():’’,dateAdded:(fd&&fd.value)?fd.value:today});
+save();closeM(‘m-add’);toast(‘❄️ Added to freezer!’);render();
 });
-document.getElementById('btn-upgrade').addEventListener('click',()=>toast('Stripe integration coming soon!'));
-document.getElementById('btn-submit').addEventListener('click',function(){
-  const fn=document.getElementById('f-name'),fc=document.getElementById('f-cat'),fq=document.getElementById('f-qty'),fd=document.getElementById('f-date');
-  const name=fn?fn.value.trim():'';
-  if(!name){if(fn){fn.style.borderColor='var(--coral)';fn.focus();setTimeout(()=>{fn.style.borderColor='';},1600);}return;}
-  const today=new Date().toISOString().split('T')[0];
-  items.unshift({id:Date.now().toString(),name,category:fc?fc.value:'other',quantity:fq?fq.value.trim():'',dateAdded:(fd&&fd.value)?fd.value:today});
-  save();closeM('m-add');toast('❄️ Added to freezer!');render();
+const fnEl=document.getElementById(‘f-name’);
+if(fnEl)fnEl.addEventListener(‘keydown’,e=>{if(e.key===‘Enter’){e.preventDefault();document.getElementById(‘btn-submit’).click();}});
+document.querySelectorAll(’.tab’).forEach(tab=>{
+tab.addEventListener(‘click’,()=>{
+document.querySelectorAll(’.tab’).forEach(t=>t.classList.remove(‘active’));
+tab.classList.add(‘active’);filter=tab.dataset.f;render();
 });
-const fnEl=document.getElementById('f-name');
-if(fnEl)fnEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('btn-submit').click();}});
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');filter=tab.dataset.f;render();
-  });
 });
-document.getElementById('btn-meal').addEventListener('click',()=>{
-  if(!items.length){toast('Add some items first!');return;}
-  // Reset filter to 'all' each time modal opens
-  meatFilter='all';
-  document.querySelectorAll('.mf-pill').forEach(p=>{
-    p.classList.toggle('active', p.dataset.mf==='all');
-  });
-  const mc=document.getElementById('meal-content');
-  if(mc)mc.innerHTML=mealHTML(matchRecipes());
-  openM('m-meal');
+document.getElementById(‘btn-meal’).addEventListener(‘click’,()=>{
+if(!items.length){toast(‘Add some items first!’);return;}
+// Reset filter to ‘all’ each time modal opens
+meatFilter=‘all’;
+document.querySelectorAll(’.mf-pill’).forEach(p=>{
+p.classList.toggle(‘active’, p.dataset.mf===‘all’);
+});
+const mc=document.getElementById(‘meal-content’);
+if(mc)mc.innerHTML=mealHTML(matchRecipes());
+openM(‘m-meal’);
 });
 
 // Meal filter pill clicks
-document.querySelectorAll('.mf-pill').forEach(pill=>{
-  pill.addEventListener('click',()=>{
-    meatFilter=pill.dataset.mf;
-    document.querySelectorAll('.mf-pill').forEach(p=>p.classList.remove('active'));
-    pill.classList.add('active');
-    const mc=document.getElementById('meal-content');
-    if(mc)mc.innerHTML=mealHTML(matchRecipes());
-  });
+document.querySelectorAll(’.mf-pill’).forEach(pill=>{
+pill.addEventListener(‘click’,()=>{
+meatFilter=pill.dataset.mf;
+document.querySelectorAll(’.mf-pill’).forEach(p=>p.classList.remove(‘active’));
+pill.classList.add(‘active’);
+const mc=document.getElementById(‘meal-content’);
+if(mc)mc.innerHTML=mealHTML(matchRecipes());
+});
 });
 let acTimer=null,acData=[];
 function showAC(list){
-  const el=document.getElementById('ac');
-  if(!el||!list.length){closeAC();return;}
-  acData=list;
-  el.innerHTML=list.map((it,i)=>`<div class="ac-row" data-i="${i}"><span>${EMO[it.c]||'🍽️'}</span><span class="ac-name">${it.n}</span>${it.c?`<span class="ac-badge">${it.c}</span>`:''}</div>`).join('');
-  el.classList.add('open');
-  el.querySelectorAll('.ac-row').forEach(row=>{
-    row.addEventListener('mousedown',e=>e.preventDefault());
-    row.addEventListener('click',()=>{
-      const sel=acData[parseInt(row.dataset.i)];
-      const fn=document.getElementById('f-name'),fc=document.getElementById('f-cat');
-      if(fn)fn.value=sel.n;if(fc&&sel.c)fc.value=sel.c;closeAC();
-    });
-  });
+const el=document.getElementById(‘ac’);
+if(!el||!list.length){closeAC();return;}
+acData=list;
+el.innerHTML=list.map((it,i)=>`<div class="ac-row" data-i="${i}"><span>${EMO[it.c]||'🍽️'}</span><span class="ac-name">${it.n}</span>${it.c?`<span class="ac-badge">${it.c}</span>`:''}</div>`).join(’’);
+el.classList.add(‘open’);
+el.querySelectorAll(’.ac-row’).forEach(row=>{
+row.addEventListener(‘mousedown’,e=>e.preventDefault());
+row.addEventListener(‘click’,()=>{
+const sel=acData[parseInt(row.dataset.i)];
+const fn=document.getElementById(‘f-name’),fc=document.getElementById(‘f-cat’);
+if(fn)fn.value=sel.n;if(fc&&sel.c)fc.value=sel.c;closeAC();
+});
+});
 }
-function closeAC(){clearTimeout(acTimer);const el=document.getElementById('ac');if(el){el.classList.remove('open');el.innerHTML='';}acData=[];}
+function closeAC(){clearTimeout(acTimer);const el=document.getElementById(‘ac’);if(el){el.classList.remove(‘open’);el.innerHTML=’’;}acData=[];}
 if(fnEl){
-  fnEl.addEventListener('input',e=>{
-    const v=e.target.value.trim();if(!v){closeAC();return;}
-    const local=COMMON.filter(i=>i.n.toLowerCase().includes(v.toLowerCase())).slice(0,5);
-    showAC(local);clearTimeout(acTimer);
-    if(v.length>=3){acTimer=setTimeout(async()=>{try{const r=await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(v)}&json=1&page_size=6&search_simple=1&action=process`);const data=await r.json();const off=(data.products||[]).filter(p=>p.product_name&&p.product_name.trim()).map(p=>({n:p.product_name.trim(),c:null})).slice(0,4);const merged=[...local];off.forEach(o=>{if(!merged.find(m=>m.n.toLowerCase()===o.n.toLowerCase()))merged.push(o);});showAC(merged.slice(0,6));}catch{}},480);}
-  });
-  fnEl.addEventListener('blur',()=>setTimeout(closeAC,200));
+fnEl.addEventListener(‘input’,e=>{
+const v=e.target.value.trim();if(!v){closeAC();return;}
+const local=COMMON.filter(i=>i.n.toLowerCase().includes(v.toLowerCase())).slice(0,5);
+showAC(local);clearTimeout(acTimer);
+if(v.length>=3){acTimer=setTimeout(async()=>{try{const r=await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(v)}&json=1&page_size=6&search_simple=1&action=process`);const data=await r.json();const off=(data.products||[]).filter(p=>p.product_name&&p.product_name.trim()).map(p=>({n:p.product_name.trim(),c:null})).slice(0,4);const merged=[…local];off.forEach(o=>{if(!merged.find(m=>m.n.toLowerCase()===o.n.toLowerCase()))merged.push(o);});showAC(merged.slice(0,6));}catch{}},480);}
+});
+fnEl.addEventListener(‘blur’,()=>setTimeout(closeAC,200));
 }
-let camStream=null,codeReader=null;
-async function startScan(){
-  try{
-    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    document.getElementById('video').srcObject=camStream;
-    document.getElementById('cam-overlay').classList.add('open');
-    if(!window.ZXing){await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
-    codeReader=new ZXing.BrowserMultiFormatReader();
-    codeReader.decodeFromVideoDevice(null,document.getElementById('video'),async result=>{
-      if(!result)return;
-      const barcode=result.getText();codeReader.reset();closeCamera();toast('🔍 Looking up product…');
-      try{
-        const r=await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-        const data=await r.json();
-        if(data.status===1&&data.product?.product_name){
-          const name=data.product.product_name;
-          const cats=(data.product.categories_tags||[]).join(' ').toLowerCase();
-          let cat='other';
-          if(cats.match(/meat|poultry|beef|pork|chicken|turkey/))cat='meat';
-          else if(cats.match(/fish|seafood|shrimp|salmon/))cat='fish';
-          else if(cats.match(/vegetable|fruit|frozen.veg/))cat='vegetable';
-          else if(cats.match(/dairy|cheese|milk|yogurt|butter/))cat='dairy';
-          else if(cats.match(/meal|prepared|pizza|ready|frozen.meal/))cat='prepared';
-          const fn=document.getElementById('f-name'),fc=document.getElementById('f-cat'),fd=document.getElementById('f-date'),fq=document.getElementById('f-qty');
-          if(fn)fn.value=name;if(fc)fc.value=cat;if(fd)fd.value=new Date().toISOString().split('T')[0];if(fq)fq.value='';
-          openM('m-add');toast('✅ Found: '+name);
-        }else{openM('m-add');toast('Not found — enter manually');}
-      }catch{openM('m-add');toast('Lookup failed — enter manually');}
-    });
-  }catch{toast('Camera not available');}
-}
-function closeCamera(){
-  document.getElementById('cam-overlay').classList.remove('open');
-  if(codeReader){try{codeReader.reset();}catch{}codeReader=null;}
-  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
-}
-document.getElementById('btn-cam-close').addEventListener('click',closeCamera);
 let toastEl=null,toastTimer=null;
 function toast(msg){
-  if(toastEl){toastEl.remove();clearTimeout(toastTimer);}
-  toastEl=document.createElement('div');
-  toastEl.className='toast';toastEl.textContent=msg;
-  document.body.appendChild(toastEl);
-  void toastEl.offsetWidth;
-  toastEl.style.display='block';
-  toastTimer=setTimeout(()=>{if(toastEl){toastEl.remove();toastEl=null;}},2800);
+if(toastEl){toastEl.remove();clearTimeout(toastTimer);}
+toastEl=document.createElement(‘div’);
+toastEl.className=‘toast’;toastEl.textContent=msg;
+document.body.appendChild(toastEl);
+void toastEl.offsetWidth;
+toastEl.style.display=‘block’;
+toastTimer=setTimeout(()=>{if(toastEl){toastEl.remove();toastEl=null;}},2800);
 }
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(‘serviceWorker’ in navigator)navigator.serviceWorker.register(‘sw.js’).catch(()=>{});
 render();
 </script>
+
 </body>
 </html>
