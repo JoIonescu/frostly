@@ -18,7 +18,7 @@
   <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   :root{
-    --ice:#4FC3F7;--ice-dark:#0288D1;--glow:#3db8ef4a;
+    --ice:#4FC3F7;--ice-dark:#0288D1;--ice2:#0288D1;--glow:#3db8ef4a;
     --coral:#FF7043;--glow-c:#ff70434a;
     --amber:#FFB300;--green:#66BB6A;
     --r:20px;--rsm:12px;
@@ -156,7 +156,7 @@
   .rc-desc{font-size:13px;color:var(--txm);line-height:1.6;margin-bottom:8px}
   .rc-chips{display:flex;flex-wrap:wrap;gap:6px}
   .rc-chip{font-size:11px;background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.18);color:var(--ice);padding:3px 9px;border-radius:100px}
-  @media(prefers-color-scheme:light){.rc-chip{background:rgba(2,136,209,.1);border-color:rgba(2,136,209,.3);color:var(--ice-dark)}}
+  @media(prefers-color-scheme:light){.rc-chip{background:rgba(2,136,209,.1);border-color:rgba(2,136,209,.3);color:var(--ice2)}}
   .rc-chip.urgent{background:rgba(255,112,67,.1);border-color:rgba(255,112,67,.25);color:var(--coral)}
   @media(prefers-color-scheme:light){.rc-chip.urgent{background:rgba(255,112,67,.12);color:var(--coral)}}
   .pro-up{text-align:center;padding:8px 0 4px}
@@ -577,11 +577,6 @@ closeAC();openM(‘m-add’);
 setTimeout(()=>{if(fn)fn.focus();},380);
 },320);
 });
-document.getElementById(‘b-scan’).addEventListener(‘click’,()=>{
-closeM(‘m-choice’);
-const pro=localStorage.getItem(‘frostly_pro’)===‘true’;
-setTimeout(()=>pro?startScan():openM(‘m-pro’),320);
-});
 // ── PRO STATUS ───────────────────────────────────────────
 // Valid codes — in production these would be verified server-side.
 // Each code is a SHA-256 prefix of “FROSTLY-” + a secret salt.
@@ -684,7 +679,7 @@ return;
 // Valid and unused — unlock
 usedCodes.push(code);
 localStorage.setItem(‘frostly_used_codes’, JSON.stringify(usedCodes));
-unlockPro();
+unlockPro(code);
 
 feedback.textContent = ‘✅  Barcode scan unlocked!’;
 feedback.style.color = ‘var(–green)’;
@@ -707,7 +702,7 @@ if(e.key === ‘Enter’){ e.preventDefault(); tryUnlockCode(); }
 const params = new URLSearchParams(window.location.search);
 const code = params.get(‘unlocked’);
 if(code && VALID_CODES.includes(code.toUpperCase()) && !isPro()){
-unlockPro();
+unlockPro(code.toUpperCase());
 toast(‘📷 Barcode scan unlocked — welcome to Pro!’);
 // Clean the URL so the code doesn’t stay visible
 window.history.replaceState({}, ‘’, window.location.pathname);
