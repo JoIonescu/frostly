@@ -44,13 +44,23 @@
 –pt:rgba(10,22,40,.65)
 }}
 
-html{height:100%;background:var(–bg)}
+html{
+height:100%;
+background:#0a1628;  /* hardcoded fallback — CSS vars may not resolve early enough on iOS */
+background:var(–bg);
+}
 body{
 height:100%;min-height:100%;
+background:#0a1628;  /* hardcoded fallback */
 background:var(–bg);
+color:#e8f4f8;
 color:var(–tx);
 font-family:‘DM Sans’,sans-serif;
 font-size:15px;
+}
+@media(prefers-color-scheme:light){
+html{background:#d8eef9}
+body{background:#d8eef9;color:#0d1f2d}
 }
 
 /* atmosphere — sits behind everything */
@@ -1300,16 +1310,28 @@ async function runBarcodeDetector(video) {
   requestAnimationFrame(loop);
 }
 
-/* Load ZXing from CDN */
+/* Load ZXing from CDN — tries three sources before giving up */
 function loadZXing() {
   if (window.ZXing) return Promise.resolve();
-  return new Promise((res, rej) => {
-    const s = document.createElement('script');
-    s.src     = 'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';
-    s.onload  = res;
-    s.onerror = () => rej(new Error('Failed to load scanner library'));
-    document.head.appendChild(s);
-  });
+
+  const CDNS = [
+    'https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js',
+    'https://unpkg.com/@zxing/library@0.18.6/umd/index.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js',
+  ];
+
+  function tryLoad(index) {
+    if (index >= CDNS.length) return Promise.reject(new Error('Scanner library unavailable — check your internet connection'));
+    return new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src     = CDNS[index];
+      s.onload  = () => { if (window.ZXing) res(); else rej(new Error('bad bundle')); };
+      s.onerror = () => rej(new Error('cdn fail'));
+      document.head.appendChild(s);
+    }).catch(() => tryLoad(index + 1));
+  }
+
+  return tryLoad(0);
 }
 
 /* ZXing with decodeFromStream — iOS Safari + Firefox */
