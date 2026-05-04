@@ -24,15 +24,14 @@
 –glow:rgba(79,195,247,.3);–glow-c:rgba(255,112,67,.3);
 –r:20px;–rsm:12px;
 –bg:#0a1628;–bg2:#060e1a;
-–surf:rgba(255,255,255,.045);–surfh:rgba(255,255,255,.09);
-–bdr:rgba(255,255,255,.08);–bdri:rgba(79,195,247,.2);
-–tx:#e8f4f8;–txm:rgba(232,244,248,.5);
+–surf:rgba(255,255,255,.06);–surfh:rgba(255,255,255,.1);
+–bdr:rgba(255,255,255,.1);–bdri:rgba(79,195,247,.25);
+–tx:#e8f4f8;–txm:rgba(232,244,248,.55);
 –modal:#0f2035;
 –ha:#fff;–hb:#4FC3F7;
 –pr1:#1c2d42;–pr2:#0d1929;–pn:#090f1e;–ps:#1c2d42;
 –pt:rgba(232,244,248,.65)
 }
-
 @media(prefers-color-scheme:light){:root{
 –bg:#d8eef9;–bg2:#b0cfea;
 –surf:rgba(255,255,255,.72);–surfh:rgba(255,255,255,.92);
@@ -46,36 +45,83 @@
 }}
 
 html{height:100%;background:var(–bg)}
-body{height:100%;background:var(–bg);color:var(–tx);font-family:‘DM Sans’,sans-serif;font-size:15px}
+body{
+height:100%;min-height:100%;
+background:var(–bg);
+color:var(–tx);
+font-family:‘DM Sans’,sans-serif;
+font-size:15px;
+}
 
-.bg-atmo{position:fixed;inset:0;pointer-events:none;z-index:0;
-background:radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,.12) 0%,transparent 60%),
-radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.1) 0%,transparent 60%)}
+/* atmosphere — sits behind everything */
+.bg-atmo{
+position:fixed;inset:0;pointer-events:none;z-index:0;
+background:
+radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,.12) 0%,transparent 60%),
+radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.1) 0%,transparent 60%);
+}
 @media(prefers-color-scheme:light){.bg-atmo{
-background:radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,.35) 0%,transparent 60%),
-radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.18) 0%,transparent 60%)}}
+background:
+radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,.35) 0%,transparent 60%),
+radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.18) 0%,transparent 60%);
+}}
 
-/* ── MOBILE: wrappers become invisible pass-throughs ── */
+/* ── MOBILE: safe wrapper resets (NO all:initial — breaks CSS var inheritance) ── */
 @media(max-width:599px){
 body{overflow:hidden}
-.dl,.ds{all:initial!important;display:block!important;width:100%!important;height:100%!important}
-.di{display:none!important}
+/* Desktop wrappers become invisible on mobile — targeted resets only */
+.dl{display:block;width:100%;height:100%;padding:0;margin:0;min-height:unset}
+.ds{
+display:block;width:100%;height:100%;
+border-radius:0;overflow:visible;
+background:transparent;
+box-shadow:none;
+position:static;
+}
+.ds::before,.ds::after{display:none}
+.di{display:none}
 #app{height:100vh;height:100dvh}
 }
 
-#app{position:relative;z-index:1;display:flex;flex-direction:column;max-width:430px;margin:0 auto;background:transparent}
+#app{
+position:relative;z-index:1;
+display:flex;flex-direction:column;
+max-width:430px;margin:0 auto;
+background:transparent;
+}
 
 /* ── HEADER ── */
-header{padding:52px 24px 20px;padding-top:max(52px,env(safe-area-inset-top) + 16px);flex-shrink:0;animation:fadeDown .6s ease both}
+header{
+padding:52px 24px 20px;
+padding-top:max(52px,env(safe-area-inset-top) + 16px);
+flex-shrink:0;
+animation:fadeDown .6s ease both;
+}
 .h-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(–ice),var(–ice2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 18px var(–glow);flex-shrink:0}
-.logo-name{font-family:‘Phudu’,sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(–ha) 30%,var(–hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.logo-icon{
+width:36px;height:36px;
+background:linear-gradient(135deg,var(–ice),var(–ice2));
+border-radius:10px;
+display:flex;align-items:center;justify-content:center;
+font-size:18px;
+box-shadow:0 0 18px var(–glow);
+flex-shrink:0;
+}
+.logo-name{
+font-family:‘Phudu’,sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px;
+background:linear-gradient(135deg,var(–ha) 30%,var(–hb));
+-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
 .header-sub{font-size:12px;color:var(–txm);font-weight:300;letter-spacing:.5px;margin-left:46px}
 
 /* ── STATS ── */
 .stats-bar{display:flex;gap:10px;padding:0 24px 16px;flex-shrink:0;animation:fadeDown .6s .1s ease both}
-.stat{flex:1;background:var(–surf);border:1px solid var(–bdr);border-radius:var(–rsm);padding:10px 12px;text-align:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.stat{
+flex:1;background:var(–surf);border:1px solid var(–bdr);border-radius:var(–rsm);
+padding:10px 12px;text-align:center;
+backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
 .stat-n{font-family:‘Phudu’,sans-serif;font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
 .stat-l{font-size:10px;color:var(–txm);text-transform:uppercase;letter-spacing:.8px;font-weight:500}
 .stat.u .stat-n{color:var(–coral);text-shadow:0 0 12px var(–glow-c)}
@@ -83,13 +129,31 @@ header{padding:52px 24px 20px;padding-top:max(52px,env(safe-area-inset-top) + 16
 .stat.g .stat-n{color:var(–green)}
 
 /* ── FILTER TABS ── */
-.tabs{display:flex;gap:8px;padding:0 24px 14px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;animation:fadeDown .6s .15s ease both}
+.tabs{
+display:flex;gap:8px;padding:0 24px 14px;flex-shrink:0;
+overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+animation:fadeDown .6s .15s ease both;
+}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex-shrink:0;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(–bdr);background:var(–surf);color:var(–txm);transition:background .2s,color .2s,border-color .2s;white-space:nowrap;touch-action:manipulation;user-select:none;-webkit-user-select:none}
-.tab.active{background:var(–ice);color:#0a1628;border-color:var(–ice);font-weight:600;box-shadow:0 0 14px var(–glow)}
+.tab{
+flex-shrink:0;padding:6px 14px;border-radius:100px;
+font-size:12px;font-weight:500;cursor:pointer;
+border:1px solid var(–bdr);background:var(–surf);color:var(–txm);
+transition:background .2s,color .2s,border-color .2s;
+white-space:nowrap;touch-action:manipulation;
+user-select:none;-webkit-user-select:none;
+}
+.tab.active{
+background:var(–ice);color:#0a1628;border-color:var(–ice);
+font-weight:600;box-shadow:0 0 14px var(–glow);
+}
 
 /* ── LIST ── */
-.list-wrap{flex:1;overflow-y:auto;padding:0 24px;scrollbar-width:thin;scrollbar-color:var(–bdr) transparent;-webkit-overflow-scrolling:touch}
+.list-wrap{
+flex:1;overflow-y:auto;padding:0 24px;
+scrollbar-width:thin;scrollbar-color:var(–bdr) transparent;
+-webkit-overflow-scrolling:touch;
+}
 .list-wrap::-webkit-scrollbar{width:3px}
 .list-wrap::-webkit-scrollbar-thumb{background:var(–bdr);border-radius:3px}
 
@@ -98,53 +162,87 @@ header{padding:52px 24px 20px;padding-top:max(52px,env(safe-area-inset-top) + 16
 .empty-ttl{font-family:‘Phudu’,sans-serif;font-size:20px;font-weight:600;color:var(–txm)}
 .empty-sub{font-size:13px;color:var(–txm);opacity:.6;text-align:center;max-width:200px;line-height:1.5}
 
-.card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(–surf);border:1px solid var(–bdr);border-radius:var(–r);margin-bottom:10px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);position:relative;overflow:hidden;touch-action:manipulation}
+.card{
+display:flex;align-items:center;gap:14px;
+padding:14px 16px;
+background:var(–surf);border:1px solid var(–bdr);border-radius:var(–r);
+margin-bottom:10px;
+backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+position:relative;overflow:hidden;touch-action:manipulation;
+}
 .card::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
 .card.urgent::before{background:var(–coral);box-shadow:0 0 8px var(–glow-c)}
 .card.soon::before{background:var(–amber)}
 .card.good::before{background:var(–green)}
 .card:active{transform:scale(.98)}
-.card-ico{font-size:28px;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border-radius:12px}
-@media(prefers-color-scheme:light){.card-ico{background:rgba(0,0,0,.04)}}
+.card-ico{
+font-size:28px;flex-shrink:0;width:44px;height:44px;
+display:flex;align-items:center;justify-content:center;
+background:rgba(255,255,255,.06);border-radius:12px;
+}
+@media(prefers-color-scheme:light){.card-ico{background:rgba(0,0,0,.05)}}
 .card-info{flex:1;min-width:0}
-.card-name{font-family:‘Phudu’,sans-serif;font-size:17px;font-weight:600;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8f4f8}
+.card-name{
+font-family:‘Phudu’,sans-serif;font-size:17px;font-weight:600;
+letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+color:#e8f4f8;
+}
 @media(prefers-color-scheme:light){.card-name{color:#0d1f2d}}
 .card-meta{display:flex;align-items:center;gap:8px;margin-top:3px}
 .card-qty{font-size:12px;color:var(–txm);font-weight:300}
-.card-dot{width:3px;height:3px;background:var(–txm);border-radius:50%;opacity:.4}
+.card-dot{width:3px;height:3px;background:var(–txm);border-radius:50%;opacity:.5}
 .card-exp{font-size:12px;font-weight:500}
 .card.urgent .card-exp{color:var(–coral)}
 .card.soon   .card-exp{color:var(–amber)}
 .card.good   .card-exp{color:var(–green)}
-.card-del{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:none;color:var(–txm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;touch-action:manipulation}
-@media(prefers-color-scheme:light){.card-del{background:rgba(0,0,0,.04)}}
+.card-del{
+width:32px;height:32px;border-radius:8px;
+background:rgba(255,255,255,.06);border:none;
+color:var(–txm);cursor:pointer;
+display:flex;align-items:center;justify-content:center;
+font-size:16px;flex-shrink:0;touch-action:manipulation;
+}
+@media(prefers-color-scheme:light){.card-del{background:rgba(0,0,0,.05)}}
 .card-del:active{background:rgba(255,112,67,.18);color:var(–coral)}
 
 /* ── BOTTOM BAR ── */
-.bar{padding:12px 20px 32px;padding-bottom:max(32px,env(safe-area-inset-bottom) + 12px);flex-shrink:0;display:flex;align-items:center;gap:10px;animation:fadeUp .6s .2s ease both}
-.btn-meal{flex:1;min-width:0;height:54px;padding:0 14px;border-radius:var(–r);border:1px solid var(–bdri);background:rgba(79,195,247,.07);color:var(–ice);font-family:‘DM Sans’,sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;touch-action:manipulation;white-space:nowrap}
-@media(prefers-color-scheme:light){.btn-meal{background:rgba(2,136,209,.08);color:var(–ice2);border-color:rgba(2,136,209,.28)}}
+.bar{
+padding:12px 20px 32px;
+padding-bottom:max(32px,env(safe-area-inset-bottom) + 12px);
+flex-shrink:0;display:flex;align-items:center;gap:10px;
+animation:fadeUp .6s .2s ease both;
+}
+.btn-meal{
+flex:1;min-width:0;height:54px;padding:0 14px;border-radius:var(–r);
+border:1px solid var(–bdri);background:rgba(79,195,247,.08);color:var(–ice);
+font-family:‘DM Sans’,sans-serif;font-size:14px;font-weight:500;cursor:pointer;
+display:flex;align-items:center;justify-content:center;gap:7px;
+touch-action:manipulation;white-space:nowrap;
+}
+@media(prefers-color-scheme:light){.btn-meal{background:rgba(2,136,209,.09);color:var(–ice2);border-color:rgba(2,136,209,.3)}}
 .btn-meal:active{background:rgba(79,195,247,.18)}
-.btn-add{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(–ice),var(–ice2));border:none;color:#0a1628;font-size:28px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px var(–glow);touch-action:manipulation}
+.btn-add{
+width:54px;height:54px;border-radius:18px;
+background:linear-gradient(135deg,var(–ice),var(–ice2));
+border:none;color:#0a1628;font-size:28px;cursor:pointer;flex-shrink:0;
+display:flex;align-items:center;justify-content:center;
+box-shadow:0 4px 20px var(–glow);touch-action:manipulation;
+}
 .btn-add:active{transform:scale(.91)}
 
-/* ─────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
 MODAL SYSTEM
-Closed:  display:none  — completely absent, cannot block
-Open:    display:flex  — visible, sheet slides up via JS class
-The sheet animation is driven by a CSS class toggle (not
-animation fill-mode:both) so there are no ghost-frame
-positioning issues on mobile.
-───────────────────────────────────────────────────────── */
+display:none when closed — cannot block taps
+display:flex when open — sheet transitions in
+───────────────────────────────────────────── */
 .overlay{
 display:none;
 position:fixed;inset:0;
-background:rgba(10,22,40,.82);
+background:rgba(10,22,40,.84);
 z-index:100;
-align-items:flex-end;
-justify-content:center;
+align-items:flex-end;justify-content:center;
 }
-@media(prefers-color-scheme:light){.overlay{background:rgba(10,22,40,.4)}}
+@media(prefers-color-scheme:light){.overlay{background:rgba(10,22,40,.42)}}
 .overlay.open{display:flex}
 
 .sheet{
@@ -155,56 +253,103 @@ border-radius:28px 28px 0 0;
 padding:12px 24px 48px;
 padding-bottom:max(48px,env(safe-area-inset-bottom) + 24px);
 max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
-/* slide-up via transform — no fill-mode, no ghost frames */
 transform:translateY(100%);
 transition:transform .36s cubic-bezier(.4,0,.2,1);
 }
 .overlay.open .sheet{transform:translateY(0)}
 
 .handle{width:40px;height:4px;background:var(–bdr);border-radius:2px;margin:8px auto 24px}
-.sheet-title{font-family:‘Phudu’,sans-serif;font-size:24px;font-weight:700;margin-bottom:24px;background:linear-gradient(135deg,var(–ha) 40%,var(–hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.sheet-title{
+font-family:‘Phudu’,sans-serif;font-size:24px;font-weight:700;margin-bottom:24px;
+background:linear-gradient(135deg,var(–ha) 40%,var(–hb));
+-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
 
 /* ── FORM ── */
 .field{margin-bottom:16px}
-.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(–txm);margin-bottom:8px}
+.field label{
+display:block;font-size:11px;font-weight:600;
+text-transform:uppercase;letter-spacing:1px;color:var(–txm);margin-bottom:8px;
+}
 @media(prefers-color-scheme:light){.field label{color:var(–tx)}}
-.field input,.field select{width:100%;padding:14px 16px;background:var(–surf);-webkit-appearance:none;appearance:none;border:1px solid var(–bdr);border-radius:var(–rsm);color:var(–tx);font-family:‘DM Sans’,sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark}
-.field input:focus,.field select:focus{border-color:var(–ice);box-shadow:0 0 0 3px var(–glow);background:rgba(79,195,247,.05)}
+.field input,.field select{
+width:100%;padding:14px 16px;background:var(–surf);
+-webkit-appearance:none;appearance:none;
+border:1px solid var(–bdr);border-radius:var(–rsm);
+color:var(–tx);font-family:‘DM Sans’,sans-serif;font-size:15px;
+outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark;
+}
+.field input:focus,.field select:focus{
+border-color:var(–ice);box-shadow:0 0 0 3px var(–glow);background:rgba(79,195,247,.05);
+}
 .field select option{background:var(–modal);color:var(–tx)}
 .row{display:flex;gap:12px}
 .row .field{flex:1}
 
 /* ── AUTOCOMPLETE ── */
 .ac-wrap{position:relative}
-.ac-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(–modal);border:1px solid var(–bdri);border-radius:var(–rsm);max-height:190px;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.25);-webkit-overflow-scrolling:touch}
+.ac-list{
+display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;
+background:var(–modal);border:1px solid var(–bdri);border-radius:var(–rsm);
+max-height:190px;overflow-y:auto;z-index:10;
+box-shadow:0 8px 24px rgba(0,0,0,.3);-webkit-overflow-scrolling:touch;
+}
 .ac-list.open{display:block}
-.ac-row{padding:11px 14px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(–bdr);touch-action:manipulation}
+.ac-row{
+padding:11px 14px;cursor:pointer;font-size:14px;
+display:flex;align-items:center;gap:10px;
+border-bottom:1px solid var(–bdr);touch-action:manipulation;
+}
 .ac-row:last-child{border-bottom:none}
 .ac-row:active{background:var(–surfh)}
 .ac-name{flex:1;color:var(–tx)}
-.ac-badge{font-size:10px;color:var(–ice);background:rgba(79,195,247,.1);padding:2px 7px;border-radius:100px;border:1px solid rgba(79,195,247,.2);white-space:nowrap}
+.ac-badge{
+font-size:10px;color:var(–ice);background:rgba(79,195,247,.1);
+padding:2px 7px;border-radius:100px;border:1px solid rgba(79,195,247,.2);white-space:nowrap;
+}
 @media(prefers-color-scheme:light){.ac-badge{color:var(–ice2)}}
 
 /* ── BUTTONS ── */
-.btn-prim{width:100%;padding:16px;background:linear-gradient(135deg,var(–ice),var(–ice2));border:none;border-radius:var(–rsm);color:#0a1628;font-family:‘Phudu’,sans-serif;font-size:18px;font-weight:700;letter-spacing:.3px;cursor:pointer;touch-action:manipulation;margin-top:4px}
+.btn-prim{
+width:100%;padding:16px;
+background:linear-gradient(135deg,var(–ice),var(–ice2));
+border:none;border-radius:var(–rsm);color:#0a1628;
+font-family:‘Phudu’,sans-serif;font-size:18px;font-weight:700;letter-spacing:.3px;
+cursor:pointer;touch-action:manipulation;margin-top:4px;
+}
 .btn-prim:active{opacity:.88;transform:scale(.98)}
 
-.btn-choice{width:100%;padding:16px;background:var(–surf);border:1px solid var(–bdr);border-radius:var(–r);cursor:pointer;display:flex;align-items:center;gap:16px;margin-bottom:12px;text-align:left;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.btn-choice{
+width:100%;padding:16px;background:var(–surf);border:1px solid var(–bdr);
+border-radius:var(–r);cursor:pointer;display:flex;align-items:center;gap:16px;
+margin-bottom:12px;text-align:left;touch-action:manipulation;
+user-select:none;-webkit-user-select:none;
+}
 .btn-choice:active{background:var(–surfh);border-color:var(–bdri)}
 .bc-ico{font-size:28px;flex-shrink:0;line-height:1}
 .bc-tx{flex:1}
-.bc-lbl{font-family:‘Phudu’,sans-serif;font-size:17px;font-weight:600;color:var(–tx);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bc-lbl{
+font-family:‘Phudu’,sans-serif;font-size:17px;font-weight:600;color:var(–tx);
+display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
 .bc-sub{font-size:12px;color:var(–txm);margin-top:3px}
-.pro-badge{font-size:9px;font-family:‘DM Sans’,sans-serif;background:var(–amber);color:#0a1628;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-
-/* Scan button unlocked state */
+.pro-badge{
+font-size:9px;font-family:‘DM Sans’,sans-serif;background:var(–amber);
+color:#0a1628;padding:2px 7px;border-radius:4px;font-weight:700;
+letter-spacing:.5px;text-transform:uppercase;
+}
 #b-scan.unlocked .pro-badge{display:none}
 #b-scan.unlocked .bc-lock{display:none}
 #b-scan.unlocked{border-color:var(–bdri)}
 
 /* ── MEAL FILTER ── */
 .meal-filter{display:flex;gap:8px;margin-bottom:16px}
-.mf-pill{flex:1;padding:8px 10px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(–bdr);background:var(–surf);color:var(–txm);text-align:center;touch-action:manipulation;transition:all .2s;user-select:none;-webkit-user-select:none}
+.mf-pill{
+flex:1;padding:8px 10px;border-radius:100px;font-size:12px;font-weight:500;
+cursor:pointer;border:1px solid var(–bdr);background:var(–surf);color:var(–txm);
+text-align:center;touch-action:manipulation;transition:all .2s;
+user-select:none;-webkit-user-select:none;
+}
 .mf-pill.active{font-weight:600}
 .mf-pill.all.active{background:var(–ice);color:#0a1628;border-color:var(–ice);box-shadow:0 0 12px var(–glow)}
 .mf-pill.meat.active{background:rgba(255,112,67,.15);color:var(–coral);border-color:rgba(255,112,67,.4)}
@@ -224,56 +369,103 @@ transition:transform .36s cubic-bezier(.4,0,.2,1);
 .rc-time{font-size:11px;color:var(–txm);margin-top:1px}
 .rc-desc{font-size:13px;color:var(–txm);line-height:1.6;margin-bottom:8px}
 .rc-chips{display:flex;flex-wrap:wrap;gap:6px}
-.rc-chip{font-size:11px;background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.18);color:var(–ice);padding:3px 9px;border-radius:100px}
+.rc-chip{
+font-size:11px;background:rgba(79,195,247,.09);border:1px solid rgba(79,195,247,.2);
+color:var(–ice);padding:3px 9px;border-radius:100px;
+}
 @media(prefers-color-scheme:light){.rc-chip{background:rgba(2,136,209,.1);border-color:rgba(2,136,209,.3);color:var(–ice2)}}
-.rc-chip.urgent{background:rgba(255,112,67,.1);border-color:rgba(255,112,67,.25);color:var(–coral)}
+.rc-chip.urgent{background:rgba(255,112,67,.1);border-color:rgba(255,112,67,.28);color:var(–coral)}
 
 /* ── PRO MODAL ── */
 .pro-up{text-align:center;padding:8px 0 4px}
 .pro-ico{font-size:52px;margin-bottom:16px}
 .pro-ttl{font-family:‘Phudu’,sans-serif;font-size:22px;font-weight:700;margin-bottom:8px;color:var(–tx)}
 .pro-desc{font-size:14px;color:var(–txm);line-height:1.6;max-width:260px;margin:0 auto 20px}
-.btn-upgrade{width:100%;padding:16px;background:linear-gradient(135deg,#FFB300,#e65100);border:none;border-radius:var(–rsm);color:#fff;font-family:‘Phudu’,sans-serif;font-size:18px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.btn-upgrade{
+width:100%;padding:16px;background:linear-gradient(135deg,#FFB300,#e65100);
+border:none;border-radius:var(–rsm);color:#fff;
+font-family:‘Phudu’,sans-serif;font-size:18px;font-weight:700;
+cursor:pointer;touch-action:manipulation;
+}
 .btn-upgrade:active{opacity:.9;transform:scale(.98)}
 .pro-fn{font-size:12px;color:var(–txm);margin-top:10px;margin-bottom:4px}
 .pro-divider{display:flex;align-items:center;gap:10px;margin:16px 0}
 .pro-divider::before,.pro-divider::after{content:’’;flex:1;height:1px;background:var(–bdr)}
 .pro-divider span{font-size:11px;color:var(–txm);white-space:nowrap}
-.pro-code-toggle{font-size:13px;color:var(–ice);cursor:pointer;touch-action:manipulation;text-align:center;display:block;padding:4px;text-decoration:underline;text-underline-offset:3px}
+.pro-code-toggle{
+font-size:13px;color:var(–ice);cursor:pointer;touch-action:manipulation;
+text-align:center;display:block;padding:4px;
+text-decoration:underline;text-underline-offset:3px;
+}
 @media(prefers-color-scheme:light){.pro-code-toggle{color:var(–ice2)}}
 .pro-code-wrap{margin-top:12px;overflow:hidden;max-height:0;transition:max-height .35s ease}
 .pro-code-wrap.open{max-height:80px}
 .pro-code-row{display:flex;gap:8px}
-.pro-code-row input{flex:1;padding:12px 14px;background:var(–surf);-webkit-appearance:none;appearance:none;border:1px solid var(–bdr);border-radius:var(–rsm);color:var(–tx);font-family:‘DM Sans’,sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark}
+.pro-code-row input{
+flex:1;padding:12px 14px;background:var(–surf);
+-webkit-appearance:none;appearance:none;
+border:1px solid var(–bdr);border-radius:var(–rsm);
+color:var(–tx);font-family:‘DM Sans’,sans-serif;font-size:15px;
+outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark;
+}
 .pro-code-row input:focus{border-color:var(–ice);box-shadow:0 0 0 3px var(–glow)}
-.btn-code-go{width:50px;height:50px;border-radius:var(–rsm);background:linear-gradient(135deg,var(–ice),var(–ice2));border:none;color:#0a1628;font-size:22px;cursor:pointer;flex-shrink:0;touch-action:manipulation;display:flex;align-items:center;justify-content:center}
+.btn-code-go{
+width:50px;height:50px;border-radius:var(–rsm);
+background:linear-gradient(135deg,var(–ice),var(–ice2));
+border:none;color:#0a1628;font-size:22px;cursor:pointer;
+flex-shrink:0;touch-action:manipulation;
+display:flex;align-items:center;justify-content:center;
+}
 .btn-code-go:active{opacity:.88;transform:scale(.95)}
 .code-feedback{font-size:12px;text-align:center;margin-top:6px;min-height:16px}
 
 /* ── CAMERA ── */
-#cam-overlay{display:none;position:fixed;inset:0;background:#000;z-index:200;flex-direction:column;align-items:center;justify-content:center}
+#cam-overlay{
+display:none;position:fixed;inset:0;
+background:#000;z-index:200;
+flex-direction:column;align-items:center;justify-content:center;
+}
 #cam-overlay.open{display:flex}
-#video{width:100%;max-width:430px}
+#video{width:100%;max-width:430px;object-fit:cover}
 .cam-ui{position:absolute;inset:0;display:flex;flex-direction:column;pointer-events:none}
 .scan-frame{flex:1;display:flex;align-items:center;justify-content:center}
-.scan-box{width:250px;height:150px;border:2px solid var(–ice);border-radius:16px;box-shadow:0 0 0 2000px rgba(0,0,0,.55),0 0 30px var(–glow);position:relative}
-.scan-line{position:absolute;left:10px;right:10px;height:2px;background:linear-gradient(90deg,transparent,var(–ice),transparent);animation:scanLine 1.8s ease-in-out infinite;border-radius:2px}
+.scan-box{
+width:250px;height:150px;border:2px solid var(–ice);border-radius:16px;
+box-shadow:0 0 0 2000px rgba(0,0,0,.55),0 0 30px var(–glow);position:relative;
+}
+.scan-line{
+position:absolute;left:10px;right:10px;height:2px;
+background:linear-gradient(90deg,transparent,var(–ice),transparent);
+animation:scanLine 1.8s ease-in-out infinite;border-radius:2px;
+}
 .cam-bottom{padding:24px;pointer-events:all;text-align:center}
 .cam-lbl{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:16px}
-.btn-cam-close{padding:12px 32px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;color:#fff;font-family:‘DM Sans’,sans-serif;font-size:14px;cursor:pointer;touch-action:manipulation}
-.cam-loading{position:absolute;inset:0;background:rgba(3,13,26,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5}
+.btn-cam-close{
+padding:12px 32px;background:rgba(255,255,255,.1);
+border:1px solid rgba(255,255,255,.2);border-radius:100px;
+color:#fff;font-family:‘DM Sans’,sans-serif;font-size:14px;
+cursor:pointer;touch-action:manipulation;
+}
+.cam-loading{
+position:absolute;inset:0;background:rgba(3,13,26,.9);
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5;
+}
 .cam-loading p{font-size:14px;color:rgba(232,244,248,.6);text-align:center;max-width:220px}
-.cam-spinner{width:40px;height:40px;border:2px solid var(–bdr);border-top-color:var(–ice);border-radius:50%;animation:spin .8s linear infinite}
+.cam-spinner{width:40px;height:40px;border:2px solid rgba(255,255,255,.15);border-top-color:var(–ice);border-radius:50%;animation:spin .8s linear infinite}
 
 /* ── TOAST ── */
-.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(–modal);border:1px solid var(–bdri);border-radius:100px;padding:10px 20px;font-size:13px;font-weight:500;color:var(–ice);z-index:400;pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.toast{
+display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);
+background:var(–modal);border:1px solid var(–bdri);border-radius:100px;
+padding:10px 20px;font-size:13px;font-weight:500;color:var(–ice);
+z-index:400;pointer-events:none;white-space:nowrap;
+box-shadow:0 8px 32px rgba(0,0,0,.25);
+}
 @media(prefers-color-scheme:light){.toast{color:var(–ice2)}}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeUp  {from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn  {from{opacity:0}to{opacity:1}}
-@keyframes slideIn {from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
 @keyframes spin    {to{transform:rotate(360deg)}}
 @keyframes scanLine{0%{top:10px;opacity:1}50%{opacity:.7}100%{top:calc(100% - 12px);opacity:1}}
 
@@ -281,12 +473,16 @@ transition:transform .36s cubic-bezier(.4,0,.2,1);
 @media(min-width:600px){
 html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-content:center;background:var(–bg2)!important}
 .dl{display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;padding:40px;position:relative;z-index:1}
-.ds{position:relative;width:390px;height:844px;border-radius:52px;overflow:hidden;flex-shrink:0;background:var(–bg);box-shadow:0 0 0 10px var(–pr1),0 0 0 13px var(–pr2),0 50px 100px rgba(0,0,0,.5),0 0 80px rgba(79,195,247,.07)}
+.ds{
+position:relative;width:390px;height:844px;border-radius:52px;overflow:hidden;
+flex-shrink:0;background:var(–bg);
+box-shadow:0 0 0 10px var(–pr1),0 0 0 13px var(–pr2),0 50px 100px rgba(0,0,0,.5),0 0 80px rgba(79,195,247,.07);
+}
 .ds::before{content:’’;position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:36px;background:var(–pn);border-radius:0 0 22px 22px;z-index:2;pointer-events:none}
 .ds::after{content:’’;position:absolute;left:-13px;top:140px;width:4px;height:36px;background:var(–ps);border-radius:4px 0 0 4px;box-shadow:0 52px 0 var(–ps),0 104px 0 var(–ps);pointer-events:none}
 #app{height:844px;max-width:100%;overflow:hidden}
 .di{display:flex;flex-direction:column;justify-content:center;margin-left:60px;gap:28px;max-width:300px}
-.di-tag{font-family:‘Phudu’,sans-serif;font-size:38px;font-weight:700;line-height:1.15;background:linear-gradient(135deg,var(–ha) 30%,var(–hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.di-tag{font-family:‘Phudu’,sans-serif;font-size:38px;font-weight:700;line-height:1.15;background:linear-gradient(135deg,var(–ha) 30%,var(–hb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .di-sub{font-size:15px;color:var(–pt);line-height:1.7;font-weight:300}
 .di-feats{display:flex;flex-direction:column;gap:14px}
 .di-feat{display:flex;align-items:center;gap:14px;font-size:14px;color:var(–pt)}
@@ -312,49 +508,56 @@ html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-cont
         </div>
         <div class="header-sub">your smart freezer companion</div>
       </header>
-      <div class="stats-bar">
-        <div class="stat u"><div class="stat-n" id="s-u">0</div><div class="stat-l">Expiring</div></div>
-        <div class="stat s"><div class="stat-n" id="s-s">0</div><div class="stat-l">This Month</div></div>
-        <div class="stat g"><div class="stat-n" id="s-g">0</div><div class="stat-l">Good</div></div>
-      </div>
-      <div class="tabs">
-        <div class="tab active" data-f="all">All Items</div>
-        <div class="tab" data-f="urgent">⚠️ Expiring</div>
-        <div class="tab" data-f="meat">🥩 Meat</div>
-        <div class="tab" data-f="fish">🐟 Fish</div>
-        <div class="tab" data-f="vegetable">🥦 Veggies</div>
-        <div class="tab" data-f="dairy">🧀 Dairy</div>
-        <div class="tab" data-f="prepared">🍲 Prepared</div>
-        <div class="tab" data-f="other">📦 Other</div>
-      </div>
-      <div class="list-wrap" id="list">
-        <div class="empty" id="empty">
-          <div class="empty-ico">🧊</div>
-          <div class="empty-ttl">Freezer is empty</div>
-          <div class="empty-sub">Tap + to add your first item</div>
-        </div>
-      </div>
-      <div class="bar">
-        <button class="btn-meal" id="btn-meal">🍽️ What can I cook?</button>
-        <button class="btn-add"  id="btn-add">+</button>
-      </div>
+
+```
+  <div class="stats-bar">
+    <div class="stat u"><div class="stat-n" id="s-u">0</div><div class="stat-l">Expiring</div></div>
+    <div class="stat s"><div class="stat-n" id="s-s">0</div><div class="stat-l">This Month</div></div>
+    <div class="stat g"><div class="stat-n" id="s-g">0</div><div class="stat-l">Good</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-f="all">All Items</div>
+    <div class="tab" data-f="urgent">⚠️ Expiring</div>
+    <div class="tab" data-f="meat">🥩 Meat</div>
+    <div class="tab" data-f="fish">🐟 Fish</div>
+    <div class="tab" data-f="vegetable">🥦 Veggies</div>
+    <div class="tab" data-f="dairy">🧀 Dairy</div>
+    <div class="tab" data-f="prepared">🍲 Prepared</div>
+    <div class="tab" data-f="other">📦 Other</div>
+  </div>
+
+  <div class="list-wrap" id="list">
+    <div class="empty" id="empty">
+      <div class="empty-ico">🧊</div>
+      <div class="empty-ttl">Freezer is empty</div>
+      <div class="empty-sub">Tap + to add your first item</div>
     </div>
+  </div>
+
+  <div class="bar">
+    <button class="btn-meal" id="btn-meal">🍽️ What can I cook?</button>
+    <button class="btn-add"  id="btn-add">+</button>
+  </div>
+</div>
+```
+
   </div>
 
   <div class="di">
     <div class="di-tag">Your smart freezer, finally.</div>
     <div class="di-sub">Track what's inside, get expiry alerts, and discover meals from what you already have.</div>
     <div class="di-feats">
-      <div class="di-feat"><div class="di-feat-ico">❄️</div><span>Track items with auto expiry dates</span></div>
+      <div class="di-feat"><div class="di-feat-ico">❄️</div><span>Auto expiry dates from USDA science</span></div>
       <div class="di-feat"><div class="di-feat-ico">📷</div><span>Scan barcodes to add instantly</span></div>
-      <div class="di-feat"><div class="di-feat-ico">🍽️</div><span>Meal ideas from what's expiring</span></div>
+      <div class="di-feat"><div class="di-feat-ico">🍽️</div><span>80+ meal ideas from what's expiring</span></div>
       <div class="di-feat"><div class="di-feat-ico">🔒</div><span>100% private — stays on your device</span></div>
     </div>
     <div class="di-url">📱 Open on your phone for the best experience</div>
   </div>
 </div>
 
-<!-- ── CHOICE MODAL ── -->
+<!-- CHOICE MODAL -->
 
 <div class="overlay" id="m-choice">
   <div class="sheet">
@@ -378,7 +581,7 @@ html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-cont
   </div>
 </div>
 
-<!-- ── ADD ITEM MODAL ── -->
+<!-- ADD ITEM MODAL -->
 
 <div class="overlay" id="m-add">
   <div class="sheet">
@@ -416,7 +619,7 @@ html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-cont
   </div>
 </div>
 
-<!-- ── MEAL MODAL ── -->
+<!-- MEAL MODAL -->
 
 <div class="overlay" id="m-meal">
   <div class="sheet">
@@ -425,13 +628,13 @@ html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-cont
     <div class="meal-filter">
       <div class="mf-pill all active" data-mf="all">🍽️ All</div>
       <div class="mf-pill meat" data-mf="meat">🥩 With meat</div>
-      <div class="mf-pill veg" data-mf="veg">🥗 No meat</div>
+      <div class="mf-pill veg"  data-mf="veg">🥗 No meat</div>
     </div>
     <div class="meal-wrap" id="meal-content"></div>
   </div>
 </div>
 
-<!-- ── PRO MODAL ── -->
+<!-- PRO MODAL -->
 
 <div class="overlay" id="m-pro">
   <div class="sheet">
@@ -455,10 +658,10 @@ html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-cont
   </div>
 </div>
 
-<!-- ── CAMERA ── -->
+<!-- CAMERA -->
 
 <div id="cam-overlay">
-  <video id="video" autoplay muted playsinline></video>
+  <video id="video" autoplay muted playsinline webkit-playsinline></video>
   <div class="cam-ui">
     <div class="scan-frame"><div class="scan-box"><div class="scan-line"></div></div></div>
     <div class="cam-bottom">
@@ -468,11 +671,12 @@ html,body{overflow:auto;height:100%;display:flex;align-items:center;justify-cont
   </div>
   <div class="cam-loading" id="cam-loading">
     <div class="cam-spinner"></div>
-    <p>Starting camera…</p>
+    <p id="cam-loading-msg">Starting camera…</p>
   </div>
 </div>
 
 <script>
+'use strict';
 'use strict';
 'use strict';
 const EXP_KW={'chicken breast':270,'chicken thigh':270,'chicken wing':270,'chicken drumstick':270,'whole chicken':270,'chicken':270,'turkey breast':270,'ground turkey':120,'turkey':120,'duck':180,'ground beef':120,'beef mince':120,'hamburger':120,'beef steak':365,'ribeye':365,'sirloin':365,'brisket':365,'beef short rib':365,'pork chop':180,'pork loin':180,'pork tenderloin':180,'pork shoulder':180,'pork belly':90,'pulled pork':90,'bacon':30,'ham':60,'pork sausage':60,'chorizo':60,'salami':60,'hot dog':60,'bratwurst':60,'lamb chop':270,'ground lamb':120,'lamb shank':270,'lamb':270,'meatball':90,'burger patty':120,'cod':180,'haddock':180,'pollock':180,'tilapia':180,'halibut':180,'flounder':180,'sea bass':180,'fish finger':180,'fish stick':180,'breaded fish':180,'salmon':90,'tuna steak':90,'mackerel':90,'sardine':90,'trout':90,'smoked salmon':60,'shrimp':180,'prawn':180,'scallop':90,'crab':90,'lobster':90,'squid':90,'calamari':90,'broccoli':365,'peas':365,'edamame':365,'corn':365,'green bean':365,'spinach':365,'kale':365,'cauliflower':365,'mixed veg':365,'carrot':365,'parsnip':365,'sweet potato':365,'butternut':365,'squash':365,'courgette':365,'zucchini':365,'pepper':365,'capsicum':365,'mushroom':365,'strawberr':365,'blueberr':365,'raspberr':365,'mango':365,'pineapple':365,'mixed berr':365,'berr':365,'cherry':365,'peach':365,'plum':365,'avocado':180,'butter':270,'ghee':365,'cheddar':180,'mozzarella':180,'parmesan':365,'cheese':180,'ice cream':60,'gelato':60,'sorbet':90,'frozen yogurt':120,'bread':90,'sourdough':90,'baguette':90,'waffle':90,'pancake':90,'croissant':60,'pastry':60,'bagel':90,'pita':90,'naan':90,'tortilla':90,'wrap':90,'rice':180,'pasta':365,'noodle':365,'dumpling':90,'spring roll':90,'samosa':90,'empanada':90,'pierogi':90,'pizza':60,'lasagna':90,'burrito':90,'soup':90,'stew':90,'curry':90,'chilli':90,'meal':90,'casserole':90};
@@ -594,7 +798,6 @@ function daysLeft(item){try{const a=new Date(item.dateAdded);const e=new Date(a.
 function urg(d){return d<=14?'urgent':d<=45?'soon':'good';}
 function expLabel(d){if(d<0)return 'Expired!';if(d===0)return 'Expires today!';if(d===1)return 'Expires tomorrow';if(d<=14)return d+' days left';if(d<60)return Math.ceil(d/7)+' weeks left';return Math.ceil(d/30)+' months left';}
 
-
 /* ── STATE ── */
 let items = [];
 try { items = JSON.parse(localStorage.getItem('frostly_items') || '[]'); } catch {}
@@ -613,32 +816,27 @@ function daysLeft(item) {
     return Math.ceil((expiry - Date.now()) / 86400000);
   } catch { return 999; }
 }
-
-function urg(d) { return d <= 14 ? 'urgent' : d <= 45 ? 'soon' : 'good'; }
-
-function expLabel(d) {
+function urg(d)     { return d <= 14 ? 'urgent' : d <= 45 ? 'soon' : 'good'; }
+function expLabel(d){
   if (d < 0)   return 'Expired!';
   if (d === 0) return 'Expires today!';
   if (d === 1) return 'Expires tomorrow';
   if (d <= 14) return d + ' days left';
-  if (d < 60)  return Math.ceil(d / 7) + ' weeks left';
-  return Math.ceil(d / 30) + ' months left';
+  if (d < 60)  return Math.ceil(d/7) + ' weeks left';
+  return Math.ceil(d/30) + ' months left';
 }
 
 /* ── RECIPE ENGINE ── */
 function matchRecipes() {
   if (!items.length) return [];
-
   const MEAT_CATS = ['meat', 'fish'];
   let pool = RECIPES;
   if (meatFilter === 'meat') pool = RECIPES.filter(r => r.c.some(c => MEAT_CATS.includes(c)));
   if (meatFilter === 'veg')  pool = RECIPES.filter(r => !r.c.some(c => MEAT_CATS.includes(c)));
-
   const enriched = items.map(i => ({
     ...i, d: daysLeft(i), nl: i.name.toLowerCase(),
     sc: urg(daysLeft(i)) === 'urgent' ? 30 : urg(daysLeft(i)) === 'soon' ? 12 : 2
   }));
-
   return pool.map(r => {
     let pts = 0;
     const used = new Map();
@@ -653,42 +851,38 @@ function matchRecipes() {
       }
     }));
     return { ...r, pts, used: [...used.values()] };
-  })
-  .filter(r => r.pts > 8)
-  .sort((a, b) => b.pts - a.pts)
-  .slice(0, 8);
+  }).filter(r => r.pts > 8).sort((a,b) => b.pts - a.pts).slice(0, 8);
 }
 
 function mealHTML(list) {
   const tag = meatFilter === 'meat' ? ' · with meat' : meatFilter === 'veg' ? ' · no meat' : '';
   if (!list.length) {
     const hint = meatFilter !== 'all'
-      ? 'No matches for this filter. Try switching to All.'
+      ? 'No matches for this filter — try switching to All.'
       : 'Add some items to get meal ideas!';
     return '<p style="color:var(--txm);text-align:center;padding:24px 0;font-size:13px">' + hint + '</p>';
   }
   const info = '<div class="meal-top">Based on ' + items.length + ' item' + (items.length !== 1 ? 's' : '') + tag + ' — soonest-expiring prioritised</div>';
   return info + list.map(r =>
     '<div class="rc">' +
-      '<div class="rc-head"><span class="rc-emo">' + r.e + '</span>' +
-      '<div><div class="rc-name">' + r.n + '</div><div class="rc-time">⏱ ' + r.t + '</div></div></div>' +
-      '<div class="rc-desc">' + r.d + '</div>' +
-      '<div class="rc-chips">' +
-        r.used.slice(0, 5).map(item =>
-          '<span class="rc-chip' + (item.d <= 14 ? ' urgent' : '') + '">' +
-          (EMO[item.category] || '📦') + ' ' + item.name + (item.d <= 14 ? ' ⚠️' : '') + '</span>'
-        ).join('') +
-      '</div>' +
-    '</div>'
+    '<div class="rc-head"><span class="rc-emo">' + r.e + '</span>' +
+    '<div><div class="rc-name">' + r.n + '</div><div class="rc-time">⏱ ' + r.t + '</div></div></div>' +
+    '<div class="rc-desc">' + r.d + '</div>' +
+    '<div class="rc-chips">' +
+    r.used.slice(0,5).map(item =>
+      '<span class="rc-chip' + (item.d <= 14 ? ' urgent' : '') + '">' +
+      (EMO[item.category]||'📦') + ' ' + item.name + (item.d <= 14 ? ' ⚠️' : '') + '</span>'
+    ).join('') +
+    '</div></div>'
   ).join('');
 }
 
 /* ── RENDER ── */
 function render() {
   let shown = [...items];
-  if (filter === 'urgent') shown = items.filter(i => urg(daysLeft(i)) === 'urgent');
+  if (filter === 'urgent')    shown = items.filter(i => urg(daysLeft(i)) === 'urgent');
   else if (filter !== 'all') shown = items.filter(i => i.category === filter);
-  shown.sort((a, b) => daysLeft(a) - daysLeft(b));
+  shown.sort((a,b) => daysLeft(a) - daysLeft(b));
 
   const su = document.getElementById('s-u');
   const ss = document.getElementById('s-s');
@@ -700,24 +894,22 @@ function render() {
   const list  = document.getElementById('list');
   const empty = document.getElementById('empty');
   if (!list || !empty) return;
-
   list.querySelectorAll('.card').forEach(el => el.remove());
 
   if (!shown.length) { empty.style.display = 'flex'; return; }
   empty.style.display = 'none';
 
   shown.forEach((item, i) => {
-    const d  = daysLeft(item);
-    const u  = urg(d);
+    const d = daysLeft(item), u = urg(d);
     const el = document.createElement('div');
     el.className = 'card ' + u;
     el.style.animationDelay = (i * 0.04) + 's';
     el.innerHTML =
-      '<div class="card-ico">' + (EMO[item.category] || '📦') + '</div>' +
+      '<div class="card-ico">' + (EMO[item.category]||'📦') + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + item.name + '</div>' +
         '<div class="card-meta">' +
-          '<span class="card-qty">' + (item.quantity || '—') + '</span>' +
+          '<span class="card-qty">' + (item.quantity||'—') + '</span>' +
           '<div class="card-dot"></div>' +
           '<span class="card-exp">' + expLabel(d) + '</span>' +
         '</div>' +
@@ -730,32 +922,30 @@ function render() {
     btn.addEventListener('click', e => {
       e.stopPropagation();
       items = items.filter(i => i.id !== btn.dataset.id);
-      save();
-      toast('Item removed');
-      render();
+      save(); toast('Item removed'); render();
     });
   });
 }
 
-/* ─────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    MODAL SYSTEM
-   openM / closeM use a requestAnimationFrame after setting
-   display:flex so the browser has painted the overlay before
-   the sheet transition starts — this prevents any ghost-click
-   or event-timing issues on mobile.
-───────────────────────────────────────────────────────── */
-let _modalLock = false; // prevent rapid double-open/close
+   openM: display:flex first, then rAF adds .open
+          so transition always has a painted frame
+   closeM: removes .open, waits for transitionend
+           then sets display:none
+   backdrop: pointerdown on overlay itself only
+───────────────────────────────────────────── */
+let _mLock = false;
 
 function openM(id) {
-  if (_modalLock) return;
+  if (_mLock) return;
   const el = document.getElementById(id);
   if (!el) return;
-  _modalLock = true;
+  _mLock = true;
   el.style.display = 'flex';
-  // rAF ensures the display:flex paint happens before the class (transition target)
   requestAnimationFrame(() => {
     el.classList.add('open');
-    _modalLock = false;
+    _mLock = false;
   });
 }
 
@@ -763,32 +953,28 @@ function closeM(id) {
   const el = document.getElementById(id);
   if (!el) return;
   el.classList.remove('open');
-  // Wait for transition to finish before setting display:none
-  el.addEventListener('transitionend', function handler() {
+  const onEnd = () => {
     if (!el.classList.contains('open')) el.style.display = 'none';
-    el.removeEventListener('transitionend', handler);
-  });
+    el.removeEventListener('transitionend', onEnd);
+  };
+  el.addEventListener('transitionend', onEnd);
   if (id === 'm-add') closeAC();
 }
 
-// Close on backdrop tap (use pointerdown + check target to avoid bubbling issues)
-['m-choice', 'm-add', 'm-meal', 'm-pro'].forEach(id => {
+['m-choice','m-add','m-meal','m-pro'].forEach(id => {
   const el = document.getElementById(id);
   if (!el) return;
   el.addEventListener('pointerdown', e => {
-    // Only close if the tap landed directly on the overlay, not on the sheet
     if (e.target === el) closeM(id);
   });
 });
 
-/* ── BUTTON: + ── */
-document.getElementById('btn-add').addEventListener('click', () => {
-  openM('m-choice');
-});
+/* ── + BUTTON ── */
+document.getElementById('btn-add').addEventListener('click', () => openM('m-choice'));
 
-/* ── BUTTON: Add Manually ── */
+/* ── ADD MANUALLY ── */
 document.getElementById('b-manual').addEventListener('click', e => {
-  e.stopPropagation(); // prevent bubbling to overlay backdrop
+  e.stopPropagation();
   closeM('m-choice');
   const today = new Date().toISOString().split('T')[0];
   const fn = document.getElementById('f-name');
@@ -800,14 +986,13 @@ document.getElementById('b-manual').addEventListener('click', e => {
   if (fq) fq.value = '';
   if (fc) fc.value = 'meat';
   closeAC();
-  // Wait for close transition before opening next modal
   setTimeout(() => {
     openM('m-add');
     setTimeout(() => { if (fn) fn.focus(); }, 350);
   }, 370);
 });
 
-/* ── BUTTON: Submit add item ── */
+/* ── SUBMIT ── */
 document.getElementById('btn-submit').addEventListener('click', e => {
   e.stopPropagation();
   const fn = document.getElementById('f-name');
@@ -823,21 +1008,15 @@ document.getElementById('btn-submit').addEventListener('click', e => {
     }
     return;
   }
-  const today = new Date().toISOString().split('T')[0];
   items.unshift({
-    id: Date.now().toString(),
-    name,
+    id: Date.now().toString(), name,
     category: fc ? fc.value : 'other',
-    quantity: fq ? fq.value.trim() : '',
-    dateAdded: (fd && fd.value) ? fd.value : today
+    quantity:  fq ? fq.value.trim() : '',
+    dateAdded: (fd && fd.value) ? fd.value : new Date().toISOString().split('T')[0]
   });
-  save();
-  closeM('m-add');
-  toast('❄️ Added to freezer!');
-  render();
+  save(); closeM('m-add'); toast('❄️ Added to freezer!'); render();
 });
 
-// Enter key on name field
 const fnEl = document.getElementById('f-name');
 if (fnEl) fnEl.addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-submit').click(); }
@@ -876,8 +1055,7 @@ document.querySelectorAll('.mf-pill').forEach(pill => {
 });
 
 /* ── AUTOCOMPLETE ── */
-let acTimer = null;
-let acData  = [];
+let acTimer = null, acData = [];
 
 function showAC(list) {
   const el = document.getElementById('ac');
@@ -885,7 +1063,7 @@ function showAC(list) {
   acData = list;
   el.innerHTML = list.map((it, i) =>
     '<div class="ac-row" data-i="' + i + '">' +
-    '<span>' + (EMO[it.c] || '🍽️') + '</span>' +
+    '<span>' + (EMO[it.c]||'🍽️') + '</span>' +
     '<span class="ac-name">' + it.n + '</span>' +
     (it.c ? '<span class="ac-badge">' + it.c + '</span>' : '') +
     '</div>'
@@ -923,12 +1101,9 @@ if (fnEl) {
         try {
           const r    = await fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(v) + '&json=1&page_size=6&search_simple=1&action=process');
           const data = await r.json();
-          const off  = (data.products || [])
-            .filter(p => p.product_name && p.product_name.trim())
-            .map(p => ({ n: p.product_name.trim(), c: null }))
-            .slice(0, 4);
+          const off  = (data.products||[]).filter(p=>p.product_name&&p.product_name.trim()).map(p=>({n:p.product_name.trim(),c:null})).slice(0,4);
           const merged = [...local];
-          off.forEach(o => { if (!merged.find(m => m.n.toLowerCase() === o.n.toLowerCase())) merged.push(o); });
+          off.forEach(o => { if (!merged.find(m => m.n.toLowerCase()===o.n.toLowerCase())) merged.push(o); });
           showAC(merged.slice(0, 6));
         } catch {}
       }, 480);
@@ -937,9 +1112,7 @@ if (fnEl) {
   fnEl.addEventListener('blur', () => setTimeout(closeAC, 200));
 }
 
-/* ─────────────────────────────────────────────────────────
-   PRO / UNLOCK SYSTEM
-───────────────────────────────────────────────────────── */
+/* ── PRO / UNLOCK ── */
 const VALID_CODES = [
   'FROSTLY-2C4A-9F1B','FROSTLY-7E3D-5A82','FROSTLY-B1F6-4D0C',
   'FROSTLY-A3E8-2B19','FROSTLY-5C7F-8E4D','FROSTLY-9D2A-1F63',
@@ -960,16 +1133,14 @@ function unlockPro(code) {
   if (btn) {
     btn.classList.add('unlocked');
     const lbl = btn.querySelector('.bc-lbl');
-    if (lbl) lbl.innerHTML = 'Scan Barcode <span style="font-size:10px;color:var(--green);background:rgba(102,187,106,.15);border:1px solid rgba(102,187,106,.3);padding:2px 7px;border-radius:4px;font-family:\'DM Sans\',sans-serif;font-weight:700">UNLOCKED ✓</span>';
+    if (lbl) lbl.innerHTML = 'Scan Barcode <span style="font-size:10px;color:var(--green);background:rgba(102,187,106,.15);border:1px solid rgba(102,187,106,.3);padding:2px 7px;border-radius:4px;font-family:DM Sans,sans-serif;font-weight:700">UNLOCKED ✓</span>';
     const sub = btn.querySelector('.bc-sub');
     if (sub) sub.textContent = 'Tap to scan any product barcode';
   }
 }
 
-// Apply on load
 if (isPro()) unlockPro();
 
-// Auto-unlock from Stripe redirect URL param
 (function () {
   const params = new URLSearchParams(window.location.search);
   const code   = params.get('unlocked');
@@ -980,10 +1151,9 @@ if (isPro()) unlockPro();
   }
 })();
 
-// Stripe button (replace href with your Stripe link when ready)
 document.getElementById('btn-upgrade').addEventListener('click', e => {
   e.stopPropagation();
-  // window.location.href = 'https://buy.stripe.com/YOUR_LINK';
+  // Replace with: window.location.href = 'https://buy.stripe.com/YOUR_LINK';
   toast('Stripe coming soon — use an unlock code below');
   const wrap = document.getElementById('pro-code-wrap');
   if (wrap && !wrap.classList.contains('open')) {
@@ -992,53 +1162,38 @@ document.getElementById('btn-upgrade').addEventListener('click', e => {
   }
 });
 
-// Toggle code input
 document.getElementById('btn-show-code').addEventListener('click', e => {
   e.stopPropagation();
   const wrap = document.getElementById('pro-code-wrap');
   if (!wrap) return;
   wrap.classList.toggle('open');
-  if (wrap.classList.contains('open')) {
-    setTimeout(() => document.getElementById('pro-code-input')?.focus(), 200);
-  }
+  if (wrap.classList.contains('open')) setTimeout(() => document.getElementById('pro-code-input')?.focus(), 200);
 });
 
-// Validate code
 function tryUnlockCode() {
   const input    = document.getElementById('pro-code-input');
   const feedback = document.getElementById('code-feedback');
   if (!input || !feedback) return;
-  const code  = input.value.trim().toUpperCase();
+  const code = input.value.trim().toUpperCase();
   if (!code) { input.focus(); return; }
-  const used  = JSON.parse(localStorage.getItem('frostly_used_codes') || '[]');
+  const used = JSON.parse(localStorage.getItem('frostly_used_codes')||'[]');
   if (!VALID_CODES.includes(code)) {
-    input.style.borderColor = 'var(--coral)';
-    feedback.style.color    = 'var(--coral)';
-    feedback.textContent    = '✗  Invalid code';
-    setTimeout(() => { input.style.borderColor = ''; }, 1600);
-    return;
+    input.style.borderColor = 'var(--coral)'; feedback.style.color = 'var(--coral)';
+    feedback.textContent = '✗  Invalid code';
+    setTimeout(() => { input.style.borderColor = ''; }, 1600); return;
   }
   if (used.includes(code)) {
-    input.style.borderColor = 'var(--amber)';
-    feedback.style.color    = 'var(--amber)';
-    feedback.textContent    = '⚠️  Code already used on this device';
-    setTimeout(() => { input.style.borderColor = ''; }, 1600);
-    return;
+    input.style.borderColor = 'var(--amber)'; feedback.style.color = 'var(--amber)';
+    feedback.textContent = '⚠️  Code already used on this device';
+    setTimeout(() => { input.style.borderColor = ''; }, 1600); return;
   }
-  used.push(code);
-  localStorage.setItem('frostly_used_codes', JSON.stringify(used));
+  used.push(code); localStorage.setItem('frostly_used_codes', JSON.stringify(used));
   unlockPro(code);
-  feedback.style.color = 'var(--green)';
-  feedback.textContent = '✅  Barcode scan unlocked!';
-  setTimeout(() => {
-    closeM('m-pro');
-    toast('📷 Barcode scan unlocked — tap Scan Barcode!');
-  }, 900);
+  feedback.style.color = 'var(--green)'; feedback.textContent = '✅  Barcode scan unlocked!';
+  setTimeout(() => { closeM('m-pro'); toast('📷 Barcode scan unlocked — tap Scan Barcode!'); }, 900);
 }
 
-document.getElementById('btn-code-go').addEventListener('click', e => {
-  e.stopPropagation(); tryUnlockCode();
-});
+document.getElementById('btn-code-go').addEventListener('click', e => { e.stopPropagation(); tryUnlockCode(); });
 document.getElementById('pro-code-input')?.addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); tryUnlockCode(); }
 });
@@ -1047,128 +1202,139 @@ document.getElementById('pro-code-input')?.addEventListener('keydown', e => {
 document.getElementById('b-scan').addEventListener('click', e => {
   e.stopPropagation();
   closeM('m-choice');
-  setTimeout(() => {
-    if (isPro()) startScan();
-    else openM('m-pro');
-  }, 370);
+  setTimeout(() => { if (isPro()) startScan(); else openM('m-pro'); }, 370);
 });
 
-/* ── CAMERA / SCAN ── */
+/* ──────────────────────────────────────────────────────
+   CAMERA / BARCODE SCANNING
+   Strategy:
+   1. Get stream ourselves (no ZXing device enumeration)
+   2. Try native BarcodeDetector first (Chrome Android/desktop)
+   3. Fall back to ZXing decodeFromStream (iOS Safari + Firefox)
+      — decodeFromStream uses our pre-existing stream so ZXing
+        never needs to call getUserMedia or enumerate devices
+────────────────────────────────────────────────────── */
 let camStream  = null;
 let codeReader = null;
+let scanActive = false;
 
 async function startScan() {
   const overlay  = document.getElementById('cam-overlay');
   const loading  = document.getElementById('cam-loading');
-  const loadingP = loading && loading.querySelector('p');
+  const msg      = document.getElementById('cam-loading-msg');
+
+  scanActive = true;
   if (overlay) overlay.classList.add('open');
   if (loading) loading.style.display = 'flex';
+  if (msg)     msg.textContent = 'Starting camera…';
 
   try {
-    // Step 1 — get camera stream (try rear first, fall back to any)
+    // Get stream — try rear camera, fall back to any
     try {
-      camStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
-      });
+      camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     } catch {
       camStream = await navigator.mediaDevices.getUserMedia({ video: true });
     }
 
-    // Step 2 — attach stream and explicitly play (required on iOS)
     const video = document.getElementById('video');
     video.srcObject = camStream;
-    video.setAttribute('playsinline', 'true'); // iOS won't play inline without this
-    await video.play().catch(() => {}); // some browsers throw if already playing
+    video.setAttribute('playsinline', 'true');
+    video.setAttribute('webkit-playsinline', 'true');
+    await video.play().catch(() => {});
 
-    // Step 3 — wait for first frame
+    // Wait for first frame (with timeout)
     await new Promise(res => {
       if (video.readyState >= 2) { res(); return; }
       video.addEventListener('canplay', res, { once: true });
-      setTimeout(res, 3000); // safety timeout — don't wait forever
+      setTimeout(res, 4000);
     });
 
     if (loading) loading.style.display = 'none';
 
-    // Step 4 — use native BarcodeDetector if available (Chrome Android, Chrome desktop)
-    //           otherwise fall back to ZXing (iOS Safari, Firefox)
+    // Route to best available scanner
     if (typeof BarcodeDetector !== 'undefined') {
-      await scanWithBarcodeDetector(video);
+      await runBarcodeDetector(video);
     } else {
-      await scanWithZXing(video);
+      if (msg) msg.textContent = 'Loading scanner…';
+      if (loading) loading.style.display = 'flex';
+      await loadZXing();
+      if (loading) loading.style.display = 'none';
+      await runZXing();
     }
 
   } catch (err) {
     closeCamera();
-    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-      toast('Camera blocked — allow camera access in your browser settings');
-    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-      toast('No camera found on this device');
-    } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
-      toast('Camera in use by another app — close it and try again');
-    } else {
-      toast('Camera error: ' + (err.message || err.name || 'unknown'));
-    }
+    let msg2 = 'Could not access camera';
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')
+      msg2 = 'Camera blocked — allow access in your browser settings';
+    else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError')
+      msg2 = 'No camera found on this device';
+    else if (err.name === 'NotReadableError' || err.name === 'TrackStartError')
+      msg2 = 'Camera in use by another app — close it and try again';
+    else if (err.message)
+      msg2 = err.message;
+    toast(msg2);
   }
 }
 
-// ── BarcodeDetector (Chrome Android + Chrome desktop) ────
-async function scanWithBarcodeDetector(video) {
-  const detector = new BarcodeDetector({ formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','itf','qr_code'] });
-  let scanning = true;
+/* Native BarcodeDetector — Chrome Android + desktop */
+async function runBarcodeDetector(video) {
+  const fmts = ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code','itf'];
+  const detector = new BarcodeDetector({ formats: fmts });
 
-  const scan = async () => {
-    if (!scanning) return;
+  const loop = async () => {
+    if (!scanActive) return;
     try {
-      const barcodes = await detector.detect(video);
-      if (barcodes.length > 0) {
-        scanning = false;
+      const results = await detector.detect(video);
+      if (results.length > 0) {
+        scanActive = false;
         closeCamera();
-        await lookupBarcode(barcodes[0].rawValue);
+        await lookupBarcode(results[0].rawValue);
         return;
       }
     } catch {}
-    if (scanning) requestAnimationFrame(scan);
+    if (scanActive) requestAnimationFrame(loop);
   };
-  requestAnimationFrame(scan);
 
-  // Store reference so closeCamera can stop the loop
-  codeReader = { reset: () => { scanning = false; } };
+  codeReader = { reset: () => { scanActive = false; } };
+  requestAnimationFrame(loop);
 }
 
-// ── ZXing fallback (iOS Safari, Firefox) ────────────────
-async function scanWithZXing(video) {
-  if (!window.ZXing) {
-    const loadingP = document.querySelector('#cam-loading p');
-    if (loadingP) loadingP.textContent = 'Loading scanner…';
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src     = 'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';
-      s.onload  = res;
-      s.onerror = () => rej(new Error('Scanner failed to load'));
-      document.head.appendChild(s);
-    });
-  }
+/* Load ZXing from CDN */
+function loadZXing() {
+  if (window.ZXing) return Promise.resolve();
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src     = 'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js';
+    s.onload  = res;
+    s.onerror = () => rej(new Error('Failed to load scanner library'));
+    document.head.appendChild(s);
+  });
+}
 
-  // Use decodeFromVideoElement (not decodeFromVideoDevice)
-  // This avoids ZXing's internal device enumeration which breaks on iOS
+/* ZXing with decodeFromStream — iOS Safari + Firefox */
+async function runZXing() {
+  if (!camStream) return;
   codeReader = new ZXing.BrowserMultiFormatReader();
-
-  try {
-    const result = await codeReader.decodeFromVideoElement(video);
-    codeReader.reset();
-    closeCamera();
-    await lookupBarcode(result.getText());
-  } catch (err) {
-    // ZXing throws NotFoundException continuously while scanning —
-    // that's normal and expected, only surface real errors
-    if (err && err.name !== 'NotFoundException') {
+  // decodeFromStream passes OUR stream directly — ZXing never calls getUserMedia
+  // The callback fires every frame; NotFoundException is normal (no barcode found yet)
+  codeReader.decodeFromStream(camStream, 'video', async (result, err) => {
+    if (!scanActive) return;
+    if (result) {
+      scanActive = false;
+      codeReader.reset();
       closeCamera();
-      toast('Scanner error — try again');
+      await lookupBarcode(result.getText());
     }
-  }
+    // NotFoundException fires every frame — ignore it silently
+    // Only surface unexpected errors
+    if (err && err.name !== 'NotFoundException' && err.name !== 'ChecksumException' && err.name !== 'FormatException') {
+      console.warn('ZXing:', err.name);
+    }
+  });
 }
 
-// ── Shared barcode lookup ────────────────────────────────
+/* Shared Open Food Facts lookup */
 async function lookupBarcode(barcode) {
   toast('🔍 Looking up product…');
   try {
@@ -1182,13 +1348,13 @@ async function lookupBarcode(barcode) {
     if (fq) fq.value = '';
     if (data.status === 1 && data.product?.product_name) {
       const name = data.product.product_name;
-      const cats = (data.product.categories_tags || []).join(' ').toLowerCase();
+      const cats = (data.product.categories_tags||[]).join(' ').toLowerCase();
       let cat = 'other';
-      if (cats.match(/meat|poultry|beef|pork|chicken|turkey|lamb/)) cat = 'meat';
-      else if (cats.match(/fish|seafood|shrimp|salmon|prawn/))      cat = 'fish';
-      else if (cats.match(/vegetable|fruit|frozen.veg/))            cat = 'vegetable';
-      else if (cats.match(/dairy|cheese|milk|yogurt|butter/))       cat = 'dairy';
-      else if (cats.match(/meal|prepared|pizza|ready|frozen.meal/)) cat = 'prepared';
+      if      (cats.match(/meat|poultry|beef|pork|chicken|turkey|lamb/)) cat = 'meat';
+      else if (cats.match(/fish|seafood|shrimp|salmon|prawn/))           cat = 'fish';
+      else if (cats.match(/vegetable|fruit|frozen.veg/))                 cat = 'vegetable';
+      else if (cats.match(/dairy|cheese|milk|yogurt|butter/))            cat = 'dairy';
+      else if (cats.match(/meal|prepared|pizza|ready|frozen.meal/))      cat = 'prepared';
       if (fn) fn.value = name;
       if (fc) fc.value = cat;
       openM('m-add');
@@ -1205,6 +1371,7 @@ async function lookupBarcode(barcode) {
 }
 
 function closeCamera() {
+  scanActive = false;
   const overlay = document.getElementById('cam-overlay');
   const loading = document.getElementById('cam-loading');
   if (overlay) overlay.classList.remove('open');
@@ -1220,7 +1387,7 @@ let toastEl = null, toastTimer = null;
 function toast(msg) {
   if (toastEl) { toastEl.remove(); clearTimeout(toastTimer); }
   toastEl = document.createElement('div');
-  toastEl.className   = 'toast';
+  toastEl.className = 'toast';
   toastEl.textContent = msg;
   document.body.appendChild(toastEl);
   void toastEl.offsetWidth;
@@ -1228,10 +1395,8 @@ function toast(msg) {
   toastTimer = setTimeout(() => { if (toastEl) { toastEl.remove(); toastEl = null; } }, 2800);
 }
 
-/* ── SERVICE WORKER ── */
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
-
-/* ── INIT ── */
+/* ── SW + INIT ── */
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 render();
 </script>
 
