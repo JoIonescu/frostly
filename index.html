@@ -111,17 +111,18 @@ animation:fadeDown .6s ease both;
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{
 width:36px;height:36px;
-background:linear-gradient(135deg,var(–ice),var(–ice2));
+background:#0288D1;
+background:linear-gradient(135deg,#4FC3F7,#0288D1);
 border-radius:10px;
 display:flex;align-items:center;justify-content:center;
 font-size:18px;
-box-shadow:0 0 18px var(–glow);
+box-shadow:0 0 18px rgba(79,195,247,.3);
 flex-shrink:0;
 }
+/* Logo text: avoid -webkit-background-clip on iOS — use plain color instead */
 .logo-name{
 font-family:‘Phudu’,sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px;
-background:linear-gradient(135deg,var(–ha) 30%,var(–hb));
--webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+color:#4FC3F7;
 }
 .header-sub{font-size:12px;color:var(–txm);font-weight:300;letter-spacing:.5px;margin-left:46px}
 
@@ -154,8 +155,8 @@ white-space:nowrap;touch-action:manipulation;
 user-select:none;-webkit-user-select:none;
 }
 .tab.active{
-background:var(–ice);color:#0a1628;border-color:var(–ice);
-font-weight:600;box-shadow:0 0 14px var(–glow);
+background:#4FC3F7;color:#0a1628;border-color:#4FC3F7;
+font-weight:600;box-shadow:0 0 14px rgba(79,195,247,.3);
 }
 
 /* ── LIST ── */
@@ -224,19 +225,20 @@ animation:fadeUp .6s .2s ease both;
 }
 .btn-meal{
 flex:1;min-width:0;height:54px;padding:0 14px;border-radius:var(–r);
-border:1px solid var(–bdri);background:rgba(79,195,247,.08);color:var(–ice);
+border:1px solid rgba(79,195,247,.25);background:rgba(79,195,247,.08);color:#4FC3F7;
 font-family:‘DM Sans’,sans-serif;font-size:14px;font-weight:500;cursor:pointer;
 display:flex;align-items:center;justify-content:center;gap:7px;
 touch-action:manipulation;white-space:nowrap;
 }
-@media(prefers-color-scheme:light){.btn-meal{background:rgba(2,136,209,.09);color:var(–ice2);border-color:rgba(2,136,209,.3)}}
+@media(prefers-color-scheme:light){.btn-meal{background:rgba(2,136,209,.09);color:#0288D1;border-color:rgba(2,136,209,.3)}}
 .btn-meal:active{background:rgba(79,195,247,.18)}
 .btn-add{
 width:54px;height:54px;border-radius:18px;
-background:linear-gradient(135deg,var(–ice),var(–ice2));
+background:#0288D1;
+background:linear-gradient(135deg,#4FC3F7,#0288D1);
 border:none;color:#0a1628;font-size:28px;cursor:pointer;flex-shrink:0;
 display:flex;align-items:center;justify-content:center;
-box-shadow:0 4px 20px var(–glow);touch-action:manipulation;
+box-shadow:0 4px 20px rgba(79,195,247,.3);touch-action:manipulation;
 }
 .btn-add:active{transform:scale(.91)}
 
@@ -421,7 +423,8 @@ outline:none;transition:border-color .2s,box-shadow .2s;color-scheme:light dark;
 .pro-code-row input:focus{border-color:var(–ice);box-shadow:0 0 0 3px var(–glow)}
 .btn-code-go{
 width:50px;height:50px;border-radius:var(–rsm);
-background:linear-gradient(135deg,var(–ice),var(–ice2));
+background:#0288D1;
+background:linear-gradient(135deg,#4FC3F7,#0288D1);
 border:none;color:#0a1628;font-size:22px;cursor:pointer;
 flex-shrink:0;touch-action:manipulation;
 display:flex;align-items:center;justify-content:center;
@@ -440,12 +443,12 @@ flex-direction:column;align-items:center;justify-content:center;
 .cam-ui{position:absolute;inset:0;display:flex;flex-direction:column;pointer-events:none}
 .scan-frame{flex:1;display:flex;align-items:center;justify-content:center}
 .scan-box{
-width:250px;height:150px;border:2px solid var(–ice);border-radius:16px;
-box-shadow:0 0 0 2000px rgba(0,0,0,.55),0 0 30px var(–glow);position:relative;
+width:250px;height:150px;border:2px solid #4FC3F7;border-radius:16px;
+box-shadow:0 0 0 2000px rgba(0,0,0,.55),0 0 30px rgba(79,195,247,.3);position:relative;
 }
 .scan-line{
 position:absolute;left:10px;right:10px;height:2px;
-background:linear-gradient(90deg,transparent,var(–ice),transparent);
+background:linear-gradient(90deg,transparent,#4FC3F7,transparent);
 animation:scanLine 1.8s ease-in-out infinite;border-radius:2px;
 }
 .cam-bottom{padding:24px;pointer-events:all;text-align:center}
@@ -461,7 +464,7 @@ position:absolute;inset:0;background:rgba(3,13,26,.9);
 display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5;
 }
 .cam-loading p{font-size:14px;color:rgba(232,244,248,.6);text-align:center;max-width:220px}
-.cam-spinner{width:40px;height:40px;border:2px solid rgba(255,255,255,.15);border-top-color:var(–ice);border-radius:50%;animation:spin .8s linear infinite}
+.cam-spinner{width:40px;height:40px;border:2px solid rgba(255,255,255,.15);border-top-color:#4FC3F7;border-radius:50%;animation:spin .8s linear infinite}
 
 /* ── TOAST ── */
 .toast{
@@ -1334,26 +1337,48 @@ function loadZXing() {
   return tryLoad(0);
 }
 
-/* ZXing with decodeFromStream — iOS Safari + Firefox */
+/* ZXing with canvas polling — works on iOS Safari
+   decodeFromStream / decodeFromVideoDevice both fail on iOS.
+   Canvas polling captures a frame, decodes it, repeats. */
 async function runZXing() {
   if (!camStream) return;
-  codeReader = new ZXing.BrowserMultiFormatReader();
-  // decodeFromStream passes OUR stream directly — ZXing never calls getUserMedia
-  // The callback fires every frame; NotFoundException is normal (no barcode found yet)
-  codeReader.decodeFromStream(camStream, 'video', async (result, err) => {
+
+  const video   = document.getElementById('video');
+  const canvas  = document.createElement('canvas');
+  const ctx     = canvas.getContext('2d');
+  const reader  = new ZXing.BrowserMultiFormatReader();
+  codeReader    = { reset: () => { scanActive = false; } };
+
+  const poll = async () => {
     if (!scanActive) return;
-    if (result) {
-      scanActive = false;
-      codeReader.reset();
-      closeCamera();
-      await lookupBarcode(result.getText());
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      try {
+        const result = await reader.decodeFromCanvas(canvas);
+        if (result && scanActive) {
+          scanActive = false;
+          closeCamera();
+          await lookupBarcode(result.getText());
+          return;
+        }
+      } catch (e) {
+        // NotFoundException is normal — no barcode in frame yet
+        if (e && e.name !== 'NotFoundException' &&
+            e.name !== 'ChecksumException' &&
+            e.name !== 'FormatException') {
+          console.warn('ZXing poll:', e.name);
+        }
+      }
     }
-    // NotFoundException fires every frame — ignore it silently
-    // Only surface unexpected errors
-    if (err && err.name !== 'NotFoundException' && err.name !== 'ChecksumException' && err.name !== 'FormatException') {
-      console.warn('ZXing:', err.name);
-    }
-  });
+
+    if (scanActive) setTimeout(poll, 250); // check 4 times per second
+  };
+
+  poll();
 }
 
 /* Shared Open Food Facts lookup */
