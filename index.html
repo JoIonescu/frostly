@@ -1174,189 +1174,176 @@ document.getElementById('b-scan').addEventListener('click', e => {
   setTimeout(() => { if (isPro()) startScan(); else openM('m-pro'); }, 370);
 });
 
-/* ──────────────────────────────────────────────────────
+/* ──────────────────────────────────────────────
    CAMERA / BARCODE SCANNING
-   Strategy:
-   1. Get stream ourselves (no ZXing device enumeration)
-   2. Try native BarcodeDetector first (Chrome Android/desktop)
-   3. Fall back to ZXing decodeFromStream (iOS Safari + Firefox)
-      — decodeFromStream uses our pre-existing stream so ZXing
-        never needs to call getUserMedia or enumerate devices
-────────────────────────────────────────────────────── */
-let camStream  = null;
+   Let ZXing manage the camera entirely.
+   decodeFromVideoDevice handles getUserMedia,
+   video binding, and frame polling internally.
+   We only handle: overlay, loading state,
+   result processing, and cleanup.
+────────────────────────────────────────────── */
 let codeReader = null;
 let scanActive = false;
 
 async function startScan() {
-  const overlay  = document.getElementById('cam-overlay');
-  const loading  = document.getElementById('cam-loading');
-  const msg      = document.getElementById('cam-loading-msg');
+  const overlay = document.getElementById('cam-overlay');
+  const loading = document.getElementById('cam-loading');
+  const msg     = document.getElementById('cam-loading-msg');
 
   scanActive = true;
   if (overlay) overlay.classList.add('open');
   if (loading) loading.style.display = 'flex';
-  if (msg)     msg.textContent = 'Starting camera…';
+  if (msg)     msg.textContent = 'Loading scanner…';
 
   try {
-    // Get stream — try rear camera, fall back to any
+    await loadZXing();
+  } catch (e) {
+    closeCamera();
+    toast('Scanner failed to load — check your connection');
+    return;
+  }
+
+  if (msg) msg.textContent = 'Starting camera…';
+
+  // Use native BarcodeDetector on Android Chrome — fastest path
+  if (typeof BarcodeDetector !== 'undefined') {
+    if (msg) msg.textContent = 'Starting camera…';
     try {
-      camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    } catch {
-      camStream = await navigator.mediaDevices.getUserMedia({ video: true });
-    }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } }
+      });
+      const video = document.getElementById('video');
+      video.srcObject = stream;
+      video.setAttribute('playsinline','true');
+      await video.play().catch(()=>{});
+      await new Promise(res => {
+        if (video.readyState >= 2) { res(); return; }
+        video.addEventListener('canplay', res, { once:true });
+        setTimeout(res, 3000);
+      });
+      if (loading) loading.style.display = 'none';
 
-    const video = document.getElementById('video');
-    video.srcObject = camStream;
-    video.setAttribute('playsinline', 'true');
-    video.setAttribute('webkit-playsinline', 'true');
-    await video.play().catch(() => {});
+      const detector = new BarcodeDetector({
+        formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code','itf']
+      });
+      codeReader = {
+        reset: () => {
+          scanActive = false;
+          stream.getTracks().forEach(t => t.stop());
+        }
+      };
+      const loop = async () => {
+        if (!scanActive) return;
+        try {
+          const results = await detector.detect(video);
+          if (results.length > 0 && scanActive) {
+            scanActive = false;
+            stream.getTracks().forEach(t => t.stop());
+            closeCamera();
+            await lookupBarcode(results[0].rawValue);
+            return;
+          }
+        } catch {}
+        if (scanActive) requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+      return;
+    } catch { /* fall through to ZXing */ }
+  }
 
-    // Wait for first frame (with timeout)
-    await new Promise(res => {
-      if (video.readyState >= 2) { res(); return; }
-      video.addEventListener('canplay', res, { once: true });
-      setTimeout(res, 4000);
+  // ZXing path — iOS Safari, Firefox, everything else
+  // decodeFromVideoDevice lets ZXing manage getUserMedia and frame polling
+  try {
+    codeReader = new ZXing.BrowserMultiFormatReader();
+
+    // decodeFromVideoDevice(deviceId, videoElementId, callback)
+    // undefined = let ZXing pick best camera (rear preferred)
+    // 'video'   = ID of our video element — ZXing sets srcObject itself
+    codeReader.decodeFromVideoDevice(undefined, 'video', async (result, err) => {
+      // Hide loading on first callback (camera is live)
+      if (loading && loading.style.display !== 'none') {
+        loading.style.display = 'none';
+      }
+
+      if (!scanActive) return;
+
+      if (result) {
+        scanActive = false;
+        codeReader.reset(); // stops stream + video
+        closeCamera();
+        await lookupBarcode(result.getText());
+        return;
+      }
+
+      // NotFoundException fires every frame when no barcode visible — completely normal
+      // Only log unexpected errors
+      if (err && err.name && err.name !== 'NotFoundException' &&
+          err.name !== 'ChecksumException' && err.name !== 'FormatException') {
+        console.warn('[Scan]', err.name);
+      }
     });
 
-    if (loading) loading.style.display = 'none';
-
-    // Route to best available scanner
-    if (typeof BarcodeDetector !== 'undefined') {
-      await runBarcodeDetector(video);
-    } else {
-      if (msg) msg.textContent = 'Loading scanner…';
-      if (loading) loading.style.display = 'flex';
-      await loadZXing();
+    // Safety timeout: if loading still showing after 4s, hide it
+    setTimeout(() => {
       if (loading) loading.style.display = 'none';
-      await runZXing();
-    }
+    }, 4000);
 
   } catch (err) {
     closeCamera();
-    let msg2 = 'Could not access camera';
     if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')
-      msg2 = 'Camera blocked — allow access in your browser settings';
-    else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError')
-      msg2 = 'No camera found on this device';
-    else if (err.name === 'NotReadableError' || err.name === 'TrackStartError')
-      msg2 = 'Camera in use by another app — close it and try again';
-    else if (err.message)
-      msg2 = err.message;
-    toast(msg2);
+      toast('Camera blocked — allow access in your browser settings');
+    else if (err.name === 'NotFoundError')
+      toast('No camera found on this device');
+    else if (err.name === 'NotReadableError')
+      toast('Camera in use by another app — close it and try again');
+    else
+      toast('Could not start camera');
   }
 }
 
-/* Native BarcodeDetector — Chrome Android + desktop */
-async function runBarcodeDetector(video) {
-  const fmts = ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code','itf'];
-  const detector = new BarcodeDetector({ formats: fmts });
-
-  const loop = async () => {
-    if (!scanActive) return;
-    try {
-      const results = await detector.detect(video);
-      if (results.length > 0) {
-        scanActive = false;
-        closeCamera();
-        await lookupBarcode(results[0].rawValue);
-        return;
-      }
-    } catch {}
-    if (scanActive) requestAnimationFrame(loop);
-  };
-
-  codeReader = { reset: () => { scanActive = false; } };
-  requestAnimationFrame(loop);
-}
-
-/* Load ZXing from CDN — tries three sources before giving up */
 function loadZXing() {
-  if (window.ZXing) return Promise.resolve();
+  if (window.ZXing && window.ZXing.BrowserMultiFormatReader) return Promise.resolve();
 
   const CDNS = [
     'https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js',
     'https://unpkg.com/@zxing/library@0.18.6/umd/index.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js',
+    'https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js',
   ];
 
-  function tryLoad(index) {
-    if (index >= CDNS.length) return Promise.reject(new Error('Scanner library unavailable — check your internet connection'));
+  function tryLoad(i) {
+    if (i >= CDNS.length) return Promise.reject(new Error('All CDNs failed'));
     return new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src     = CDNS[index];
-      s.onload  = () => { if (window.ZXing) res(); else rej(new Error('bad bundle')); };
-      s.onerror = () => rej(new Error('cdn fail'));
+      const s     = document.createElement('script');
+      s.src       = CDNS[i];
+      s.onload    = () => (window.ZXing && window.ZXing.BrowserMultiFormatReader) ? res() : rej(new Error('no BrowserMultiFormatReader'));
+      s.onerror   = () => rej(new Error('load error'));
       document.head.appendChild(s);
-    }).catch(() => tryLoad(index + 1));
+    }).catch(() => tryLoad(i + 1));
   }
 
   return tryLoad(0);
 }
 
-/* ZXing canvas polling — raw decode path, no video pipeline
-   Uses MultiFormatReader + BinaryBitmap directly, most reliable on iOS */
-async function runZXing() {
-  if (!camStream) return;
-
-  const video  = document.getElementById('video');
-  const canvas = document.createElement('canvas');
-  const ctx    = canvas.getContext('2d', { willReadFrequently: true });
-
-  // MultiFormatReader is the raw synchronous decoder — no video pipeline
-  const hints = new Map();
-  hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
-  const reader = new ZXing.MultiFormatReader();
-  reader.setHints(hints);
-
-  codeReader = { reset: () => { scanActive = false; } };
-
-  const poll = () => {
-    if (!scanActive) return;
-
-    if (video.readyState >= 2 && video.videoWidth > 0) {
-      canvas.width  = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      try {
-        // HTMLCanvasElementLuminanceSource is the correct class in @zxing/library
-        const luminance = new ZXing.HTMLCanvasElementLuminanceSource(canvas);
-        const bitmap    = new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(luminance));
-        const result    = reader.decode(bitmap);
-
-        // If we reach here, a barcode was found
-        if (result && scanActive) {
-          scanActive = false;
-          closeCamera();
-          lookupBarcode(result.getText());
-          return;
-        }
-      } catch (e) {
-        // NotFoundException = no barcode in frame, completely normal
-        // Anything else = log so we can debug
-        const name = (e && (e.name || e.constructor?.name)) || '';
-        if (name && name !== 'NotFoundException' &&
-            name !== 'ChecksumException' &&
-            name !== 'FormatException' &&
-            !String(e).includes('NotFoundException')) {
-          console.warn('[ZXing]', name, String(e).slice(0, 80));
-        }
-      }
-    }
-
-    if (scanActive) setTimeout(poll, 150); // ~6fps — fast enough, not CPU heavy
-  };
-
-  poll();
+function closeCamera() {
+  scanActive = false;
+  const overlay = document.getElementById('cam-overlay');
+  const loading = document.getElementById('cam-loading');
+  if (overlay) overlay.classList.remove('open');
+  if (loading) loading.style.display = 'none';
+  if (codeReader) {
+    try { codeReader.reset(); } catch {}
+    codeReader = null;
+  }
 }
 
-/* ── SCAN FLOW ─────────────────────────────────────────────
-   1. Open Food Facts → product name + category tags
-   2. USDA keyword expiry applied automatically
-   3. Item added DIRECTLY to freezer list — no form needed
-   4. If product not in OFF → open form pre-filled so user
-      can confirm/edit before saving
-──────────────────────────────────────────────────────────── */
+document.getElementById('btn-cam-close').addEventListener('click', closeCamera);
+
+/* ── BARCODE LOOKUP ────────────────────────────────────
+   1. Open Food Facts → name, category, quantity
+   2. USDA expiry applied automatically via getExp()
+   3. Added directly to list — no form needed
+   4. Not found → open form for manual entry
+────────────────────────────────────────────────────── */
 async function lookupBarcode(barcode) {
   toast('🔍 Looking up product…');
   try {
@@ -1364,11 +1351,10 @@ async function lookupBarcode(barcode) {
     const data = await res.json();
 
     if (data.status === 1 && data.product?.product_name) {
-      const name    = data.product.product_name.trim();
-      const cats    = (data.product.categories_tags || []).join(' ').toLowerCase();
-      const qty     = data.product.quantity || '';
+      const name = data.product.product_name.trim();
+      const cats = (data.product.categories_tags || []).join(' ').toLowerCase();
+      const qty  = data.product.quantity || '';
 
-      // Auto-detect category from OFF tags
       let cat = 'other';
       if      (cats.match(/meat|poultry|beef|pork|chicken|turkey|lamb/)) cat = 'meat';
       else if (cats.match(/fish|seafood|shrimp|salmon|prawn/))           cat = 'fish';
@@ -1376,27 +1362,16 @@ async function lookupBarcode(barcode) {
       else if (cats.match(/dairy|cheese|milk|yogurt|butter/))            cat = 'dairy';
       else if (cats.match(/meal|prepared|pizza|ready|frozen.meal/))      cat = 'prepared';
 
-      // Add DIRECTLY to freezer — no form
       const today = new Date().toISOString().split('T')[0];
-      items.unshift({
-        id:        Date.now().toString(),
-        name,
-        category:  cat,
-        quantity:  qty,
-        dateAdded: today,
-      });
+      items.unshift({ id: Date.now().toString(), name, category: cat, quantity: qty, dateAdded: today });
       save();
       render();
 
-      // Show expiry info in the toast
-      const fakeItem   = { name, category: cat, dateAdded: today };
-      const expiryDays = getExp(fakeItem);
-      const months     = Math.round(expiryDays / 30);
-      const expText    = months >= 2 ? months + ' months' : expiryDays + ' days';
+      const fakeItem = { name, category: cat, dateAdded: today };
+      const days     = getExp(fakeItem);
+      const expText  = days >= 60 ? Math.round(days / 30) + ' months' : days + ' days';
       toast('❄️ Added: ' + name + ' · expires in ~' + expText);
-
     } else {
-      // Product not in OFF — open form so user can enter manually
       const fn = document.getElementById('f-name');
       const fc = document.getElementById('f-cat');
       const fd = document.getElementById('f-date');
@@ -1413,18 +1388,6 @@ async function lookupBarcode(barcode) {
     toast('Lookup failed — enter name manually');
   }
 }
-
-function closeCamera() {
-  scanActive = false;
-  const overlay = document.getElementById('cam-overlay');
-  const loading = document.getElementById('cam-loading');
-  if (overlay) overlay.classList.remove('open');
-  if (loading) loading.style.display = 'none';
-  if (codeReader) { try { codeReader.reset(); } catch {} codeReader = null; }
-  if (camStream)  { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-}
-
-document.getElementById('btn-cam-close').addEventListener('click', closeCamera);
 
 /* ── TOAST ── */
 let toastEl = null, toastTimer = null;
