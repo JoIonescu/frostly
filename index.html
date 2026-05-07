@@ -55,8 +55,8 @@ radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.1) 0%,transparent 60
 body{overflow:hidden}
 .dl{display:block;width:100%;height:100%;padding:0;margin:0}
 .ds{display:block;width:100%;height:100%;border-radius:0;overflow:visible;background:transparent;box-shadow:none;position:static}
-.ds::before{content:none !important;display:none !important}
-.ds::after{content:none !important;display:none !important}
+.ds::before{content:none !important;display:none !important;visibility:hidden !important;width:0 !important;height:0 !important}
+.ds::after {content:none !important;display:none !important;visibility:hidden !important;width:0 !important;height:0 !important}
 .di{display:none}
 #app{height:100vh;height:100dvh}
 }
@@ -1372,6 +1372,8 @@ async function lookupBarcode(barcode) {
       const expText  = days >= 60 ? Math.round(days / 30) + ' months' : days + ' days';
       toast('❄️ Added: ' + name + ' · expires in ~' + expText);
     } else {
+      // Product not in Open Food Facts — open the form so user can add manually
+      toast('📦 Product not found — add it manually');
       const fn = document.getElementById('f-name');
       const fc = document.getElementById('f-cat');
       const fd = document.getElementById('f-date');
@@ -1380,12 +1382,12 @@ async function lookupBarcode(barcode) {
       if (fc) fc.value = 'other';
       if (fd) fd.value = new Date().toISOString().split('T')[0];
       if (fq) fq.value = '';
-      openM('m-add');
-      toast('Product not found — enter name manually');
+      // Delay so camera close animation finishes and _mLock clears
+      setTimeout(() => openM('m-add'), 400);
     }
   } catch {
-    openM('m-add');
-    toast('Lookup failed — enter name manually');
+    toast('Lookup failed — add it manually');
+    setTimeout(() => openM('m-add'), 400);
   }
 }
 
@@ -1402,9 +1404,75 @@ function toast(msg) {
   toastTimer = setTimeout(() => { if (toastEl) { toastEl.remove(); toastEl = null; } }, 2800);
 }
 
+/* ── EXPIRY NOTIFICATIONS ──────────────────────────────
+   Checks on every app open. If items expire within 7 days
+   and we haven't notified today, fires a browser notification.
+   No server. No cron. Works on Android immediately.
+   Works on iOS 16.4+ when added to home screen.
+────────────────────────────────────────────────────── */
+async function checkExpiryNotifications() {
+  if (!('Notification' in window)) return;
+
+  // Don't notify more than once per day
+  const today     = new Date().toISOString().split('T')[0];
+  const lastCheck = localStorage.getItem('frostly_notif_date');
+  if (lastCheck === today) return;
+
+  // Find items expiring within 7 days
+  const expiring = items
+    .map(i => ({ ...i, d: daysLeft(i) }))
+    .filter(i => i.d >= 0 && i.d <= 7)
+    .sort((a, b) => a.d - b.d);
+
+  if (!expiring.length) return;
+
+  // Request permission if not yet granted
+  let perm = Notification.permission;
+  if (perm === 'default') {
+    perm = await Notification.requestPermission();
+  }
+  if (perm !== 'granted') return;
+
+  // Build notification message
+  const first = expiring[0];
+  let title, body;
+
+  if (expiring.length === 1) {
+    title = first.d === 0 ? '🚨 Use today: ' + first.name
+          : first.d === 1 ? '⚠️ ' + first.name + ' expires tomorrow'
+          : '📅 ' + first.name + ' expires in ' + first.d + ' days';
+    body = 'Open Frostly to see what you can cook.';
+  } else {
+    title = '❄️ ' + expiring.length + ' items expiring soon';
+    body  = expiring.slice(0, 3).map(i =>
+      i.name + ' (' + (i.d === 0 ? 'today' : i.d + 'd') + ')'
+    ).join(', ');
+  }
+
+  const sw = navigator.serviceWorker && await navigator.serviceWorker.ready.catch(() => null);
+  if (sw && sw.showNotification) {
+    // Service worker notification — works when app is backgrounded
+    sw.showNotification(title, {
+      body,
+      icon:  '/icons/icon-192.png',
+      badge: '/icons/badge-72.png',
+      tag:   'frostly-expiry',
+      data:  { url: '/' }
+    });
+  } else {
+    // Fallback — inline notification
+    new Notification(title, { body, icon: '/icons/icon-192.png', tag: 'frostly-expiry' });
+  }
+
+  localStorage.setItem('frostly_notif_date', today);
+}
+
 /* ── SW + INIT ── */
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 render();
+
+// Check for expiring items after a short delay (let render finish first)
+setTimeout(checkExpiryNotifications, 1500);
 </script>
 
 </body>
