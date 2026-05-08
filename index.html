@@ -465,8 +465,8 @@ box-shadow:0 0 0 10px #1c2d42,0 0 0 13px #0d1929,0 50px 100px rgba(0,0,0,.6),0 0
 <body>
 <div class="bg-atmo" aria-hidden="true"></div>
 
-<div class="dl">
-  <div class="ds">
+<div class="dl" id="dl-wrap">
+  <div class="ds" id="ds-wrap">
     <div id="app">
       <header>
         <div class="h-top">
@@ -646,8 +646,20 @@ box-shadow:0 0 0 10px #1c2d42,0 0 0 13px #0d1929,0 50px 100px rgba(0,0,0,.6),0 0
 
 <script>
 'use strict';
-'use strict';
-'use strict';
+
+/* ── MOBILE: remove desktop phone-frame wrappers from DOM entirely ──
+   Pseudo-elements on .dl/.ds were causing dots on iOS.
+   Simplest fix: remove the wrappers so they cannot render anything. */
+(function(){
+  if (window.innerWidth < 600) {
+    const app  = document.getElementById('app');
+    const wrap = document.getElementById('dl-wrap');
+    if (app && wrap) {
+      document.body.insertBefore(app, wrap);
+      wrap.remove();
+    }
+  }
+})();
 const EXP_KW={'chicken breast':270,'chicken thigh':270,'chicken wing':270,'chicken drumstick':270,'whole chicken':270,'chicken':270,'turkey breast':270,'ground turkey':120,'turkey':120,'duck':180,'ground beef':120,'beef mince':120,'hamburger':120,'beef steak':365,'ribeye':365,'sirloin':365,'brisket':365,'beef short rib':365,'pork chop':180,'pork loin':180,'pork tenderloin':180,'pork shoulder':180,'pork belly':90,'pulled pork':90,'bacon':30,'ham':60,'pork sausage':60,'chorizo':60,'salami':60,'hot dog':60,'bratwurst':60,'lamb chop':270,'ground lamb':120,'lamb shank':270,'lamb':270,'meatball':90,'burger patty':120,'cod':180,'haddock':180,'pollock':180,'tilapia':180,'halibut':180,'flounder':180,'sea bass':180,'fish finger':180,'fish stick':180,'breaded fish':180,'salmon':90,'tuna steak':90,'mackerel':90,'sardine':90,'trout':90,'smoked salmon':60,'shrimp':180,'prawn':180,'scallop':90,'crab':90,'lobster':90,'squid':90,'calamari':90,'broccoli':365,'peas':365,'edamame':365,'corn':365,'green bean':365,'spinach':365,'kale':365,'cauliflower':365,'mixed veg':365,'carrot':365,'parsnip':365,'sweet potato':365,'butternut':365,'squash':365,'courgette':365,'zucchini':365,'pepper':365,'capsicum':365,'mushroom':365,'strawberr':365,'blueberr':365,'raspberr':365,'mango':365,'pineapple':365,'mixed berr':365,'berr':365,'cherry':365,'peach':365,'plum':365,'avocado':180,'butter':270,'ghee':365,'cheddar':180,'mozzarella':180,'parmesan':365,'cheese':180,'ice cream':60,'gelato':60,'sorbet':90,'frozen yogurt':120,'bread':90,'sourdough':90,'baguette':90,'waffle':90,'pancake':90,'croissant':60,'pastry':60,'bagel':90,'pita':90,'naan':90,'tortilla':90,'wrap':90,'rice':180,'pasta':365,'noodle':365,'dumpling':90,'spring roll':90,'samosa':90,'empanada':90,'pierogi':90,'pizza':60,'lasagna':90,'burrito':90,'soup':90,'stew':90,'curry':90,'chilli':90,'meal':90,'casserole':90};
 const EXP_CAT={meat:180,fish:180,vegetable:365,dairy:90,prepared:90,other:180};
 const EMO={meat:'🥩',fish:'🐟',vegetable:'🥦',dairy:'🧀',prepared:'🍲',other:'📦'};
@@ -1338,57 +1350,122 @@ function closeCamera() {
 
 document.getElementById('btn-cam-close').addEventListener('click', closeCamera);
 
-/* ── BARCODE LOOKUP ────────────────────────────────────
-   1. Open Food Facts → name, category, quantity
-   2. USDA expiry applied automatically via getExp()
-   3. Added directly to list — no form needed
-   4. Not found → open form for manual entry
-────────────────────────────────────────────────────── */
+/* ── BARCODE LOOKUP — multi-database chain ─────────────────
+   1. Open Food Facts (global)  — world.openfoodfacts.org
+   2. Open Food Facts (Polish)  — pl.openfoodfacts.org
+   3. UPC Item DB               — api.upcitemdb.com (100/day free)
+   If all three fail → open manual entry form.
+   lookupInProgress prevents duplicate calls from scanner.
+────────────────────────────────────────────────────────── */
+let lookupInProgress = false;
+
 async function lookupBarcode(barcode) {
+  if (lookupInProgress) return;
+  lookupInProgress = true;
+
   toast('🔍 Looking up product…');
+
   try {
-    const res  = await fetch('https://world.openfoodfacts.org/api/v0/product/' + encodeURIComponent(barcode) + '.json');
-    const data = await res.json();
+    const result = await queryDatabases(barcode);
 
-    if (data.status === 1 && data.product?.product_name) {
-      const name = data.product.product_name.trim();
-      const cats = (data.product.categories_tags || []).join(' ').toLowerCase();
-      const qty  = data.product.quantity || '';
-
-      let cat = 'other';
-      if      (cats.match(/meat|poultry|beef|pork|chicken|turkey|lamb/)) cat = 'meat';
-      else if (cats.match(/fish|seafood|shrimp|salmon|prawn/))           cat = 'fish';
-      else if (cats.match(/vegetable|fruit|frozen.veg/))                 cat = 'vegetable';
-      else if (cats.match(/dairy|cheese|milk|yogurt|butter/))            cat = 'dairy';
-      else if (cats.match(/meal|prepared|pizza|ready|frozen.meal/))      cat = 'prepared';
-
+    if (result) {
       const today = new Date().toISOString().split('T')[0];
-      items.unshift({ id: Date.now().toString(), name, category: cat, quantity: qty, dateAdded: today });
+      items.unshift({
+        id:        Date.now().toString(),
+        name:      result.name,
+        category:  result.cat,
+        quantity:  result.qty || '',
+        dateAdded: today,
+      });
       save();
       render();
-
-      const fakeItem = { name, category: cat, dateAdded: today };
+      const fakeItem = { name: result.name, category: result.cat, dateAdded: today };
       const days     = getExp(fakeItem);
       const expText  = days >= 60 ? Math.round(days / 30) + ' months' : days + ' days';
-      toast('❄️ Added: ' + name + ' · expires in ~' + expText);
+      toast('❄️ Added: ' + result.name + ' · expires in ~' + expText);
     } else {
-      // Product not in Open Food Facts — open the form so user can add manually
-      toast('📦 Product not found — add it manually');
-      const fn = document.getElementById('f-name');
-      const fc = document.getElementById('f-cat');
-      const fd = document.getElementById('f-date');
-      const fq = document.getElementById('f-qty');
-      if (fn) fn.value = '';
-      if (fc) fc.value = 'other';
-      if (fd) fd.value = new Date().toISOString().split('T')[0];
-      if (fq) fq.value = '';
-      // Delay so camera close animation finishes and _mLock clears
-      setTimeout(() => openM('m-add'), 400);
+      // Nothing found in any database — open manual form
+      toast('📦 Not found in any database — add manually');
+      setTimeout(() => {
+        const fn = document.getElementById('f-name');
+        const fc = document.getElementById('f-cat');
+        const fd = document.getElementById('f-date');
+        const fq = document.getElementById('f-qty');
+        if (fn) fn.value = '';
+        if (fc) fc.value = 'other';
+        if (fd) fd.value = new Date().toISOString().split('T')[0];
+        if (fq) fq.value = '';
+        openM('m-add');
+      }, 450);
     }
   } catch {
-    toast('Lookup failed — add it manually');
-    setTimeout(() => openM('m-add'), 400);
+    toast('Lookup failed — add manually');
+    setTimeout(() => openM('m-add'), 450);
+  } finally {
+    lookupInProgress = false;
   }
+}
+
+async function queryDatabases(barcode) {
+  // ── 1. Open Food Facts global ──────────────────────────
+  try {
+    const r    = await fetchWithTimeout('https://world.openfoodfacts.org/api/v0/product/' + encodeURIComponent(barcode) + '.json', 5000);
+    const data = await r.json();
+    if (data.status === 1 && data.product?.product_name) {
+      return parseOFF(data.product);
+    }
+  } catch {}
+
+  // ── 2. Open Food Facts Polish ──────────────────────────
+  try {
+    const r    = await fetchWithTimeout('https://pl.openfoodfacts.org/api/v0/product/' + encodeURIComponent(barcode) + '.json', 5000);
+    const data = await r.json();
+    if (data.status === 1 && data.product?.product_name) {
+      return parseOFF(data.product);
+    }
+  } catch {}
+
+  // ── 3. UPC Item DB (100 free lookups/day) ─────────────
+  try {
+    const r    = await fetchWithTimeout('https://api.upcitemdb.com/prod/trial/lookup?upc=' + encodeURIComponent(barcode), 5000);
+    const data = await r.json();
+    if (data.code === 'OK' && data.items && data.items.length > 0) {
+      const item = data.items[0];
+      const name = item.title || item.brand || '';
+      if (name) {
+        return {
+          name: name.trim(),
+          cat:  guessCategory(name + ' ' + (item.category || '')),
+          qty:  item.size || '',
+        };
+      }
+    }
+  } catch {}
+
+  return null; // nothing found
+}
+
+function parseOFF(product) {
+  const name = product.product_name.trim();
+  const cats = (product.categories_tags || []).join(' ').toLowerCase();
+  const qty  = product.quantity || product.net_weight_value || '';
+  return { name, cat: guessCategory(name + ' ' + cats), qty };
+}
+
+function guessCategory(text) {
+  const t = text.toLowerCase();
+  if (t.match(/meat|poultry|beef|pork|chicken|turkey|lamb|wieprzow|kurczak|wolowina|baranina/)) return 'meat';
+  if (t.match(/fish|seafood|shrimp|salmon|prawn|ryba|losos|krewetk|tuńczyk|makrela/))         return 'fish';
+  if (t.match(/vegetable|fruit|frozen.veg|warzywa|owoc|brokuł|szpinak|groszek/))               return 'vegetable';
+  if (t.match(/dairy|cheese|milk|yogurt|butter|mleko|ser|masło|jogurt|śmietana/))              return 'dairy';
+  if (t.match(/meal|prepared|pizza|ready|frozen.meal|danie|gotow/))                            return 'prepared';
+  return 'other';
+}
+
+function fetchWithTimeout(url, ms) {
+  const controller = new AbortController();
+  const timer      = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
 }
 
 /* ── TOAST ── */
