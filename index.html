@@ -50,14 +50,10 @@ radial-gradient(ellipse 80% 60% at 20% -10%,rgba(79,195,247,.12) 0%,transparent 
 radial-gradient(ellipse 60% 50% at 80% 110%,rgba(2,136,209,.1) 0%,transparent 60%);
 }
 
-/* ── MOBILE WRAPPER RESET (no all:initial — breaks var inheritance) ── */
+/* ── MOBILE ── */
 @media(max-width:599px){
 body{overflow:hidden}
-.dl{display:block;width:100%;height:100%;padding:0;margin:0}
-.ds{display:block;width:100%;height:100%;border-radius:0;overflow:visible;background:transparent;box-shadow:none;position:static}
-.ds::before{content:none !important;display:none !important;visibility:hidden !important;width:0 !important;height:0 !important}
-.ds::after {content:none !important;display:none !important;visibility:hidden !important;width:0 !important;height:0 !important}
-.di{display:none}
+.di-panel{display:none !important}
 #app{height:100vh;height:100dvh}
 }
 
